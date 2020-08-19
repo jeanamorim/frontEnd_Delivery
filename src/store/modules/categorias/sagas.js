@@ -6,6 +6,8 @@ import {
   getCategoriaFailure,
   postCategoriaSucess,
   postCategoriaFailure,
+  editCategoriaSucess,
+  editCategoriaFailure,
 } from './actions';
 
 import api from '../../../services/api';
@@ -36,22 +38,29 @@ export function* cadastrarCategoria({ payload }) {
     );
   }
 }
-// export function* deleteOfertas({ payload }) {
-//   const { id } = payload;
-//   try {
-//     yield call(api.delete, `offers/${id}`);
-//     toast.success('Oferta encerrada com sucesso!');
-//     yield put(deletOfertasSucess());
-//   } catch ({ response }) {
-//     yield put(deletOfertasFailure());
-//     toast.error(
-//       'Não foi possivel consultar suas ofertas, verifique sua internet!',
-//     );
-//   }
-// }
+export function* editCategoria({ payload }) {
+  const { id, name } = payload.categoria;
+  const image_id = payload.categoria.avatar.id;
+
+  try {
+    yield call(api.put, `categories/${id}`, {
+      name,
+      image_id,
+    });
+    const { data } = yield call(api.get, 'categories');
+    yield put(getCategoriasSuccess(data));
+    toast.success('Categoria editada com sucesso!');
+    yield put(editCategoriaSucess());
+  } catch ({ response }) {
+    yield put(editCategoriaFailure());
+    toast.error(
+      'Não foi possivel atualizar a categoria, verifique sua internet!',
+    );
+  }
+}
 
 export default all([
   takeLatest('@product/GET_CATEGORIA_REQUEST', getCategorias),
   takeLatest('@product/POST_CATEGORIA_REQUEST', cadastrarCategoria),
-  // takeLatest('@product/DELETE_OFERTA_REQUEST', deleteOfertas),
+  takeLatest('@product/EDIT_CATEGORIA_REQUEST', editCategoria),
 ]);

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-use-before-define */
@@ -7,11 +8,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import Dropzone from 'react-dropzone';
 
 import { bindActionCreators } from 'redux';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
+
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { MdCheckCircle, MdError } from 'react-icons/md';
 import filesize from 'filesize';
-import { resetUploads } from '../../../store/modules/uploads/actions';
 import * as actions from '../../../store/modules/uploads/actions';
 import {
   Container,
@@ -24,9 +25,15 @@ import api from '../../../services/api';
 //  * as actions from '../../store/modules/Upload/actions';
 
 const Avatar = ({ uploadAvatarRequest }) => {
-  const dispatch = useDispatch();
+  const url = useSelector(state => state.categorias.CategoriaToEdit.image.url);
+  const image = useSelector(state => state.categorias.CategoriaToEdit.image);
+
   const [uploaded, setUploaded] = useState({});
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState(url);
+
+  useEffect(() => {
+    uploadAvatarRequest(image);
+  }, []);
 
   const handleUpload = files => {
     files.forEach(file => {
@@ -62,10 +69,10 @@ const Avatar = ({ uploadAvatarRequest }) => {
       });
 
       setUploaded({ ...uploadedFile, uploaded: true });
+      // return saveIdFile(data.id);   return uploadAvatarRequest(data);
 
       return uploadAvatarRequest(data);
     } catch (error) {
-      dispatch(resetUploads());
       setUploaded({ ...uploadedFile, error: true });
       return setPreview('');
     }

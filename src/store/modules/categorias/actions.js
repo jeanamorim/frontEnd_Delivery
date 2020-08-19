@@ -46,3 +46,33 @@ export function deletOfertmasFailure() {
     type: '@product/DELETE_OFEfRTA_FAILURE',
   };
 }
+// EDITAR UMA CATEGORIA
+// abrir o modal edit categoria
+export function editeCategoriaOpen(categoria) {
+  return {
+    type: '@product/EDIT_CATEGORIA_OPEN',
+    categoria,
+  };
+}
+export function editeCategoriaClose() {
+  return {
+    type: '@product/EDIT_CATEGORIA_CLOSE',
+  };
+}
+// editar a categoria
+export function editCategoriaRequest(categoria) {
+  return {
+    type: '@product/EDIT_CATEGORIA_REQUEST',
+    payload: { categoria },
+  };
+}
+export function editCategoriaSucess() {
+  return {
+    type: '@product/EDIT_CATEGORIA_CLOSE',
+  };
+}
+export function editCategoriaFailure() {
+  return {
+    type: '@product/EDIT_CATEGORIA_FAILURE',
+  };
+}

@@ -1,6 +1,7 @@
 /* eslint-disable no-return-assign */
 const initialState = {
   editProduct: false,
+  modalCadastrarProduct: false,
   ProductToEdit: {},
   ProductCategoria: [],
   ListProducts: [],
@@ -36,6 +37,16 @@ function Product(state = initialState, action) {
         ...state,
         editProduct: false,
         ProductToEdit: {},
+      });
+    case '@product/OPEN_MODAL_CADASTRAR_PRODUCT':
+      return (state = {
+        ...state,
+        modalCadastrarProduct: true,
+      });
+    case '@product/CLOSE_MODAL_CADASTRAR_PRODUCT':
+      return (state = {
+        ...state,
+        modalCadastrarProduct: false,
       });
 
     default:

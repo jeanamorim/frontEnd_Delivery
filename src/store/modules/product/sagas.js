@@ -6,7 +6,7 @@ import {
   deleteProductSucess,
   GetProductFailure,
   GetProductSucess,
-  postProductsucess,
+  fecharModalCadastarProduct,
   postProductFailure,
   listProductSucess,
   listProductFailure,
@@ -38,10 +38,18 @@ export function* listProduct() {
 }
 export function* cadastrarProducts({ payload }) {
   const { product } = payload;
+  const id = payload.avatar.avatar;
+  if (id === null) {
+    toast.error('A imagem é obrigatória, favor verificar!');
+    return;
+  }
   try {
-    yield call(api.post, 'products', product);
+    yield call(api.post, 'products', {
+      ...product,
+      image_id: id.id,
+    });
     toast.success('Produto cadastrado  com sucesso!');
-    yield put(postProductsucess());
+    yield put(fecharModalCadastarProduct());
   } catch ({ response }) {
     yield put(postProductFailure());
     toast.error(

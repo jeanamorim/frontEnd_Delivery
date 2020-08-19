@@ -121,8 +121,8 @@ const Avatar = ({ uploadAvatarRequest }) => {
           )}
           {uploaded.uploaded && (
             <div>
-              <span>Enviado com sucesso!</span>
-              <MdCheckCircle size={24} color="#78e5d5" />
+              <text style={{ color: '#B36A04' }}>Enviado com sucesso!</text>
+              <MdCheckCircle size={24} color="#09A817" />
             </div>
           )}
           {uploaded.error && (

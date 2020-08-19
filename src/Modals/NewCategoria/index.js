@@ -1,14 +1,20 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/button-has-type */
 import React, { useState } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
 import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
-
+import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { postCategoriaRequest } from '../../store/modules/categorias/actions';
 import Avatar from './Image';
 import { ModalArea } from './style';
+
+const schema = Yup.object().shape({
+  name: Yup.string().required('O nome é obrigatório'),
+  status: Yup.string().required('O status é obrigatório'),
+});
 
 export default function Neew() {
   const dispatch = useDispatch();
@@ -32,6 +38,7 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
+      style={{ height: '60vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
@@ -46,25 +53,30 @@ export default function Neew() {
           onClick={handleCloseCreateProduct}
         />
       </Modal.Header>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} schema={schema}>
         <ModalArea forR>
           <Avatar />
           <div>
-            <Input
-              name="name"
-              type="text"
-              placeholder="NOME DO CATEGORIA"
-              required
-            />
-            <Select
-              placeholder="STATUS"
-              style={{ border: '1px solid #999', height: 40 }}
-              name="unit"
-              options={[
-                { id: 'ATIVO', title: 'ATIVO' },
-                { id: 'INATIVO', title: 'INATIVO' },
-              ]}
-            />
+            <div>
+              <label>
+                Nome da categoria <span style={{ color: 'red' }}>*</span>
+              </label>
+              <Input name="name" type="text" placeholder="NOME DO CATEGORIA" />
+            </div>
+            <div>
+              <label>
+                Status da categoria <span style={{ color: 'red' }}>*</span>
+              </label>
+              <Select
+                placeholder="STATUS"
+                style={{ border: '1px solid #999', height: 40 }}
+                name="status"
+                options={[
+                  { id: 'ATIVO', title: 'ATIVO' },
+                  { id: 'INATIVO', title: 'INATIVO' },
+                ]}
+              />
+            </div>
           </div>
 
           {loading ? (

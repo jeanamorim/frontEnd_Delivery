@@ -138,7 +138,7 @@ export const AutocompleteStyle = styled.div`
   display: flex;
   width: 100%;
 
-  select + input {
+  select + select {
     margin-left: 25px;
   }
 `;

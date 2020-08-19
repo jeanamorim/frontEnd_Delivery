@@ -3,11 +3,15 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { Advertisement } from 'semantic-ui-react';
-import { getCategoriasRequest } from '../../store/modules/categorias/actions';
+import { Advertisement, Icon, Button } from 'semantic-ui-react';
+import {
+  getCategoriasRequest,
+  editeCategoriaOpen,
+} from '../../store/modules/categorias/actions';
 import { Container } from './styles';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
+import EditCategoria from '../../Modals/EditCategoria';
 
 export default function Categoria() {
   const dispatch = useDispatch();
@@ -16,6 +20,10 @@ export default function Categoria() {
   useEffect(() => {
     dispatch(getCategoriasRequest());
   }, []);
+
+  function handleEditCategoria(categoria) {
+    dispatch(editeCategoriaOpen(categoria));
+  }
 
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
@@ -57,9 +65,25 @@ export default function Categoria() {
                                   />
                                 </Advertisement>
                               </Link>
+                              <Button
+                                icon="edit outline"
+                                title="Editar"
+                                size="mini"
+                                onClick={() => handleEditCategoria(categoria)}
+                                style={{
+                                  position: 'absolute',
+                                  marginTop: -31,
+                                  borderRadius: 0,
+                                  backgroundColor: '#999',
+                                  color: '#fff',
+
+                                  marginLeft: 3,
+                                }}
+                              />
                             </li>
                           ))}
                         </ul>
+                        <EditCategoria />
                       </Container>
                     </div>
                   </div>

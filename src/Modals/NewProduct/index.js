@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
@@ -7,7 +8,12 @@ import { Modal, Button, Icon } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 import translate from '../../locales';
-import { postProductRequest } from '../../store/modules/product/actions';
+import { resetUploads } from '../../store/modules/uploads/actions';
+import {
+  postProductRequest,
+  openModalCadastarProduct,
+  fecharModalCadastarProduct,
+} from '../../store/modules/product/actions';
 import { getCategoriasRequest } from '../../store/modules/categorias/actions';
 import Avatar from './Image';
 import { ModalArea, TwoInput, AutocompleteStyle } from './style';
@@ -27,9 +33,9 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const modal = useSelector(state => state.product.modalCadastrarProduct);
   const categorias = useSelector(state => state.categorias.Categorias);
+
   const avatar = useSelector(state => state.uploads);
 
   useEffect(() => {
@@ -37,28 +43,29 @@ export default function Neew() {
   }, []);
 
   async function handleSubmit(data) {
-    const product = {
-      ...data,
-      image_id: avatar.avatar.id,
-    };
-
-    dispatch(postProductRequest(product));
-    setOpenModal(false);
+    dispatch(postProductRequest(data, avatar));
+    dispatch(resetUploads());
   }
 
   const options = categorias.map(category => ({
     id: category.id,
     title: category.name,
   }));
-  function handleCloseCreateProduct() {
-    setOpenModal(false);
+  function handleAbrirModal() {
+    dispatch(openModalCadastarProduct());
+    dispatch(resetUploads());
+  }
+  function handleFecharModal() {
+    dispatch(fecharModalCadastarProduct());
+    dispatch(resetUploads());
   }
 
   return (
     <Modal
-      open={openModal}
+      open={modal}
+      style={{ height: '80vh' }}
       trigger={
-        <Button positive onClick={() => setOpenModal(true)}>
+        <Button positive onClick={() => handleAbrirModal()}>
           <Icon name="plus" />
           Novo produto
         </Button>
@@ -66,83 +73,102 @@ export default function Neew() {
     >
       <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
         Cadastrar produto
-        <MdClose
-          style={{ float: 'right' }}
-          onClick={handleCloseCreateProduct}
-        />
+        <MdClose style={{ float: 'right' }} onClick={handleFecharModal} />
       </Modal.Header>
-      <Form onSubmit={handleSubmit} schema={schema}>
+      <Form onSubmit={handleSubmit} schema={schema} className="form-horizontal">
         <ModalArea forR>
           <Avatar name="image_id" />
+
           <div>
-            <Input name="name" type="text" placeholder="NOME DO PRODUTO" />
+            <div>
+              <label>
+                Nome do produto <span style={{ color: 'red' }}>*</span>
+              </label>
+              <Input name="name" type="text" placeholder="NOME DO PRODUTO" />
+            </div>
+            <label>
+              Descrição do produto <span style={{ color: 'red' }}>*</span>
+            </label>
             <Input
               name="description"
               type="text"
               placeholder="DESCRIÇÃO DO PRODUTO"
             />
             <TwoInput>
-              <Input
-                name="price"
-                type="text"
-                placeholder=" R$ PREÇO DO PRODUTO"
-              />
-              <Input
-                name="quantity"
-                type="text"
-                placeholder="QUANTIDADE DISPONIVEL"
-              />
+              <div style={{ width: '50%' }}>
+                <label>
+                  Preço do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input
+                  name="price"
+                  type="text"
+                  placeholder=" R$ PREÇO DO PRODUTO"
+                />
+              </div>
+              <div style={{ width: '50%', marginLeft: 5 }}>
+                <label>
+                  Quantidade do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input
+                  name="quantity"
+                  type="text"
+                  placeholder="QUANTIDADE DISPONIVEL"
+                />
+              </div>
             </TwoInput>
 
             <AutocompleteStyle>
-              <Select
-                placeholder="UNIDADE"
-                style={{ border: '1px solid #999', width: '50%', height: 40 }}
-                name="unit"
-                options={[
-                  { id: 'kg', title: 'kg' },
-                  { id: 'g', title: 'g' },
-                  { id: 'dz', title: 'dz' },
-                  { id: 'un', title: 'un' },
-                  { id: '0', title: 'Nenhum' },
-                ]}
-              />
-
-              <Select
-                style={{ border: '1px solid #999', width: '50%' }}
-                name="category_id"
-                placeholder="CATEGORIA"
-                options={options}
-              />
+              <div style={{ width: '50%' }}>
+                <label>
+                  Unidade do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Select
+                  placeholder="UNIDADE"
+                  name="unit"
+                  options={[
+                    { id: 'kg', title: 'kg' },
+                    { id: 'g', title: 'g' },
+                    { id: 'dz', title: 'dz' },
+                    { id: 'un', title: 'un' },
+                    { id: '0', title: 'Nenhum' },
+                  ]}
+                />
+              </div>
+              <div style={{ width: '50%', marginLeft: 5 }}>
+                <label>
+                  Categoria do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Select
+                  name="category_id"
+                  placeholder="CATEGORIA"
+                  options={options}
+                />
+              </div>
             </AutocompleteStyle>
-          </div>
 
-          {loading ? (
-            <Button
-              loading
-              type="submit"
-              style={{
-                position: 'absolute',
-                width: 140,
-                background: '#f4a460',
-                color: '#fff',
-              }}
-            >
-              Loading
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              style={{
-                position: 'absolute',
-                width: 140,
-                background: '#f4a460',
-                color: '#fff',
-              }}
-            >
-              Salvar produto
-            </Button>
-          )}
+            <footer>
+              <Button
+                negative
+                onClick={handleFecharModal}
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                positive
+                type="submit"
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Salvar
+              </Button>
+            </footer>
+          </div>
         </ModalArea>
       </Form>
     </Modal>

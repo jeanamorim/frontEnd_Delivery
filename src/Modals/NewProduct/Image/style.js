@@ -24,10 +24,9 @@ export const DropContainer = styled.div.attrs({
   border: 4px solid #ddd;
   border-radius: 10px;
   cursor: pointer;
-  max-width: 140px;
-  min-height: 140px;
-  width: auto;
-  height: auto;
+  width: 160px;
+  height: 160px;
+
   overflow: hidden;
 
   transition: height 0.2s ease;
@@ -66,8 +65,8 @@ export const Progress = styled.div.attrs({
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 140px;
-  max-height: 60px;
+  max-width: 160px;
+  max-height: 70px;
   width: 100%;
   height: 100%;
   margin-top: 5%;

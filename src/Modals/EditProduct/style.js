@@ -1,15 +1,6 @@
 import styled from 'styled-components';
 import { shade } from 'polished';
 
-export const InputContent = styled.div`
-  position: absolute;
-  display: flex;
-  width: 600px;
-  top: 75px;
-  left: 185px;
-  height: 40px;
-`;
-
 export const InputStyle = styled.div`
   display: flex;
   align-items: center;
@@ -77,7 +68,7 @@ export const ModalArea = styled.div`
     input {
       border-radius: 4px;
       border: 1px solid #999999;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       padding: 15px;
       height: 40px;
       width: 100%;
@@ -88,6 +79,18 @@ export const ModalArea = styled.div`
         font-size: 14px;
         font-family: 'Square721 BT', serif;
       }
+    }
+    span {
+      color: #f64c75;
+      margin: 50px 0 0;
+
+      margin-bottom: 20px;
+      align-self: flex-start;
+      font-weight: bold;
+    }
+    footer {
+      float: right;
+      margin-top: 50px;
     }
     select {
       border-radius: 4px;
@@ -104,21 +107,6 @@ export const ModalArea = styled.div`
         font-size: 14px;
         font-family: 'Square721 BT', serif;
       }
-    }
-  }
-
-  button {
-    position: absolute;
-    bottom: 25px;
-    right: 40px;
-    padding: 10px 20px 10px 20px;
-    border-radius: 8px;
-    border: 0;
-    color: #fff;
-    background: #f4a460;
-
-    &:hover {
-      background: ${shade(0.2, '#F4A460')};
     }
   }
 `;

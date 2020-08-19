@@ -1,17 +1,24 @@
 // cadastrar um produto
-export function postProductRequest(product) {
+export function postProductRequest(product, avatar) {
   return {
     type: '@product/POST_PRODUCT_REQUEST',
-    payload: { product },
+    payload: { product, avatar },
   };
 }
-export const postProductsucess = product => ({
-  type: '@product/POST_PRODUCT_SUCCESS',
-  product,
-});
+
 export function postProductFailure() {
   return {
     type: '@product/POST_PRODUCT_FAILURE',
+  };
+}
+export function openModalCadastarProduct() {
+  return {
+    type: '@product/OPEN_MODAL_CADASTRAR_PRODUCT',
+  };
+}
+export function fecharModalCadastarProduct() {
+  return {
+    type: '@product/CLOSE_MODAL_CADASTRAR_PRODUCT',
   };
 }
 // lista os produtos por categorias

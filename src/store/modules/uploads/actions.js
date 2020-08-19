@@ -11,3 +11,8 @@ export const uploadAvatarSuccess = checkedFile => {
     checkedFile,
   };
 };
+export const resetUploads = () => {
+  return {
+    type: '@cycle/CANCEL_AVATAR_UPLOADS',
+  };
+};

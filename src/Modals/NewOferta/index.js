@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable no-use-before-define */
@@ -6,11 +7,8 @@ import React, { useEffect, useState } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
 import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
-import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import api from '../../services/api';
-import translate from '../../locales';
 import { formatPrice } from '../../util/format';
 import { ModalArea, TwoInput, AutocompleteStyle } from './style';
 import { postOfertaRequest } from '../../store/modules/ofertas/actions';
@@ -18,28 +16,31 @@ import { listProductsRequest } from '../../store/modules/product/actions';
 
 const schema = Yup.object().shape({
   product_id: Yup.number()
-    .typeError(translate('offer_product_error_1'))
-    .required(translate('offer_product_error_2')),
-  unit: Yup.string().required(translate('offer_product_unit_error')),
+    .typeError('Voce precisa selecionar um produto')
+    .required('O produto é obrigatório'),
+  unit: Yup.string().required('A unidade é obrigatória'),
   from: Yup.string()
     .matches(
       /^[+]?([.]\d+|\d+[.]?\d*)$/,
-      translate('offer_product_from_error_1'),
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
     )
-    .required(translate('offer_product_from_error_2')),
+    .required('O valor da oferta é obrigatório'),
   to: Yup.string()
-    .matches(/^[+]?([.]\d+|\d+[.]?\d*)$/, translate('offer_product_to_error_1'))
-    .required(translate('offer_product_to_error_2')),
+    .matches(
+      /^[+]?([.]\d+|\d+[.]?\d*)$/,
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
+    )
+    .required('O valor da oferta é obrigatório'),
   quantity: Yup.number()
-    .typeError(translate('offer_product_quantity_error_1'))
-    .positive(translate('offer_product_quantity_error_2'))
-    .integer(translate('offer_product_quantity_error_3'))
-    .required(translate('offer_product_quantity_error_4')),
+    .typeError('O valor precisa ser um número')
+    .positive('O número precisa ser maior que zero')
+    .integer('O número precisa ser inteiro')
+    .required('A expiração da oferta é obrigatória'),
   expires_in: Yup.number()
-    .typeError(translate('offer_product_expiration_error_1'))
-    .positive(translate('offer_product_expiration_error_2'))
-    .integer(translate('offer_product_expiration_error_3'))
-    .required(translate('offer_product_expiration_error_4')),
+    .typeError('O valor precisa ser um número')
+    .positive('O número precisa ser maior que zero')
+    .integer('O número precisa ser inteiro')
+    .required('A expiração da oferta é obrigatória'),
 });
 
 export default function Neew() {
@@ -51,7 +52,7 @@ export default function Neew() {
 
   const products = useSelector(state => state.product.ListProducts);
   const [productInfo, setProductInfo] = useState({
-    from: `${translate('currency')} 0`,
+    from: `${'R$'} 0`,
     fromUnformatted: 0,
     unit: 'KG',
   });
@@ -94,7 +95,7 @@ export default function Neew() {
     setOpenModal(false);
     setNameProduct('');
     setProductInfo({
-      from: `${translate('currency')} 0`,
+      from: `${'R$'} 0`,
       fromUnformatted: 0,
       unit: 'kg',
     });
@@ -103,6 +104,7 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
+      style={{ height: '70vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
@@ -132,55 +134,79 @@ export default function Neew() {
           )}
           <div>
             <AutocompleteStyle>
-              <Select
-                onChange={handleChange}
-                name="product_id"
-                style={{ width: '50%' }}
-                placeholder="SELECIONE O PRODUTO"
-                options={options}
-              />
+              <div style={{ width: '50%' }}>
+                <label>
+                  Nome do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Select
+                  onChange={handleChange}
+                  name="product_id"
+                  placeholder="SELECIONE O PRODUTO"
+                  options={options}
+                />
+              </div>
 
-              <Input
-                style={{ width: '50%' }}
-                disabled
-                value={productInfo.unit}
-                type="text"
-                name="unit"
-              />
+              <div style={{ width: '50%', marginLeft: 5 }}>
+                <label>
+                  Unidade do produto <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Select
+                  disabled
+                  value={productInfo.unit}
+                  name="unit"
+                  options={[
+                    { id: 'kg', title: 'kg' },
+                    { id: 'g', title: 'g' },
+                    { id: 'dz', title: 'dz' },
+                    { id: 'un', title: 'un' },
+                    { id: '0', title: 'Nenhum' },
+                  ]}
+                />
+              </div>
             </AutocompleteStyle>
             <TwoInput>
-              <Input
-                disabled
-                style={{ width: '50%' }}
-                value={productInfo.from}
-                type="text"
-                name="from-formatted"
-              />
+              <div style={{ width: '50%' }}>
+                <label>
+                  De <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input
+                  disabled
+                  value={productInfo.from}
+                  type="text"
+                  name="from-formatted"
+                />
+              </div>
+
               <Input
                 type="hidden"
                 value={productInfo.fromUnformatted}
                 name="from"
               />
-              <Input
-                style={{ width: '50%' }}
-                type="text"
-                name="to"
-                placeholder="PARA"
-              />
+              <div style={{ width: '50%', marginLeft: 5 }}>
+                <label>
+                  Para <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input type="text" name="to" placeholder="PARA" />
+              </div>
             </TwoInput>
             <TwoInput>
-              <Input
-                type="text"
-                name="quantity"
-                style={{ width: '50%' }}
-                placeholder="QUANTIDADE"
-              />
-              <Input
-                style={{ width: '50%' }}
-                type="text"
-                name="expires_in"
-                placeholder="EXPIRAÇÃO (em dias)"
-              />
+              <div style={{ width: '50%' }}>
+                <label>
+                  Quantidade <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input type="text" name="quantity" placeholder="QUANTIDADE" />
+              </div>
+
+              <div style={{ width: '50%', marginLeft: 5 }}>
+                <label>
+                  Expiração em dias <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input
+                  type="text"
+                  name="expires_in"
+                  placeholder="EXPIRAÇÃO (em dias)"
+                />
+              </div>
             </TwoInput>
           </div>
 

@@ -6,6 +6,7 @@ import uploads from './uploads/reducer';
 import ofertas from './ofertas/reducer';
 import product from './product/reducer';
 import categorias from './categorias/reducer';
+import variacao from './variacao/reducer';
 
 export default combineReducers({
   auth,
@@ -14,4 +15,5 @@ export default combineReducers({
   ofertas,
   product,
   categorias,
+  variacao,
 });
