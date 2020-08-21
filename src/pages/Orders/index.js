@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/order */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/button-has-type */
@@ -8,186 +9,202 @@ import { parseISO, formatDistanceStrict } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { Button, Icon } from 'semantic-ui-react';
 import { formatPrice } from '../../util/format';
-
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getPedidosRequest,
+  updateStatus,
+} from '../../store/modules/pedidos/actions';
 import './styles.css';
 import api from '../../services/api';
 
 export default function Pedidos() {
-  const [pendente_, setPendente_] = useState([]);
-  const [producao_, setProducao_] = useState([]);
-  const [enviado_, setEnviado_] = useState([]);
-  const [entregue_, setEntregue_] = useState([]);
-  const [cancelado_, setCancelado_] = useState([]);
-  const [date] = useState(new Date());
-  const [render, setRender] = useState(false);
-  const [, setValue] = useState({});
-  async function handleChange(event) {
-    const status = event.target.value;
-    const orderId = event.target.id;
-    setValue({
-      id: Number(orderId),
-      status,
-    });
+  const dispatch = useDispatch();
+  const pedidos = useSelector(state => state.pedidos);
+  const [pendente, setPendente] = useState([]);
+  const [producao, setProducao] = useState([]);
+  const [enviado, setEnviado] = useState([]);
+  const [entregue, setEntregue] = useState([]);
+  const [cancelado, setCancelado] = useState([]);
 
-    try {
-      await api.put(`/orders/${orderId}`, {
-        status,
-      });
-
-      if (status === 'CANCELADO') {
-        await api.delete(`/orders/${orderId}`);
-        toast.success('Pedido cancelado');
-      }
-
-      setRender(!render);
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Erro ao conectar com o servidor');
-      }
-    }
+  useEffect(() => {
+    dispatch(getPedidosRequest());
+    setPendente(pedidos.pendente);
+    setProducao(pedidos.producao);
+    setEnviado(pedidos.enviado);
+    setEntregue(pedidos.entregue);
+    setCancelado(pedidos.cancelado);
+  }, [pedidos]);
+  function updateStatuss(status, orderId) {
+    dispatch(updateStatus(status, orderId));
   }
-  useEffect(() => {
-    async function loadStatusPend() {
-      try {
-        const response = await api.get(`status/PENDENTE`, {
-          params: { date },
-        });
-        console.tron.log(response.data);
-        const data = response.data.map(statusPendenetes => ({
-          ...statusPendenetes,
-          timeDistance: formatDistanceStrict(
-            parseISO(statusPendenetes.date),
-            new Date(),
-            { addSuffix: true, locale: pt },
-          ),
-        }));
 
-        setPendente_(data);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
-      }
-    }
+  // async function handleChange(event) {
+  //   const status = event.target.value;
+  //   const orderId = event.target.id;
+  //   // setValue({
+  //   //   id: Number(orderId),
+  //   //   status,
+  //   // });
 
-    loadStatusPend();
-  }, [date, render]);
-  useEffect(() => {
-    async function loadStatusProd() {
-      try {
-        const response = await api.get(`status/PRODUCAO`, {
-          params: { date },
-        });
+  //   try {
+  //     const response = await api.put(`/orders/${orderId}`, {
+  //       status,
+  //     });
 
-        const data = response.data.map(statusAprovado => ({
-          ...statusAprovado,
-          timeDistance: formatDistanceStrict(
-            parseISO(statusAprovado.date),
-            new Date(),
-            { addSuffix: true, locale: pt },
-          ),
-        }));
+  //     if (status === 'CANCELADO') {
+  //       await api.delete(`/orders/${orderId}`);
+  //       toast.success('Pedido cancelado');
+  //     }
 
-        setProducao_(data);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
-      }
-    }
+  //     setRender(!render);
+  //   } catch (err) {
+  //     if (err.response) {
+  //       toast.error('Erro no servidor');
+  //     } else {
+  //       toast.error('Erro ao conectar com o servidor');
+  //     }
+  //   }
+  // }
+  // useEffect(() => {
+  //   async function loadStatusPend() {
+  //     try {
+  //       const response = await api.get(`status/PENDENTE`, {
+  //         params: { date },
+  //       });
+  //       console.tron.log(response.data);
+  //       const data = response.data.map(statusPendenetes => ({
+  //         ...statusPendenetes,
+  //         timeDistance: formatDistanceStrict(
+  //           parseISO(statusPendenetes.date),
+  //           new Date(),
+  //           { addSuffix: true, locale: pt },
+  //         ),
+  //       }));
 
-    loadStatusProd();
-  }, [date, render]);
-  useEffect(() => {
-    async function loadStatusEnv() {
-      try {
-        const response = await api.get(`status/ENVIADO`, {
-          params: { date },
-        });
+  //       setPendente_(data);
+  //     } catch (err) {
+  //       if (err.response) {
+  //         toast.error('Erro no servidor');
+  //       } else {
+  //         toast.error('Falha ao conectar com o servidor');
+  //       }
+  //     }
+  //   }
 
-        const data = response.data.map(statusEnviado => ({
-          ...statusEnviado,
-          timeDistance: formatDistanceStrict(
-            parseISO(statusEnviado.date),
-            new Date(),
-            { addSuffix: true, locale: pt },
-          ),
-        }));
+  //   loadStatusPend();
+  // }, [date, render]);
+  // useEffect(() => {
+  //   async function loadStatusProd() {
+  //     try {
+  //       const response = await api.get(`status/PRODUCAO`, {
+  //         params: { date },
+  //       });
 
-        setEnviado_(data);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
-      }
-    }
+  //       const data = response.data.map(statusAprovado => ({
+  //         ...statusAprovado,
+  //         timeDistance: formatDistanceStrict(
+  //           parseISO(statusAprovado.date),
+  //           new Date(),
+  //           { addSuffix: true, locale: pt },
+  //         ),
+  //       }));
 
-    loadStatusEnv();
-  }, [date, render]);
-  useEffect(() => {
-    async function loadStatusCanc() {
-      try {
-        const response = await api.get(`status/CANCELADO`, {
-          params: { date },
-        });
+  //       setProducao_(data);
+  //     } catch (err) {
+  //       if (err.response) {
+  //         toast.error('Erro no servidor');
+  //       } else {
+  //         toast.error('Falha ao conectar com o servidor');
+  //       }
+  //     }
+  //   }
 
-        const data = response.data.map(statusCancelado => ({
-          ...statusCancelado,
-          timeDistance: formatDistanceStrict(
-            parseISO(statusCancelado.date),
-            new Date(),
-            { addSuffix: true, locale: pt },
-          ),
-        }));
+  //   loadStatusProd();
+  // }, [date, render]);
+  // useEffect(() => {
+  //   async function loadStatusEnv() {
+  //     try {
+  //       const response = await api.get(`status/ENVIADO`, {
+  //         params: { date },
+  //       });
 
-        setCancelado_(data);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
-      }
-    }
+  //       const data = response.data.map(statusEnviado => ({
+  //         ...statusEnviado,
+  //         timeDistance: formatDistanceStrict(
+  //           parseISO(statusEnviado.date),
+  //           new Date(),
+  //           { addSuffix: true, locale: pt },
+  //         ),
+  //       }));
 
-    loadStatusCanc();
-  }, [date, render]);
-  useEffect(() => {
-    async function loadStatusEntre() {
-      try {
-        const response = await api.get(`status/ENTREGUE`, {
-          params: { date },
-        });
+  //       setEnviado_(data);
+  //     } catch (err) {
+  //       if (err.response) {
+  //         toast.error('Erro no servidor');
+  //       } else {
+  //         toast.error('Falha ao conectar com o servidor');
+  //       }
+  //     }
+  //   }
 
-        const data = response.data.map(statusEntregue => ({
-          ...statusEntregue,
-          timeDistance: formatDistanceStrict(
-            parseISO(statusEntregue.date),
-            new Date(),
-            { addSuffix: true, locale: pt },
-          ),
-        }));
+  //   loadStatusEnv();
+  // }, [date, render]);
+  // useEffect(() => {
+  //   async function loadStatusCanc() {
+  //     try {
+  //       const response = await api.get(`status/CANCELADO`, {
+  //         params: { date },
+  //       });
 
-        setEntregue_(data);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
-      }
-    }
+  //       const data = response.data.map(statusCancelado => ({
+  //         ...statusCancelado,
+  //         timeDistance: formatDistanceStrict(
+  //           parseISO(statusCancelado.date),
+  //           new Date(),
+  //           { addSuffix: true, locale: pt },
+  //         ),
+  //       }));
 
-    loadStatusEntre();
-  }, [date, render]);
+  //       setCancelado_(data);
+  //     } catch (err) {
+  //       if (err.response) {
+  //         toast.error('Erro no servidor');
+  //       } else {
+  //         toast.error('Falha ao conectar com o servidor');
+  //       }
+  //     }
+  //   }
+
+  //   loadStatusCanc();
+  // }, [date, render]);
+  // useEffect(() => {
+  //   async function loadStatusEntre() {
+  //     try {
+  //       const response = await api.get(`status/ENTREGUE`, {
+  //         params: { date },
+  //       });
+
+  //       const data = response.data.map(statusEntregue => ({
+  //         ...statusEntregue,
+  //         timeDistance: formatDistanceStrict(
+  //           parseISO(statusEntregue.date),
+  //           new Date(),
+  //           { addSuffix: true, locale: pt },
+  //         ),
+  //       }));
+
+  //       setEntregue_(data);
+  //     } catch (err) {
+  //       if (err.response) {
+  //         toast.error('Erro no servidor');
+  //       } else {
+  //         toast.error('Falha ao conectar com o servidor');
+  //       }
+  //     }
+  //   }
+
+  //   loadStatusEntre();
+  // }, [date, render]);
 
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
   function refreshPage() {
@@ -349,7 +366,7 @@ export default function Pedidos() {
                 <div style={{ width: '20%', marginTop: 5 }}>
                   <div className="board" id="boardjsplain">
                     <>
-                      {pendente_.map(order => (
+                      {pendente.map(order => (
                         <div className="cards" key={order.id}>
                           <div
                             className="panel panel-default"
@@ -422,7 +439,7 @@ export default function Pedidos() {
                                   marginLeft: 4,
                                 }}
                                 id={order.id}
-                                onClick={handleChange}
+                                // onClick={handleChange}
                                 type="button"
                                 value="CANCELADO"
                               >
@@ -432,7 +449,9 @@ export default function Pedidos() {
                               <Button
                                 style={{ width: '50%', background: '#048923' }}
                                 id={order.id}
-                                onClick={handleChange}
+                                onClick={() =>
+                                  updateStatuss('PRODUCAO', order.id)
+                                }
                                 type="button"
                                 value="PRODUCAO"
                               >
@@ -451,7 +470,7 @@ export default function Pedidos() {
                 <div style={{ width: '20%', marginTop: 5 }}>
                   <div className="board" id="boardjsplain">
                     <>
-                      {producao_.map(order => (
+                      {producao.map(order => (
                         <div className="cards" key={order.id}>
                           <div
                             className="panel panel-default"
@@ -530,7 +549,9 @@ export default function Pedidos() {
                               <Button
                                 style={{ width: '50%', background: '#5F8DF1' }}
                                 id={order.id}
-                                onClick={handleChange}
+                                onClick={() =>
+                                  updateStatuss('ENVIADO', order.id)
+                                }
                                 type="button"
                                 value="ENVIADO"
                               >
@@ -550,7 +571,7 @@ export default function Pedidos() {
                   <div className="board" id="boardjsplain">
                     <div className="list">
                       <>
-                        {enviado_.map(order => (
+                        {enviado.map(order => (
                           <div className="cards" key={order.id}>
                             <div
                               className="panel panel-default"
@@ -638,7 +659,9 @@ export default function Pedidos() {
                                     background: '#099F24',
                                   }}
                                   id={order.id}
-                                  onClick={handleChange}
+                                  onClick={() =>
+                                    updateStatuss('ENTREGUE', order.id)
+                                  }
                                   type="button"
                                   value="ENTREGUE"
                                 >
@@ -658,7 +681,7 @@ export default function Pedidos() {
                 <div style={{ width: '20%', marginTop: 5 }}>
                   <div className="board" id="boardjsplain">
                     <>
-                      {entregue_.map(order => (
+                      {entregue.map(order => (
                         <div key={order.id}>
                           <div
                             className="panel panel-default"
@@ -740,7 +763,7 @@ export default function Pedidos() {
                   <div className="board" id="boardjsplain">
                     <div className="list">
                       <>
-                        {cancelado_.map(order => (
+                        {cancelado.map(order => (
                           <div className="cards" key={order.id}>
                             <div
                               className="panel panel-default"

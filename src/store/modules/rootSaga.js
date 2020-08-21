@@ -7,7 +7,17 @@ import product from './product/sagas';
 import ofertas from './ofertas/sagas';
 import categorias from './categorias/sagas';
 import opcao from './opcaoVariacao/sagas';
+import pedidos from './pedidos/sagas';
 
 export default function* rootSaga() {
-  return yield all([auth, user, uploads, product, ofertas, categorias, opcao]);
+  return yield all([
+    auth,
+    user,
+    uploads,
+    product,
+    ofertas,
+    categorias,
+    opcao,
+    pedidos,
+  ]);
 }

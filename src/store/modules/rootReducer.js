@@ -7,6 +7,7 @@ import ofertas from './ofertas/reducer';
 import product from './product/reducer';
 import categorias from './categorias/reducer';
 import opcao from './opcaoVariacao/reducer';
+import pedidos from './pedidos/reducer';
 
 export default combineReducers({
   auth,
@@ -16,4 +17,5 @@ export default combineReducers({
   product,
   categorias,
   opcao,
+  pedidos,
 });
