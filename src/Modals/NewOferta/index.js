@@ -104,7 +104,7 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
-      style={{ height: '70vh' }}
+      style={{ height: '75vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
@@ -208,34 +208,38 @@ export default function Neew() {
                 />
               </div>
             </TwoInput>
+            <div
+              style={{
+                display: 'flex',
+                right: 40,
+                position: 'fixed',
+                marginTop: 55,
+                padding: 0,
+                bottom: 25,
+              }}
+            >
+              <Button
+                negative
+                onClick={() => setOpenModal(false)}
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                positive
+                type="submit"
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Salvar
+              </Button>
+            </div>
           </div>
-
-          {loading ? (
-            <Button
-              loading
-              type="submit"
-              style={{
-                position: 'absolute',
-                width: 140,
-                background: '#f4a460',
-                color: '#fff',
-              }}
-            >
-              Loading
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              style={{
-                position: 'absolute',
-                width: 140,
-                background: '#f4a460',
-                color: '#fff',
-              }}
-            >
-              Criar oferta
-            </Button>
-          )}
         </ModalArea>
       </Form>
     </Modal>

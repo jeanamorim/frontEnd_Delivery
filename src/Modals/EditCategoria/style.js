@@ -35,6 +35,7 @@ export const ModalArea = styled.div`
       align-self: flex-start;
       font-weight: bold;
     }
+
     select {
       border-radius: 4px;
       border: 1px solid #999999;
@@ -53,7 +54,7 @@ export const ModalArea = styled.div`
     }
   }
 
-  button {
+  /* button {
     position: absolute;
     bottom: 25px;
     right: 40px;
@@ -66,5 +67,5 @@ export const ModalArea = styled.div`
     &:hover {
       background: ${shade(0.2, '#F4A460')};
     }
-  }
+  } */
 `;

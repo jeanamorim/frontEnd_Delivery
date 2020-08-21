@@ -63,7 +63,7 @@ export default function Neew() {
   return (
     <Modal
       open={modal}
-      style={{ height: '80vh' }}
+      style={{ height: '85vh' }}
       trigger={
         <Button positive onClick={() => handleAbrirModal()}>
           <Icon name="plus" />
@@ -146,7 +146,16 @@ export default function Neew() {
               </div>
             </AutocompleteStyle>
 
-            <footer>
+            <div
+              style={{
+                display: 'flex',
+                right: 40,
+                position: 'fixed',
+                marginTop: 55,
+                padding: 0,
+                bottom: 25,
+              }}
+            >
               <Button
                 negative
                 onClick={handleFecharModal}
@@ -167,7 +176,7 @@ export default function Neew() {
               >
                 Salvar
               </Button>
-            </footer>
+            </div>
           </div>
         </ModalArea>
       </Form>

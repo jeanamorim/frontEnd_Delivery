@@ -40,7 +40,7 @@ export default function Neew() {
   }
 
   return (
-    <Modal open={openModal} style={{ height: '60vh' }}>
+    <Modal open={openModal}>
       <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
         Editar categoria
         <MdClose
@@ -49,7 +49,7 @@ export default function Neew() {
         />
       </Modal.Header>
       <Form onSubmit={handleSubmitEdit} initialData={category} schema={schema}>
-        <ModalArea forR>
+        <ModalArea>
           <Avatar />
           <div>
             <div>
@@ -72,6 +72,37 @@ export default function Neew() {
                 ]}
               />
             </div>
+            <div
+              style={{
+                display: 'flex',
+                right: 40,
+                position: 'fixed',
+                marginTop: 55,
+                padding: 0,
+                bottom: 25,
+              }}
+            >
+              <Button
+                negative
+                onClick={handleCloseCreateProduct}
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                positive
+                type="submit"
+                style={{
+                  width: 140,
+                  border: 0,
+                }}
+              >
+                Salvar
+              </Button>
+            </div>
           </div>
 
           {/* {loading ? (
@@ -88,17 +119,6 @@ export default function Neew() {
               Loading
             </Button>
           ) : ( */}
-          <Button
-            type="submit"
-            style={{
-              position: 'absolute',
-              width: 150,
-              background: '#f4a460',
-              color: '#fff',
-            }}
-          >
-            Salvar categoria
-          </Button>
         </ModalArea>
       </Form>
     </Modal>

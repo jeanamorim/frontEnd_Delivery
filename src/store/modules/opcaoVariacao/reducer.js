@@ -2,7 +2,7 @@
 const initialState = {
   openModal: false,
 };
-function Variacao(state = initialState, action) {
+function OpcaoVariacao(state = initialState, action) {
   switch (action.type) {
     case '@product/OPEN_MODAL_CADASTRAR_VARIACAO':
       return (state = {
@@ -20,4 +20,4 @@ function Variacao(state = initialState, action) {
   }
 }
 
-export default Variacao;
+export default OpcaoVariacao;

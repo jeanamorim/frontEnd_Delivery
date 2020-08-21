@@ -107,7 +107,7 @@ export const ModalArea = styled.div`
     }
   }
 
-  button {
+  /* button {
     position: absolute;
     bottom: 25px;
     right: 40px;
@@ -120,7 +120,7 @@ export const ModalArea = styled.div`
     &:hover {
       background: ${shade(0.2, '#F4A460')};
     }
-  }
+  } */
 `;
 
 export const TwoInput = styled.div`

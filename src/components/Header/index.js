@@ -18,7 +18,7 @@ export default function Header() {
   }
 
   return (
-    <div className="ui stackable menu">
+    <div className="ui stackable menu ">
       <div className="item">
         <img src={profile.image.url} className="Logo" alt="logo" />
       </div>

@@ -85,4 +85,17 @@ export function deleteProductFailure() {
     type: '@product/DELETE_PRODUCT_FAILURE',
   };
 }
-//
+// delete a variacao do estado do redux, por id
+export function deleteVariacao(id) {
+  return {
+    type: '@product/REMOVE_VARIACAO',
+    id,
+  };
+}
+// delete a opção da variação do estado do redux, por id
+export function deleteOpcao(id) {
+  return {
+    type: '@product/REMOVE_OPCAO',
+    id,
+  };
+}

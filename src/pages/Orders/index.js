@@ -206,7 +206,7 @@ export default function Pedidos() {
                       <Icon name="list alternate" /> Pedidos
                     </Button>
                   </Link>
-                  <Button onClick={refreshPage}>
+                  <Button onClick={refreshPage} color="orange">
                     <Icon name="sync" /> Atualizar
                   </Button>
                   <Button onClick={refreshPage}>

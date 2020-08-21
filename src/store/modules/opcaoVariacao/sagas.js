@@ -19,7 +19,20 @@ export function* cadastrarVariacao({ payload }) {
     );
   }
 }
+export function* deletarOpcao({ payload }) {
+  const { id } = payload;
+  try {
+    yield call(api.delete, `opcaovariacao/${id}`);
+
+    toast.success('Opção deletada com sucesso!');
+    yield put(postVariacaoSucess());
+  } catch ({ response }) {
+    yield put(postVariacaoFailure());
+    toast.error('Não foi possivel deletar essa opção, verifique sua internet!');
+  }
+}
 
 export default all([
   takeLatest('@product/CADASTRAR_VARIACAO_REQUEST', cadastrarVariacao),
+  takeLatest('@product/DELETAR_OPCAO_REQUEST', deletarOpcao),
 ]);

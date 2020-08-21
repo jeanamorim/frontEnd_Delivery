@@ -60,3 +60,47 @@ export const Container = styled.div`
     }
   }
 `;
+export const PageActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  div {
+    align-items: center;
+    justify-content: center;
+    svg {
+      position: absolute;
+      margin-top: 9px;
+      margin-left: 4px;
+      color: #666;
+    }
+    input {
+      height: 36px;
+      width: 230px;
+      padding-left: 30px;
+      padding-right: 5px;
+      color: #666;
+      border: 1px solid #999;
+      border-radius: 4px;
+    }
+  }
+`;
+
+export const Title = styled.div`
+  margin: 40px 0;
+  strong {
+    font-size: 20px;
+    color: #444;
+  }
+  img {
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    margin-top: 4px;
+    margin-right: 10px;
+  }
+  div {
+    margin-left: 7px;
+    color: #444;
+  }
+`;

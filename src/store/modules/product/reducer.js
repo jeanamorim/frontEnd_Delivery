@@ -1,8 +1,10 @@
 /* eslint-disable no-return-assign */
+import produce from 'immer';
+
 const initialState = {
   editProduct: false,
   modalCadastrarProduct: false,
-  ProductToEdit: {},
+  ProductToEdit: [],
   ProductCategoria: [],
   ListProducts: [],
 };
@@ -48,6 +50,28 @@ function Product(state = initialState, action) {
         ...state,
         modalCadastrarProduct: false,
       });
+    case '@product/REMOVE_VARIACAO': {
+      return produce(state, draft => {
+        const productIndex = draft.ProductToEdit.variacao.findIndex(
+          p => p.id === action.id,
+        );
+        if (productIndex >= 0) {
+          draft.ProductToEdit.variacao.splice(productIndex, 1);
+        }
+      });
+    }
+    case '@product/REMOVE_OPCAO': {
+      return produce(state, draft => {
+        draft.ProductToEdit.variacao.forEach(item => {
+          const opcaoIndex = item.opcao.findIndex(o => o.id === action.id);
+
+          if (opcaoIndex >= 0) {
+            // console.log(item.opcao[opcaoIndex].name);
+            item.opcao.splice(opcaoIndex, 1);
+          }
+        });
+      });
+    }
 
     default:
       return state;

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-shadow */
@@ -10,13 +11,21 @@ import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Avatar from './Image';
-import { ModalArea, TwoInput, AutocompleteStyle } from './style';
+import {
+  ModalArea,
+  TwoInput,
+  AutocompleteStyle,
+  PageContent,
+  Container,
+} from './style';
 import {
   closeEditProduct,
   updateProductRequest,
   deleteProductRequest,
+  deleteVariacao,
+  deleteOpcao,
 } from '../../store/modules/product/actions';
-import { openModalCadastarVariacao } from '../../store/modules/variacao/actions';
+import { deleteOpcaoRequest } from '../../store/modules/opcaoVariacao/actions';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('O nome é obrigatório'),
@@ -41,27 +50,19 @@ export default function Neew({ idCat }) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [modalVariacao, setModalVariacao] = useState(false);
   const product = useSelector(state => state.product.ProductToEdit);
-  const s = useSelector(state => state.product.ProductToEdit.variacao);
+  const [modalDeletVariacao, SetModalDeletVariacao] = useState(false);
   const [newVariacao, setNewVariacao] = useState([]);
   const openModal = useSelector(state => state.product.editProduct);
   const avatar = useSelector(state => state.uploads.avatar);
   const id = useSelector(state => state.product.ProductToEdit.id);
   const categorias = useSelector(state => state.categorias.Categorias);
 
-  // useEffect(() => {
-  //   if (openModal === true) {
-  //     console.log('true ele');
-  //   }
-  //   console.log('false ele');
-  //   // setNewVariacao(product.variacao);
-  // }, []);
-  // useEffect(() => {
-  //   txt1.current.focus();
-  // }, []);
-  console.log(newVariacao);
   function handleSubmit(data) {
     dispatch(updateProductRequest(data, avatar, id, idCat));
   }
+  useEffect(() => {
+    setNewVariacao(product.variacao);
+  }, [product]);
 
   const options = categorias.map(category => ({
     id: category.id,
@@ -78,6 +79,14 @@ export default function Neew({ idCat }) {
   function handleDeleteProduct(id) {
     dispatch(deleteProductRequest(id, idCat));
     setOpenDeleteModal(false);
+  }
+  function handleDeleteOpcaoVariacao(id) {
+    dispatch(deleteVariacao(id));
+    SetModalDeletVariacao(false);
+  }
+  function handleDeleteOpcao(id) {
+    dispatch(deleteOpcao(id));
+    // SetModalDeletVariacao(false);
   }
 
   function addNewVariacao() {
@@ -168,30 +177,37 @@ export default function Neew({ idCat }) {
                 </div>
               </AutocompleteStyle>
 
-              <footer>
+              <div
+                style={{
+                  display: 'flex',
+                  right: 40,
+                  position: 'fixed',
+                  marginTop: 55,
+                  padding: 0,
+                  bottom: 25,
+                }}
+              >
                 <Button
-                  content="cancelar"
-                  labelPosition="right"
-                  icon="times"
                   negative
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
                   onClick={handleCloseModal}
-                />
-                <Button
-                  type="submit"
-                  content="Salvar"
-                  labelPosition="right"
-                  icon="checkmark"
-                  positive
                   style={{
                     width: 140,
                     border: 0,
                   }}
-                />
-              </footer>
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  positive
+                  type="submit"
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Salvar
+                </Button>
+              </div>
             </div>
           </ModalArea>
         </Form>
@@ -246,166 +262,208 @@ export default function Neew({ idCat }) {
               onClick={() => setModalVariacao(false)}
             />
           </Modal.Header>
-          <Form onSubmit={handleSubmit}>
-            <ModalArea forR>
-              <div>
-                {newVariacao.map((variacao, index) => {
-                  return (
-                    <>
-                      <TwoInput style={{ marginLeft: -50 }} key={variacao.id}>
-                        <div style={{ width: '50%' }}>
-                          <label>
-                            Nome
-                            <span style={{ color: 'red' }}>*</span>
-                          </label>
-                          <Input
-                            name="name"
-                            type="text"
-                            placeholder="NOME"
-                            value={variacao.name}
-                            onChange={e =>
-                              setNewVariacao(index, 'name', e.target.value)
-                            }
-                          />
-                        </div>
-                        <div style={{ width: '50%', marginLeft: 5 }}>
-                          <label>
-                            Mínimo
-                            <span style={{ color: 'red' }}>*</span>
-                          </label>
-                          <Input
-                            name="minimo"
-                            type="text"
-                            placeholder="MINÍMO"
-                            value={variacao.minimo}
-                            onChange={e =>
-                              setNewVariacao(index, 'minimo', e.target.value)
-                            }
-                          />
-                        </div>
-                        <div style={{ width: '50%', marginLeft: 5 }}>
-                          <label>
-                            Maxímo
-                            <span style={{ color: 'red' }}>*</span>
-                          </label>
-                          <Input
-                            name="minimo"
-                            type="text"
-                            placeholder="MAXÍMO"
-                            value={variacao.minimo}
-                            onChange={e =>
-                              setNewVariacao(index, 'minimo', e.target.value)
-                            }
-                          />
-                        </div>
-                        <div style={{ width: '50%', marginLeft: 5 }}>
-                          <label>
-                            Calculo do preço
-                            <span style={{ color: 'red' }}>*</span>
-                          </label>
-                          <Select
-                            placeholder="CALCULO"
-                            name="calculoPrice"
-                            options={[
-                              { id: 'Soma total', title: 'Soma total' },
-                              { id: 'Maior preço', title: 'Maior preço' },
-                            ]}
-                          />
-                        </div>
-                        <Button
-                          negative
-                          icon
-                          style={{ height: 40, marginTop: 19, marginLeft: 15 }}
-                        >
-                          <Icon name="trash alternate outline" />
-                        </Button>
-                      </TwoInput>
 
-                      {variacao.opcao.map((opcao, index) => {
-                        return (
-                          <>
-                            <TwoInput>
-                              <div style={{ width: '30%' }}>
-                                <label>
-                                  Name
-                                  <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Input
-                                  name="name"
-                                  type="text"
-                                  placeholder="NAME"
-                                  value={opcao.name}
-                                  onChange={e =>
-                                    setNewVariacao(
-                                      index,
-                                      'name',
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div style={{ width: '20%', marginLeft: 5 }}>
-                                <label>
-                                  Preço
-                                  <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Input
-                                  name="price"
-                                  type="text"
-                                  placeholder="PRICE"
-                                  value={opcao.price}
-                                  onChange={e =>
-                                    setNewVariacao(
-                                      index,
-                                      'price',
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div style={{ width: '20%', marginLeft: 5 }}>
-                                <label>
-                                  Status
-                                  <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Select
-                                  placeholder="STATUS"
-                                  name="status"
-                                  value={opcao.status}
-                                  onChange={e =>
-                                    setNewVariacao(
-                                      index,
-                                      'status',
-                                      e.target.value,
-                                    )
-                                  }
-                                  options={[
-                                    { id: 'ATIVO', title: 'ATIVO' },
-                                    { id: 'INATIVO', title: 'INATIVO' },
-                                  ]}
-                                />
-                              </div>
-                            </TwoInput>
-                          </>
-                        );
-                      })}
-
+          <ModalArea forR>
+            <div>
+              {newVariacao.map(variacao => {
+                return (
+                  <>
+                    <TwoInput style={{ marginLeft: -50 }} key={variacao.id}>
+                      <div style={{ width: '50%' }}>
+                        <label>
+                          Nome
+                          <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          disabled
+                          name="name"
+                          type="text"
+                          placeholder="NOME"
+                          value={variacao.name}
+                        />
+                      </div>
+                      <div style={{ width: '50%', marginLeft: 5 }}>
+                        <label>
+                          Mínimo
+                          <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          disabled
+                          name="minimo"
+                          type="text"
+                          placeholder="MINÍMO"
+                          value={variacao.minimo}
+                        />
+                      </div>
+                      <div style={{ width: '50%', marginLeft: 5 }}>
+                        <label>
+                          Maxímo
+                          <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Input
+                          disabled
+                          name="minimo"
+                          type="text"
+                          placeholder="MAXÍMO"
+                          value={variacao.minimo}
+                        />
+                      </div>
+                      <div style={{ width: '50%', marginLeft: 5 }}>
+                        <label>
+                          Calculo do preço
+                          <span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <Select
+                          disabled
+                          placeholder="CALCULO"
+                          name="calculoPrice"
+                          options={[
+                            { id: 'Soma total', title: 'Soma total' },
+                            { id: 'Maior preço', title: 'Maior preço' },
+                          ]}
+                        />
+                      </div>
                       <Button
+                        color="orange"
+                        icon
+                        style={{
+                          height: 40,
+                          marginTop: 19,
+                          marginLeft: 15,
+                        }}
+                      >
+                        <Icon name="edit" />
+                      </Button>
+                      <Button
+                        onClick={() => SetModalDeletVariacao(true)}
+                        negative
+                        icon
+                        style={{ height: 40, marginTop: 19, marginLeft: 15 }}
+                      >
+                        <Icon name="trash alternate outline" />
+                      </Button>
+                      <Modal
+                        closeIcon
+                        onClose={() => SetModalDeletVariacao(false)}
+                        onOpen={() => SetModalDeletVariacao(true)}
+                        open={modalDeletVariacao}
+                      >
+                        <Header icon="archive" content="Deletar produto" />
+                        <Modal.Content>
+                          <p>
+                            Voçê tem certeza que deseja remover a variação{' '}
+                            {variacao.name}?
+                          </p>
+                        </Modal.Content>
+                        <Modal.Actions>
+                          <Button
+                            color="red"
+                            onClick={() => SetModalDeletVariacao(false)}
+                          >
+                            <Icon name="remove" /> Não
+                          </Button>
+                          <Button
+                            color="green"
+                            onClick={() =>
+                              handleDeleteOpcaoVariacao(variacao.id)
+                            }
+                          >
+                            <Icon name="checkmark" /> Sim
+                          </Button>
+                        </Modal.Actions>
+                      </Modal>
+                    </TwoInput>
+
+                    {variacao.opcao.map(opcao => {
+                      return (
+                        <>
+                          <TwoInput key={opcao.id}>
+                            <div style={{ width: '30%' }}>
+                              <label>
+                                Name
+                                <span style={{ color: 'red' }}>*</span>
+                              </label>
+                              <Input
+                                disabled
+                                name="name"
+                                type="text"
+                                placeholder="NAME"
+                                value={opcao.name}
+                              />
+                            </div>
+                            <div style={{ width: '20%', marginLeft: 5 }}>
+                              <label>
+                                Preço
+                                <span style={{ color: 'red' }}>*</span>
+                              </label>
+                              <Input
+                                disabled
+                                name="price"
+                                type="text"
+                                placeholder="PRICE"
+                                value={opcao.price}
+                              />
+                            </div>
+                            <div style={{ width: '20%', marginLeft: 5 }}>
+                              <label>
+                                Status
+                                <span style={{ color: 'red' }}>*</span>
+                              </label>
+                              <Select
+                                disabled
+                                placeholder="STATUS"
+                                name="status"
+                                value={opcao.status}
+                                options={[
+                                  { id: 'ATIVO', title: 'ATIVO' },
+                                  { id: 'INATIVO', title: 'INATIVO' },
+                                ]}
+                              />
+                            </div>
+                            <Button
+                              color="orange"
+                              icon
+                              style={{
+                                height: 40,
+                                marginTop: 19,
+                                marginLeft: 15,
+                              }}
+                            >
+                              <Icon name="edit" />
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteOpcao(opcao.id)}
+                              negative
+                              icon
+                              style={{
+                                height: 40,
+                                marginTop: 19,
+                                marginLeft: 15,
+                              }}
+                            >
+                              <Icon name="trash alternate outline" />
+                            </Button>
+                          </TwoInput>
+                        </>
+                      );
+                    })}
+
+                    {/* <Button
                         positive
                         onClick={addNewOpcao}
                         style={{ marginTop: -10 }}
                       >
                         <Icon name="plus" />
                         Nova opção
-                      </Button>
-                      <Divider />
-                    </>
-                  );
-                })}
-              </div>
-            </ModalArea>
-          </Form>
-          <div
+                      </Button> */}
+                    <Divider />
+                  </>
+                );
+              })}
+            </div>
+          </ModalArea>
+
+          {/* <div
             style={{
               alignSelf: 'center',
               position: 'absolute',
@@ -417,7 +475,7 @@ export default function Neew({ idCat }) {
               <Icon name="plus" />
               Nova variação
             </Button>
-          </div>
+          </div> */}
         </Modal>
       </>
     </>

@@ -132,20 +132,6 @@ export const AutocompleteStyle = styled.div`
 `;
 
 // Fim Cadastro Produto
-export const Container = styled.div`
-
-
-  align-items: center;
-  justify-content: center;
-  left: 0;
-
-  width: 70%;
-  height: 100vh;
-  background: #fff
-  margin-top: 70px;
-  border-color: #000;
-  border-width: 2;
-`;
 
 export const Content = styled.div`
   width: 60%;
@@ -241,4 +227,47 @@ export const ButtonNo = styled.button`
     background: ${shade(0.2, '#777')};
     transition: 0.2s;
   }
+`;
+
+export const PageContent = styled.table`
+  width: 100%;
+  margin: 25px 0;
+  border-collapse: collapse;
+  margin-left: -50px;
+  th,
+  td {
+    padding: 6px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  td {
+    color: #666;
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    img {
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+      border: 1px solid #eee;
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+  }
+  /*
+  > td.status {
+  } */
+  tbody tr {
+    background: #eeeae6;
+    border: 0;
+  }
+`;
+export const Container = styled.div`
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  max-width: 1250px;
+  width: 100%;
 `;

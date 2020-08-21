@@ -6,16 +6,8 @@ import uploads from './uploads/sagas';
 import product from './product/sagas';
 import ofertas from './ofertas/sagas';
 import categorias from './categorias/sagas';
-import variacao from './variacao/sagas';
+import opcao from './opcaoVariacao/sagas';
 
 export default function* rootSaga() {
-  return yield all([
-    auth,
-    user,
-    uploads,
-    product,
-    ofertas,
-    categorias,
-    variacao,
-  ]);
+  return yield all([auth, user, uploads, product, ofertas, categorias, opcao]);
 }
