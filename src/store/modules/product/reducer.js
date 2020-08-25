@@ -7,6 +7,7 @@ const initialState = {
   ProductToEdit: [],
   ProductCategoria: [],
   ListProducts: [],
+  NewVariacao: [],
 };
 function Product(state = initialState, action) {
   switch (action.type) {

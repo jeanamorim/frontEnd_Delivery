@@ -99,3 +99,9 @@ export function deleteOpcao(id) {
     id,
   };
 }
+export function adicionarVariacao(data) {
+  return {
+    type: '@product/ADICIONAR_VARIACAO',
+    payload: { data },
+  };
+}

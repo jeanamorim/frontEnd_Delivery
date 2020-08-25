@@ -24,6 +24,7 @@ import {
   deleteProductRequest,
   deleteVariacao,
   deleteOpcao,
+  adicionarVariacao,
 } from '../../store/modules/product/actions';
 import { deleteOpcaoRequest } from '../../store/modules/opcaoVariacao/actions';
 
@@ -42,21 +43,38 @@ const schema = Yup.object().shape({
     )
     .required('O preço é obrigatório'),
 });
+const schemaVariacao = Yup.object().shape({
+  name: Yup.string().required('Obrigatório'),
+  calculoPrice: Yup.string().required('Obrigatório'),
+
+  minimo: Yup.string()
+    .matches(
+      /^[+]?([.]\d+|\d+[.]?\d*)$/,
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
+    )
+    .required('Obrigatório'),
+  maximo: Yup.string()
+    .matches(
+      /^[+]?([.]\d+|\d+[.]?\d*)$/,
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
+    )
+    .required('Obrigatório'),
+});
 
 export default function Neew({ idCat }) {
   const dispatch = useDispatch();
 
-  const [newOpcao, setNewOpcao] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [modalVariacao, setModalVariacao] = useState(false);
   const product = useSelector(state => state.product.ProductToEdit);
+
   const [modalDeletVariacao, SetModalDeletVariacao] = useState(false);
   const [newVariacao, setNewVariacao] = useState([]);
   const openModal = useSelector(state => state.product.editProduct);
   const avatar = useSelector(state => state.uploads.avatar);
   const id = useSelector(state => state.product.ProductToEdit.id);
   const categorias = useSelector(state => state.categorias.Categorias);
-
+  console.log(product);
   function handleSubmit(data) {
     dispatch(updateProductRequest(data, avatar, id, idCat));
   }
@@ -88,13 +106,35 @@ export default function Neew({ idCat }) {
     dispatch(deleteOpcao(id));
     // SetModalDeletVariacao(false);
   }
+  function handleSubmitVariacao(data) {
+    const variacao = {
+      ...data,
+      product_id: product.id,
+    };
+    dispatch(adicionarVariacao(variacao));
+  }
 
-  function addNewVariacao() {
-    setNewVariacao([...newVariacao, { name: '', minimo: '', maximo: '' }]);
-  }
-  function addNewOpcao() {
-    setNewOpcao([...newOpcao, { name: '', price: '', status: '' }]);
-  }
+  // function addNewVariacao() {
+  //   setVariacao([
+  //     ...variacao,
+  //     { name: '', minimo: '', maximo: '', Calculo: '' },
+  //   ]);
+  // }
+  // function setVariacaoItemValue(position, field, value) {
+  //   const updateVariacao = variacao.map((scheduleItem, index) => {
+  //     if (index === position) {
+  //       return { ...variacao, [field]: value };
+  //     }
+
+  //     return variacao;
+  //   });
+
+  //   setVariacao(updateVariacao);
+  // }
+
+  // function addNewOpcao() {
+  //   setNewOpcao([...newOpcao, { name: '', price: '', status: '' }]);
+  // }
 
   return (
     <>
@@ -265,6 +305,61 @@ export default function Neew({ idCat }) {
 
           <ModalArea forR>
             <div>
+              <Form onSubmit={handleSubmitVariacao} schema={schemaVariacao}>
+                <TwoInput style={{ marginLeft: -50, marginTop: 50 }}>
+                  <div style={{ width: '50%' }}>
+                    <label>
+                      Nome
+                      <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <Input name="name" type="text" placeholder="NOME" />
+                  </div>
+                  <div style={{ width: '50%', marginLeft: 5 }}>
+                    <label>
+                      Mínimo
+                      <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <Input name="minimo" type="text" placeholder="MINÍMO" />
+                  </div>
+                  <div style={{ width: '50%', marginLeft: 5 }}>
+                    <label>
+                      Maxímo
+                      <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <Input name="maximo" type="text" placeholder="MAXÍMO" />
+                  </div>
+                  <div style={{ width: '50%', marginLeft: 5 }}>
+                    <label>
+                      Calculo do preço
+                      <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <Select
+                      placeholder="CALCULO"
+                      name="calculoPrice"
+                      options={[
+                        { id: 'Soma total', title: 'Soma total' },
+                        { id: 'Maior preço', title: 'Maior preço' },
+                      ]}
+                    />
+                  </div>
+                  <Button
+                    positive
+                    type="submit"
+                    icon
+                    style={{
+                      height: 40,
+                      marginTop: 19,
+                      marginLeft: 15,
+                      width: 80,
+                    }}
+                  >
+                    Salvar
+                  </Button>
+                </TwoInput>
+              </Form>
+
+              <Divider />
+
               {newVariacao.map(variacao => {
                 return (
                   <>
@@ -302,7 +397,7 @@ export default function Neew({ idCat }) {
                         </label>
                         <Input
                           disabled
-                          name="minimo"
+                          name="maximo"
                           type="text"
                           placeholder="MAXÍMO"
                           value={variacao.minimo}
@@ -448,34 +543,12 @@ export default function Neew({ idCat }) {
                       );
                     })}
 
-                    {/* <Button
-                        positive
-                        onClick={addNewOpcao}
-                        style={{ marginTop: -10 }}
-                      >
-                        <Icon name="plus" />
-                        Nova opção
-                      </Button> */}
                     <Divider />
                   </>
                 );
               })}
             </div>
           </ModalArea>
-
-          {/* <div
-            style={{
-              alignSelf: 'center',
-              position: 'absolute',
-              marginTop: -70,
-              marginLeft: 5,
-            }}
-          >
-            <Button positive onClick={addNewVariacao}>
-              <Icon name="plus" />
-              Nova variação
-            </Button>
-          </div> */}
         </Modal>
       </>
     </>

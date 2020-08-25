@@ -1,4 +1,4 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, put, takeLatest, select } from 'redux-saga/effects';
 import { toast } from 'react-toastify';
 
 import {
@@ -11,6 +11,7 @@ import {
   listProductSucess,
   listProductFailure,
   closeEditProduct,
+  openEditProduct,
 } from './actions';
 
 import api from '../../../services/api';
@@ -57,6 +58,34 @@ export function* cadastrarProducts({ payload }) {
     );
   }
 }
+export function* cadastrarVariacao({ payload }) {
+  const variacaoId = yield select(
+    state => state.product.ProductToEdit.variacao,
+  );
+  const Ids_variacao = variacaoId.map(function(item) {
+    return item.id;
+  });
+
+  const variacao = payload.data;
+  const { product_id } = payload.data;
+
+  try {
+    const response = yield call(api.post, 'variacao', variacao);
+    const { id } = response.data;
+    yield call(api.put, `products/${product_id}`, {
+      variacao: [...Ids_variacao, id],
+    });
+    const { data } = yield call(api.get, `productsEdit/${product_id}`);
+    yield put(openEditProduct(data[0]));
+
+    toast.success('Variacao cadastrado  com sucesso!');
+  } catch ({ response }) {
+    // yield put(postProductFailure());
+    toast.error(
+      'Não foi possivel cadastrar essa produto, verifique sua internet!',
+    );
+  }
+}
 
 export function* editProduct({ payload }) {
   const { id } = payload;
@@ -97,4 +126,5 @@ export default all([
   takeLatest('@product/POST_PRODUCT_REQUEST', cadastrarProducts),
   takeLatest('@product/DELETE_PRODUCT_REQUEST', deleteProducts),
   takeLatest('@product/EDIT_REQUEST', editProduct),
+  takeLatest('@product/ADICIONAR_VARIACAO', cadastrarVariacao),
 ]);
