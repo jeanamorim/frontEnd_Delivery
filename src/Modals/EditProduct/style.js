@@ -233,7 +233,7 @@ export const PageContent = styled.table`
   width: 100%;
   margin: 25px 0;
   border-collapse: collapse;
-  margin-left: -50px;
+  margin-left: -20px;
   th,
   td {
     padding: 6px;
@@ -270,4 +270,19 @@ export const Container = styled.div`
   align-items: center;
   max-width: 1250px;
   width: 100%;
+`;
+export const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    margin: 0 10px 5px;
+  }
+  button {
+    border: 0;
+    background: none;
+    &:disabled {
+      opacity: 0;
+    }
+  }
 `;

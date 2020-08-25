@@ -5,7 +5,11 @@
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
-import { MdClose } from 'react-icons/md';
+import {
+  MdClose,
+  MdKeyboardArrowLeft,
+  MdKeyboardArrowRight,
+} from 'react-icons/md';
 import { Modal, Button, Icon, Header, Divider } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,7 +21,10 @@ import {
   AutocompleteStyle,
   PageContent,
   Container,
+  PageActions,
+  Pagination,
 } from './style';
+
 import {
   closeEditProduct,
   updateProductRequest,
@@ -74,7 +81,7 @@ export default function Neew({ idCat }) {
   const avatar = useSelector(state => state.uploads.avatar);
   const id = useSelector(state => state.product.ProductToEdit.id);
   const categorias = useSelector(state => state.categorias.Categorias);
-  console.log(product);
+
   function handleSubmit(data) {
     dispatch(updateProductRequest(data, avatar, id, idCat));
   }
@@ -306,7 +313,7 @@ export default function Neew({ idCat }) {
           <ModalArea forR>
             <div>
               <Form onSubmit={handleSubmitVariacao} schema={schemaVariacao}>
-                <TwoInput style={{ marginLeft: -50, marginTop: 50 }}>
+                <TwoInput style={{ marginLeft: -20, marginTop: 50 }}>
                   <div style={{ width: '50%' }}>
                     <label>
                       Nome
@@ -360,10 +367,98 @@ export default function Neew({ idCat }) {
 
               <Divider />
 
-              {newVariacao.map(variacao => {
-                return (
-                  <>
-                    <TwoInput style={{ marginLeft: -50 }} key={variacao.id}>
+              <>
+                <Container>
+                  <PageContent>
+                    <thead>
+                      <tr>
+                        <th>NOME</th>
+                        <th>QTD. MAXIMA</th>
+                        <th>QTD. MINIMA</th>
+                        <th>CALCULO</th>
+                        <th>QTD. OPÇÁO</th>
+                        <th />
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {newVariacao.map(delivery => (
+                        <>
+                          <tr
+                            key={delivery.id}
+                            // onClick={() => handleEditProduct(delivery)}
+                          >
+                            <td>{delivery.name}</td>
+                            <td>{delivery.maximo}</td>
+                            <td>{delivery.minimo}</td>
+                            <td>Soma total</td>
+                            <td>{delivery.opcao.length}</td>
+                            <td>
+                              {' '}
+                              <Button
+                                color="orange"
+                                icon
+                                style={{
+                                  height: 40,
+
+                                  marginLeft: 15,
+                                }}
+                              >
+                                <Icon name="edit" />
+                              </Button>
+                            </td>
+                            <td>
+                              <Button
+                                onClick={() => SetModalDeletVariacao(true)}
+                                negative
+                                icon
+                                style={{
+                                  height: 40,
+
+                                  marginLeft: 15,
+                                }}
+                              >
+                                <Icon name="trash alternate outline" />
+                              </Button>
+                            </td>
+                          </tr>
+                          <br />
+                          <Modal
+                            closeIcon
+                            onClose={() => SetModalDeletVariacao(false)}
+                            onOpen={() => SetModalDeletVariacao(true)}
+                            open={modalDeletVariacao}
+                          >
+                            <Header icon="archive" content="Deletar produto" />
+                            <Modal.Content>
+                              <p>
+                                Voçê tem certeza que deseja remover a variação{' '}
+                                {delivery.name}?
+                              </p>
+                            </Modal.Content>
+                            <Modal.Actions>
+                              <Button
+                                color="red"
+                                onClick={() => SetModalDeletVariacao(false)}
+                              >
+                                <Icon name="remove" /> Não
+                              </Button>
+                              <Button
+                                color="green"
+                                onClick={() =>
+                                  handleDeleteOpcaoVariacao(delivery.id)
+                                }
+                              >
+                                <Icon name="checkmark" /> Sim
+                              </Button>
+                            </Modal.Actions>
+                          </Modal>
+                        </>
+                      ))}
+                    </tbody>
+                  </PageContent>
+                </Container>
+                {/* <TwoInput style={{ marginLeft: -50 }} key={variacao.id}>
                       <div style={{ width: '50%' }}>
                         <label>
                           Nome
@@ -437,38 +532,10 @@ export default function Neew({ idCat }) {
                       >
                         <Icon name="trash alternate outline" />
                       </Button>
-                      <Modal
-                        closeIcon
-                        onClose={() => SetModalDeletVariacao(false)}
-                        onOpen={() => SetModalDeletVariacao(true)}
-                        open={modalDeletVariacao}
-                      >
-                        <Header icon="archive" content="Deletar produto" />
-                        <Modal.Content>
-                          <p>
-                            Voçê tem certeza que deseja remover a variação{' '}
-                            {variacao.name}?
-                          </p>
-                        </Modal.Content>
-                        <Modal.Actions>
-                          <Button
-                            color="red"
-                            onClick={() => SetModalDeletVariacao(false)}
-                          >
-                            <Icon name="remove" /> Não
-                          </Button>
-                          <Button
-                            color="green"
-                            onClick={() =>
-                              handleDeleteOpcaoVariacao(variacao.id)
-                            }
-                          >
-                            <Icon name="checkmark" /> Sim
-                          </Button>
-                        </Modal.Actions>
-                      </Modal>
-                    </TwoInput>
+               
+                    </TwoInput> */}
 
+                {/* 
                     {variacao.opcao.map(opcao => {
                       return (
                         <>
@@ -541,12 +608,9 @@ export default function Neew({ idCat }) {
                           </TwoInput>
                         </>
                       );
-                    })}
-
-                    <Divider />
-                  </>
-                );
-              })}
+                    })} */}
+                {/* <Divider /> */}
+              </>
             </div>
           </ModalArea>
         </Modal>
