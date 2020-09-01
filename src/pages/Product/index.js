@@ -57,6 +57,7 @@ export default function Products({ location }) {
   function handleEditCategoria() {
     dispatch(editeCategoriaOpen(state.categoria));
   }
+
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
       <div className="container-fluid">
@@ -66,11 +67,10 @@ export default function Products({ location }) {
               <div className="col-md-12">
                 <div className="panel panel-default">
                   <div className="panel-heading">
-                    <Button
-                      labelPosition="left"
-                      icon="arrow left"
-                      content="Voltar"
-                    />
+                    <Button onClick={history.goBack}>
+                      <Icon name="arrow left" />
+                      Voltar
+                    </Button>
                   </div>
 
                   <div className="panel-body">
