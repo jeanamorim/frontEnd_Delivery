@@ -10,7 +10,7 @@ import * as loadingData from '../../assets/animations/loading.json';
 import { signInRequest } from '../../store/modules/auth/actions';
 
 import bg from '../../assets/img/login-bg.png';
-import logo from '../../assets/img/logo2.png';
+import logo from '../../assets/img/logo12.png';
 
 const schema = Yup.object().shape({
   email: Yup.string()
@@ -79,7 +79,11 @@ export default function SignIn() {
                       <Check name="checkbox" id="checkbox" defaultChecked />
                       <label htmlFor="checkbox">Me manter logado</label>
                     </div>
-                    <button className="btn btn-primary btn-block" type="submit">
+                    <button
+                      className="btn btn-primary btn-block"
+                      type="submit"
+                      style={{ background: '#F4A460' }}
+                    >
                       {loading ? (
                         <Animation
                           width={30}

@@ -29,14 +29,14 @@ export const ErrorContainer = styled.div`
     color: #fff;
     text-transform: uppercase;
     padding: 13px 23px;
-    background: #325d88;
+    background: #f4a460;
     font-size: 18px;
     -webkit-transition: 0.2s all;
     transition: 0.2s all;
 
     &:hover {
       color: #fff;
-      background: #244363;
+      background: #cd6803;
     }
   }
 

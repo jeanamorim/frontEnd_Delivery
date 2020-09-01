@@ -55,7 +55,7 @@ export default function Offers() {
                 <div className="col-md-12">
                   <div className="panel panel-default">
                     <div className="panel-heading">
-                      <Button onClick={refreshPage} color="orange">
+                      <Button onClick={refreshPage}>
                         <Icon name="sync" /> Atualizar
                       </Button>
                     </div>

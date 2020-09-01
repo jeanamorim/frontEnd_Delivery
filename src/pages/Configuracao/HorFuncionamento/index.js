@@ -33,11 +33,10 @@ function HorFuncionamento() {
     Schedule();
   }, []);
 
-  async function handleCreateClass(e) {
-    e.preventDefault();
+  async function handleCreateClass(data) {
     try {
       await api.post('schedule', {
-        schedule: scheduleItems,
+        schedule: [data],
       });
       await Schedule();
       toast.success('Horários salvos com sucesso');
@@ -80,83 +79,50 @@ function HorFuncionamento() {
               <div className="panel panel-default">
                 <div className="panel-heading">Seus horários</div>
                 <div className="panel-body">
-                  <div>
+                  <Form
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onSubmit={handleCreateClass}
+                    schema={schema}
+                  >
+                    <div className="form-group col-md-2">
+                      <label htmlFor="week_day">Dias da semana</label>
+
+                      <Select
+                        name="week_day"
+                        className="form-control"
+                        options={[
+                          { id: '0', title: 'Domingo' },
+                          { id: '1', title: 'Segunda-feira' },
+                          { id: '2', title: 'Terça-feira' },
+                          { id: '3', title: 'Quarta-feira' },
+                          { id: '4', title: 'Quinta-feira' },
+                          { id: '5', title: 'Sexta-feira' },
+                          { id: '6', title: 'Sábado' },
+                        ]}
+                      />
+                    </div>
+                    <div className="form-group col-md-2">
+                      <label htmlFor="from">Das</label>
+                      <Input type="time" className="form-control" name="from" />
+                    </div>
+                    <div className="form-group col-md-2">
+                      <label htmlFor="to">Até</label>
+                      <Input name="to" type="time" className="form-control" />
+                    </div>
                     <Button
-                      type="button"
+                      type="submit"
+                      name="submit"
                       positive
                       variant="contained"
-                      onClick={addNewScheduleItem}
                     >
-                      <Icon name="plus" />
-                      Novo horario
+                      Salvar
                     </Button>
-                  </div>
-                  {scheduleItems.map((scheduleItem, index) => {
-                    return (
-                      <Form
-                        key={scheduleItem.week_day}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <div className="form-group col-md-2">
-                          <label htmlFor="week_day">Dias da semana</label>
+                  </Form>
 
-                          <Select
-                            name="week_day"
-                            className="form-control"
-                            value={scheduleItem.week_day}
-                            onChange={e =>
-                              setScheduleItemValue(
-                                index,
-                                'week_day',
-                                e.target.value,
-                              )
-                            }
-                            options={[
-                              { id: '0', title: 'Domingo' },
-                              { id: '1', title: 'Segunda-feira' },
-                              { id: '2', title: 'Terça-feira' },
-                              { id: '3', title: 'Quarta-feira' },
-                              { id: '4', title: 'Quinta-feira' },
-                              { id: '5', title: 'Sexta-feira' },
-                              { id: '6', title: 'Sábado' },
-                            ]}
-                          />
-                        </div>
-                        <div className="form-group col-md-1">
-                          <label htmlFor="from">Das</label>
-                          <Input
-                            type="time"
-                            className="form-control"
-                            name="from"
-                            value={scheduleItem.from}
-                            onChange={e =>
-                              setScheduleItemValue(
-                                index,
-                                'from',
-                                e.target.value,
-                              )
-                            }
-                          />
-                        </div>
-                        <div className="form-group col-md-1">
-                          <label htmlFor="to">Até</label>
-                          <Input
-                            name="to"
-                            type="time"
-                            className="form-control"
-                            value={scheduleItem.to}
-                            onChange={e =>
-                              setScheduleItemValue(index, 'to', e.target.value)
-                            }
-                          />
-                        </div>
-                      </Form>
-                    );
-                  })}
                   <br />
                   <br />
                   <br />
@@ -189,18 +155,20 @@ function HorFuncionamento() {
                             ]}
                           />
                         </div>
-                        <div className="form-group col-md-1">
+                        <div className="form-group col-md-2">
                           <label htmlFor="from">Das</label>
                           <input
+                            disabled
                             type="time"
                             className="form-control"
                             name="from"
                             value={scheduleItem.from}
                           />
                         </div>
-                        <div className="form-group col-md-1">
+                        <div className="form-group col-md-2">
                           <label htmlFor="to">Até</label>
                           <input
+                            disabled
                             name="to"
                             type="time"
                             className="form-control"
