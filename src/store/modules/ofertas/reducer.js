@@ -21,6 +21,36 @@ function Ofertas(state = initialState, action) {
         ...state,
         loading: false,
       });
+    case '@product/POST_OFERTA_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+    case '@product/POST_OFERTA_SUCCESS':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+    case '@product/POST_OFERTA_FAILURE':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+    case '@product/DELETE_OFERTA_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+    case '@product/DELETE_OFERTA_SUCCESS':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+    case '@product/DELETE_OFERTA_FAILURE':
+      return (state = {
+        ...state,
+        loading: false,
+      });
 
     default:
       return state;

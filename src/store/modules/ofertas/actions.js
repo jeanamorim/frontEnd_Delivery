@@ -29,6 +29,7 @@ export function GetOfertasFailure() {
     type: '@product/GET_OFERTAS_FAILURE',
   };
 }
+//
 export function deletOfertasRequest(id) {
   return {
     type: '@product/DELETE_OFERTA_REQUEST',

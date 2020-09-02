@@ -45,12 +45,13 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+
   const [nameProduct, setNameProduct] = useState('');
   const [ImageProduct, setImageProduct] = useState('');
   const [openModal, setOpenModal] = useState(false);
 
   const products = useSelector(state => state.product.ListProducts);
+  const loading = useSelector(state => state.ofertas.loading);
   const [productInfo, setProductInfo] = useState({
     from: `${'R$'} 0`,
     fromUnformatted: 0,
@@ -228,16 +229,29 @@ export default function Neew() {
               >
                 Cancelar
               </Button>
-              <Button
-                positive
-                type="submit"
-                style={{
-                  width: 140,
-                  border: 0,
-                }}
-              >
-                Salvar
-              </Button>
+              {loading ? (
+                <Button
+                  positive
+                  loading
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Loading
+                </Button>
+              ) : (
+                <Button
+                  positive
+                  type="submit"
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Salvar
+                </Button>
+              )}
             </div>
           </div>
         </ModalArea>
