@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { parseISO, formatDistanceStrict } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Divider, Grid, Image, Segment } from 'semantic-ui-react';
 import { formatPrice } from '../../util/format';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -63,6 +63,50 @@ export default function Pedidos() {
                   </Button>
                 </div>
               </div>
+
+              <Segment>
+                <Grid columns="equal" divided padded >
+                  <Grid.Row
+                    style={{ background: '#cfc8c8' }}
+                    textAlign="center"
+                  >
+                    <Grid.Column>
+                      <div className="grid">
+                        <Icon name="exclamation triangle" />
+                        PENDENTE
+                      </div>
+                    </Grid.Column>
+
+                    <Grid.Column>
+                      <div className="grid">
+                        <Icon name="home" />
+                        PRODUZINDO
+                      </div>
+                    </Grid.Column>
+
+                    <Grid.Column>
+                      <div className="grid">
+                        <Icon name="motorcycle" />
+                        ENVIADO
+                      </div>
+                    </Grid.Column>
+
+                    <Grid.Column>
+                      <div className="grid">
+                        <Icon name="check" />
+                        ENTREGUE
+                      </div>
+                    </Grid.Column>
+
+                    <Grid.Column>
+                      <div className="grid">
+                        <Icon name="ban" />
+                        CANCELADO
+                      </div>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Segment>
 
               <div style={{ display: 'flex' }}>
                 <div

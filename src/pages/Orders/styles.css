@@ -44,3 +44,8 @@
   border-width: 2;
   border-color: #000;
 }
+.grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
