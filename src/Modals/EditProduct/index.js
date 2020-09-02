@@ -81,6 +81,7 @@ export default function Neew({ idCat }) {
   const avatar = useSelector(state => state.uploads.avatar);
   const id = useSelector(state => state.product.ProductToEdit.id);
   const categorias = useSelector(state => state.categorias.Categorias);
+  const loading = useSelector(state => state.product.loading);
 
   function handleSubmit(data) {
     dispatch(updateProductRequest(data, avatar, id, idCat));
@@ -244,16 +245,29 @@ export default function Neew({ idCat }) {
                 >
                   Cancelar
                 </Button>
-                <Button
-                  positive
-                  type="submit"
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Salvar
-                </Button>
+                {loading ? (
+                  <Button
+                    positive
+                    loading
+                    style={{
+                      width: 140,
+                      border: 0,
+                    }}
+                  >
+                    Loading
+                  </Button>
+                ) : (
+                  <Button
+                    positive
+                    type="submit"
+                    style={{
+                      width: 140,
+                      border: 0,
+                    }}
+                  >
+                    Salvar
+                  </Button>
+                )}
               </div>
             </div>
           </ModalArea>

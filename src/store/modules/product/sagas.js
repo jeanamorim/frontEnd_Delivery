@@ -12,6 +12,7 @@ import {
   listProductFailure,
   closeEditProduct,
   openEditProduct,
+  postProductSucess,
 } from './actions';
 
 import api from '../../../services/api';
@@ -51,6 +52,7 @@ export function* cadastrarProducts({ payload }) {
     });
     toast.success('Produto cadastrado  com sucesso!');
     yield put(fecharModalCadastarProduct());
+    yield put(postProductSucess());
   } catch ({ response }) {
     yield put(postProductFailure());
     toast.error(

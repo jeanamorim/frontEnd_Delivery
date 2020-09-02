@@ -66,6 +66,11 @@ export function editCategoriaRequest(categoria) {
     payload: { categoria },
   };
 }
+export function editCategoriaSuccess() {
+  return {
+    type: '@product/EDIT_CATEGORIA_SUCCESS',
+  };
+}
 export function editCategoriaSucess() {
   return {
     type: '@product/EDIT_CATEGORIA_CLOSE',

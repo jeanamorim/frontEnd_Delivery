@@ -29,6 +29,29 @@ function Product(state = initialState, action) {
         loading: false,
       });
 
+    case '@product/POST_PRODUCT_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+
+    case '@product/POST_PRODUCT_SUCCESS':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+
+    case '@product/POST_PRODUCT_FAILURE':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+    case '@product/EDIT_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+
     case '@product/LIST_PRODUCT_SUCCESS':
       return (state = {
         ...state,

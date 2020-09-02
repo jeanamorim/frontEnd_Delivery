@@ -7,12 +7,13 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { format, parseISO, isAfter } from 'date-fns';
 import { Modal, Button, Icon, Header, Divider } from 'semantic-ui-react';
-
 import {
   MdKeyboardArrowLeft,
   MdKeyboardArrowRight,
   MdSearch,
 } from 'react-icons/md';
+import Animation from '../../components/Animation';
+import * as loadingData from '../../assets/animations/loading.json';
 
 import { formatPrice } from '../../util/format';
 import Oferta from '../../Modals/NewOferta';
@@ -32,8 +33,13 @@ import {
 export default function Offers() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const ofertas = useSelector(state => state.ofertas.Ofertas);
+  const loading = useSelector(state => state.ofertas.loading);
   const dispatch = useDispatch();
-  console.log(ofertas.length);
+
+  const loadingAnimation = (
+    <Animation width={50} height={50} animation={loadingData} />
+  );
+
   useEffect(() => {
     dispatch(GetOfertasRequest());
   }, []);
@@ -77,7 +83,21 @@ export default function Offers() {
                         </div>
                       </PageActions>
                       <Divider />
-                      {ofertas.length > 0 ? (
+                      {loading ? (
+                        <Container>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'column',
+                            }}
+                          >
+                            Carregando ofertas..
+                          </div>
+                          {loadingAnimation}
+                        </Container>
+                      ) : (
                         <Container>
                           <PageContent>
                             <thead>
@@ -204,17 +224,17 @@ export default function Offers() {
                             </button>
                           </Pagination>
                         </Container>
-                      ) : (
-                        <Container
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                          }}
-                        >
-                          <div>Nenhum oferta cadastrada...</div>
-                        </Container>
+                        // ) : (
+                        //   <Container
+                        //     style={{
+                        //       display: 'flex',
+                        //       alignItems: 'center',
+                        //       justifyContent: 'center',
+                        //       flexDirection: 'column',
+                        //     }}
+                        //   >
+                        //     <div>Nenhum oferta cadastrada...</div>
+                        //   </Container>
                       )}
                     </div>
                   </div>

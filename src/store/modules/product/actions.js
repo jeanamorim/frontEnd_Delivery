@@ -5,6 +5,11 @@ export function postProductRequest(product, avatar) {
     payload: { product, avatar },
   };
 }
+export function postProductSucess() {
+  return {
+    type: '@product/POST_PRODUCT_SUCCESS',
+  };
+}
 export function postProductFailure() {
   return {
     type: '@product/POST_PRODUCT_FAILURE',

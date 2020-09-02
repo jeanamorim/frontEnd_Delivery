@@ -21,10 +21,11 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+
   const category = useSelector(state => state.categorias.CategoriaToEdit);
   const openModal = useSelector(state => state.categorias.editCategoria);
   const avatar = useSelector(state => state.uploads.avatar);
+  const loading = useSelector(state => state.categorias.loading);
 
   async function handleSubmitEdit(data) {
     const categoria = {
@@ -92,16 +93,29 @@ export default function Neew() {
               >
                 Cancelar
               </Button>
-              <Button
-                positive
-                type="submit"
-                style={{
-                  width: 140,
-                  border: 0,
-                }}
-              >
-                Salvar
-              </Button>
+              {loading ? (
+                <Button
+                  positive
+                  loading
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Loading
+                </Button>
+              ) : (
+                <Button
+                  positive
+                  type="submit"
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Salvar
+                </Button>
+              )}
             </div>
           </div>
 

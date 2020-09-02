@@ -35,6 +35,7 @@ export default function Neew() {
   const dispatch = useDispatch();
   const modal = useSelector(state => state.product.modalCadastrarProduct);
   const categorias = useSelector(state => state.categorias.Categorias);
+  const loading = useSelector(state => state.product.loading);
 
   const avatar = useSelector(state => state.uploads);
 
@@ -63,7 +64,6 @@ export default function Neew() {
   return (
     <Modal
       open={modal}
- 
       trigger={
         <Button positive onClick={() => handleAbrirModal()}>
           <Icon name="plus" />
@@ -166,16 +166,29 @@ export default function Neew() {
               >
                 Cancelar
               </Button>
-              <Button
-                positive
-                type="submit"
-                style={{
-                  width: 140,
-                  border: 0,
-                }}
-              >
-                Salvar
-              </Button>
+              {loading ? (
+                <Button
+                  positive
+                  loading
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Loading
+                </Button>
+              ) : (
+                <Button
+                  positive
+                  type="submit"
+                  style={{
+                    width: 140,
+                    border: 0,
+                  }}
+                >
+                  Salvar
+                </Button>
+              )}
             </div>
           </div>
         </ModalArea>

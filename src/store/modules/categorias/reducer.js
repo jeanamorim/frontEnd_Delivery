@@ -38,6 +38,16 @@ function Categorias(state = initialState, action) {
         ...state,
         loading: false,
       });
+    case '@product/EDIT_CATEGORIA_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+    case '@product/EDIT_CATEGORIA_SUCCESS':
+      return (state = {
+        ...state,
+        loading: false,
+      });
 
     case '@product/EDIT_CATEGORIA_OPEN':
       return (state = {
