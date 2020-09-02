@@ -14,6 +14,7 @@ export function postOfertaFailure() {
     type: '@product/POST_OFERTA_FAILURE',
   };
 }
+//
 export function GetOfertasRequest() {
   return {
     type: '@product/GET_OFERTA_REQUEST',
