@@ -192,3 +192,51 @@ export const ProductTable = styled.table`
     }
   }
 `;
+export const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    margin: 0 10px 5px;
+  }
+  button {
+    border: 0;
+    background: none;
+    &:disabled {
+      opacity: 0;
+    }
+  }
+`;
+export const ContainerTable = styled.div`
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  max-width: 1250px;
+  width: 100%;
+`;
+export const PageContent = styled.table`
+  width: 100%;
+  margin: 25px 0;
+  border-collapse: collapse;
+  th,
+  td {
+    padding: 6px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  td {
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  /*
+  > td.status {
+  } */
+  tbody tr {
+    background: #eeeae6;
+    border: 0;
+    height: 45px;
+  }
+`;

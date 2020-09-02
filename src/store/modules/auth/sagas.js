@@ -30,7 +30,7 @@ export function* signIn({ payload }) {
       );
       yield put(signInFailure());
     } else {
-      toast.error(translate('auth_error'));
+      toast.error('Erro de autenticação, verifique seus dados.');
       yield put(signInFailure());
     }
   }

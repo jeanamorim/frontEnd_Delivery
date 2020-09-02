@@ -4,13 +4,26 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { format, subDays, addDays, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
 import pt from 'date-fns/locale/pt';
-import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import {
+  MdChevronLeft,
+  MdChevronRight,
+  MdKeyboardArrowLeft,
+  MdKeyboardArrowRight,
+} from 'react-icons/md';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { Icon, Menu, Table, Image } from 'semantic-ui-react';
+
 import { formatPrice } from '../../util/format';
 import api from '../../services/api';
-import { Container, Time, Content, ProductTable, Header } from './styles';
+import {
+  Container,
+  Time,
+  Content,
+  Header,
+  Pagination,
+  ContainerTable,
+  PageContent,
+} from './styles';
 import { dateLanguage } from '../../locales';
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
@@ -234,74 +247,67 @@ export default function Analises() {
                       </Content>
                     </Container>
                     {relatorio.length > 0 ? (
-                      <Table celled>
-                        <Table.Header>
-                          <Table.Row>
-                            <Table.HeaderCell>Data</Table.HeaderCell>
-                            <Table.HeaderCell>Qtd.Produto</Table.HeaderCell>
-                            <Table.HeaderCell>Preço</Table.HeaderCell>
-                            <Table.HeaderCell>Entrega</Table.HeaderCell>
-                            <Table.HeaderCell>Subtotal</Table.HeaderCell>
-                            <Table.HeaderCell>Form.Pagm.</Table.HeaderCell>
-                            <Table.HeaderCell>Status</Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Header>
+                      <ContainerTable>
+                        <PageContent>
+                          <thead>
+                            <tr>
+                              <th>DATA</th>
+                              <th>QTD. PRODUTO</th>
+                              <th>PREÇO</th>
+                              <th>ENTREGA</th>
+                              <th>SUBTOTAL</th>
+                              <th>FORM. PAGAMENTO</th>
+                              <th>STATUS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {relatorio.map(item => (
+                              <>
+                                <tr key={item.id}>
+                                  <td>
+                                    <Link
+                                      to={{
+                                        pathname: '/order',
+                                        search: `?id=${item.id}`,
+                                        state: {
+                                          orderData: item,
+                                        },
+                                      }}
+                                    >
+                                      {format(parseISO(item.date), 'Pp', {
+                                        locale: dateLanguage,
+                                      })}
+                                    </Link>
+                                  </td>
+                                  <td>{item.order_details.length}</td>
+                                  <td>
+                                    {formatPrice(item.order_details[0].price)}
+                                  </td>
+                                  <td> {formatPrice(item.delivery_fee)}</td>
+                                  <td>{formatPrice(item.total)}</td>
+                                  <td>{item.payment_method}</td>
+                                  <td className={className(item.status)}>
+                                    {statusName(item.status)}
+                                  </td>
+                                </tr>
+                                <br />
+                              </>
+                            ))}
+                          </tbody>
+                        </PageContent>
 
-                        <Table.Body>
-                          {relatorio.map(item => (
-                            <Table.Row key={item.id}>
-                              <Table.Cell>
-                                <Link
-                                  to={{
-                                    pathname: '/order',
-                                    search: `?id=${item.id}`,
-                                    state: {
-                                      orderData: item,
-                                    },
-                                  }}
-                                >
-                                  {format(parseISO(item.date), 'Pp', {
-                                    locale: dateLanguage,
-                                  })}
-                                </Link>
-                              </Table.Cell>
-                              <Table.Cell>
-                                {item.order_details.length}
-                              </Table.Cell>
-                              <Table.Cell>
-                                {formatPrice(item.order_details[0].price)}
-                              </Table.Cell>
-                              <Table.Cell>
-                                {formatPrice(item.delivery_fee)}
-                              </Table.Cell>
-                              <Table.Cell>{formatPrice(item.total)}</Table.Cell>
-                              <Table.Cell>{item.payment_method}</Table.Cell>
-                              <Table.Cell className={className(item.status)}>
-                                {statusName(item.status)}
-                              </Table.Cell>
-                            </Table.Row>
-                          ))}
-                        </Table.Body>
+                        <Pagination>
+                          <button type="button">
+                            <MdKeyboardArrowLeft size={20} color="#7d40e7" />
+                          </button>
 
-                        <Table.Footer>
-                          <Table.Row>
-                            <Table.HeaderCell colSpan="9">
-                              <Menu floated="right" pagination>
-                                <Menu.Item as="a" icon>
-                                  <Icon name="chevron left" />
-                                </Menu.Item>
-                                <Menu.Item as="a">1</Menu.Item>
-                                <Menu.Item as="a">2</Menu.Item>
-                                <Menu.Item as="a">3</Menu.Item>
-                                <Menu.Item as="a">4</Menu.Item>
-                                <Menu.Item as="a" icon>
-                                  <Icon name="chevron right" />
-                                </Menu.Item>
-                              </Menu>
-                            </Table.HeaderCell>
-                          </Table.Row>
-                        </Table.Footer>
-                      </Table>
+                          <span>Página 1</span>
+
+                          <button type="button">
+                            <MdKeyboardArrowRight size={20} color="#7d40e7" />
+                          </button>
+                        </Pagination>
+                      </ContainerTable>
                     ) : null}
                   </div>
                 </div>

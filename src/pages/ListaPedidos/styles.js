@@ -1,49 +1,96 @@
 import styled from 'styled-components';
+import { darken, shade } from 'polished';
 
-export const Containerr = styled.table`
-  max-width: 1300px;
-  margin: 10px auto;
-  display: flex;
-  flex-direction: column;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ffd39b;
+export const Container = styled.div`
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  max-width: 1250px;
+  width: 100%;
 `;
 
-export const ProductTable = styled.table`
-  margin: 50px auto;
-  background: #f8f8ff;
-  width: 100%;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #ffd39b;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  thead th {
-    margin-top: 60px;
-    color: #000;
-    height: 50px;
-    background: #f0e68c;
-    text-align: left;
-    padding: 10px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+export const Title = styled.div`
+  margin: 40px 0;
+  strong {
+    font-size: 20px;
+    color: #444;
   }
-  tbody td {
-    padding: 20px;
-    border-bottom: 1px solid #999;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  img {
+    height: 55px;
+    width: 55px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    margin-top: 4px;
+    margin-right: 10px;
   }
+  div {
+    margin-left: 7px;
+    color: #444;
+  }
+`;
+export const PageActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  div {
+    align-items: center;
+    justify-content: center;
+    svg {
+      position: absolute;
+      margin-top: 9px;
+      margin-left: 4px;
+      color: #666;
+    }
+    input {
+      height: 36px;
+      width: 230px;
+      padding-left: 30px;
+      padding-right: 5px;
+      color: #666;
+      border: 1px solid #999;
+      border-radius: 4px;
+    }
+  }
+`;
 
+export const PageContent = styled.table`
+  width: 100%;
+  margin: 25px 0;
+  border-collapse: collapse;
+  th,
+  td {
+    padding: 6px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  td {
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  /*
+  > td.status {
+  } */
+  tbody tr {
+    background: #eeeae6;
+    border: 0;
+    height: 45px;
+  }
+`;
+
+export const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   span {
-    display: block;
-    margin-top: 200px;
-    font-size: 19px;
-    font-weight: bold;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: 0 10px 5px;
+  }
+  button {
+    border: 0;
+    background: none;
+    &:disabled {
+      opacity: 0;
+    }
   }
 `;

@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
-import { Button } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Button, Icon } from 'semantic-ui-react';
+
 import LocalPrintshopIcon from '@material-ui/icons/LocalPrintshop';
 import { history } from '../../services/history';
 
@@ -53,12 +53,8 @@ export default function Order({ location }) {
         {orderData.map(order => (
           <Containerr>
             <div style={{ display: 'flex' }}>
-              <Button
-                onClick={history.goBack}
-                variant="contained"
-                color="primary"
-                startIcon={<ArrowBackIcon />}
-              >
+              <Button onClick={history.goBack}>
+                <Icon name="arrow left" />
                 Voltar
               </Button>
             </div>
