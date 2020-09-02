@@ -26,4 +26,21 @@
   align-self: center;
   text-align: center;
 }
+.name_status{
+  text-align: center;
+  background-color: #FDC995;
+  width: 20%;
+  height: 40;
+  color: #000;
+ 
+ 
 
+ 
+  
+}
+.name_icon_status{
+  background: #F4A460;
+  color: #fff;
+  border-width: 2;
+  border-color: #000;
+}

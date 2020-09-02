@@ -128,7 +128,11 @@ export default function Orders() {
                 <div className="col-md-12">
                   <div className="panel panel-default">
                     <div className="panel-heading">
-                      <Button onClick={refreshPage} color="orange">
+                      <Button onClick={history.goBack}>
+                        <Icon name="arrow left" />
+                        Voltar
+                      </Button>
+                      <Button onClick={refreshPage}>
                         <Icon name="sync" /> Atualizar
                       </Button>
                     </div>

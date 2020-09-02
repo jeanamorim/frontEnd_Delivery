@@ -64,6 +64,9 @@ export default function Products({ location }) {
   function handleEditCategoria() {
     dispatch(editeCategoriaOpen(state.categoria));
   }
+  function refreshPage() {
+    window.location.reload();
+  }
 
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
@@ -77,6 +80,9 @@ export default function Products({ location }) {
                     <Button onClick={history.goBack}>
                       <Icon name="arrow left" />
                       Voltar
+                    </Button>
+                    <Button onClick={refreshPage}>
+                      <Icon name="sync" /> Atualizar
                     </Button>
                   </div>
 

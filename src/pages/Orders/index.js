@@ -38,174 +38,6 @@ export default function Pedidos() {
     dispatch(updateStatus(status, orderId));
   }
 
-  // async function handleChange(event) {
-  //   const status = event.target.value;
-  //   const orderId = event.target.id;
-  //   // setValue({
-  //   //   id: Number(orderId),
-  //   //   status,
-  //   // });
-
-  //   try {
-  //     const response = await api.put(`/orders/${orderId}`, {
-  //       status,
-  //     });
-
-  //     if (status === 'CANCELADO') {
-  //       await api.delete(`/orders/${orderId}`);
-  //       toast.success('Pedido cancelado');
-  //     }
-
-  //     setRender(!render);
-  //   } catch (err) {
-  //     if (err.response) {
-  //       toast.error('Erro no servidor');
-  //     } else {
-  //       toast.error('Erro ao conectar com o servidor');
-  //     }
-  //   }
-  // }
-  // useEffect(() => {
-  //   async function loadStatusPend() {
-  //     try {
-  //       const response = await api.get(`status/PENDENTE`, {
-  //         params: { date },
-  //       });
-  //       console.tron.log(response.data);
-  //       const data = response.data.map(statusPendenetes => ({
-  //         ...statusPendenetes,
-  //         timeDistance: formatDistanceStrict(
-  //           parseISO(statusPendenetes.date),
-  //           new Date(),
-  //           { addSuffix: true, locale: pt },
-  //         ),
-  //       }));
-
-  //       setPendente_(data);
-  //     } catch (err) {
-  //       if (err.response) {
-  //         toast.error('Erro no servidor');
-  //       } else {
-  //         toast.error('Falha ao conectar com o servidor');
-  //       }
-  //     }
-  //   }
-
-  //   loadStatusPend();
-  // }, [date, render]);
-  // useEffect(() => {
-  //   async function loadStatusProd() {
-  //     try {
-  //       const response = await api.get(`status/PRODUCAO`, {
-  //         params: { date },
-  //       });
-
-  //       const data = response.data.map(statusAprovado => ({
-  //         ...statusAprovado,
-  //         timeDistance: formatDistanceStrict(
-  //           parseISO(statusAprovado.date),
-  //           new Date(),
-  //           { addSuffix: true, locale: pt },
-  //         ),
-  //       }));
-
-  //       setProducao_(data);
-  //     } catch (err) {
-  //       if (err.response) {
-  //         toast.error('Erro no servidor');
-  //       } else {
-  //         toast.error('Falha ao conectar com o servidor');
-  //       }
-  //     }
-  //   }
-
-  //   loadStatusProd();
-  // }, [date, render]);
-  // useEffect(() => {
-  //   async function loadStatusEnv() {
-  //     try {
-  //       const response = await api.get(`status/ENVIADO`, {
-  //         params: { date },
-  //       });
-
-  //       const data = response.data.map(statusEnviado => ({
-  //         ...statusEnviado,
-  //         timeDistance: formatDistanceStrict(
-  //           parseISO(statusEnviado.date),
-  //           new Date(),
-  //           { addSuffix: true, locale: pt },
-  //         ),
-  //       }));
-
-  //       setEnviado_(data);
-  //     } catch (err) {
-  //       if (err.response) {
-  //         toast.error('Erro no servidor');
-  //       } else {
-  //         toast.error('Falha ao conectar com o servidor');
-  //       }
-  //     }
-  //   }
-
-  //   loadStatusEnv();
-  // }, [date, render]);
-  // useEffect(() => {
-  //   async function loadStatusCanc() {
-  //     try {
-  //       const response = await api.get(`status/CANCELADO`, {
-  //         params: { date },
-  //       });
-
-  //       const data = response.data.map(statusCancelado => ({
-  //         ...statusCancelado,
-  //         timeDistance: formatDistanceStrict(
-  //           parseISO(statusCancelado.date),
-  //           new Date(),
-  //           { addSuffix: true, locale: pt },
-  //         ),
-  //       }));
-
-  //       setCancelado_(data);
-  //     } catch (err) {
-  //       if (err.response) {
-  //         toast.error('Erro no servidor');
-  //       } else {
-  //         toast.error('Falha ao conectar com o servidor');
-  //       }
-  //     }
-  //   }
-
-  //   loadStatusCanc();
-  // }, [date, render]);
-  // useEffect(() => {
-  //   async function loadStatusEntre() {
-  //     try {
-  //       const response = await api.get(`status/ENTREGUE`, {
-  //         params: { date },
-  //       });
-
-  //       const data = response.data.map(statusEntregue => ({
-  //         ...statusEntregue,
-  //         timeDistance: formatDistanceStrict(
-  //           parseISO(statusEntregue.date),
-  //           new Date(),
-  //           { addSuffix: true, locale: pt },
-  //         ),
-  //       }));
-
-  //       setEntregue_(data);
-  //     } catch (err) {
-  //       if (err.response) {
-  //         toast.error('Erro no servidor');
-  //       } else {
-  //         toast.error('Falha ao conectar com o servidor');
-  //       }
-  //     }
-  //   }
-
-  //   loadStatusEntre();
-  // }, [date, render]);
-
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
   function refreshPage() {
     window.location.reload();
@@ -234,135 +66,44 @@ export default function Pedidos() {
 
               <div style={{ display: 'flex' }}>
                 <div
-                  style={{
-                    textAlign: 'center',
-                    backgroundColor: '#FDC995',
-                    width: '20%',
-                    height: 40,
-                    color: '#000',
-                    margin: 1,
-                    borderWidth: 2,
-                    borderColor: '#000',
-                    border: 10,
-                  }}
+                  className="name_status"
+                  style={{ borderColor: '#000', borderWidth: 3 }}
                 >
-                  <div
-                    style={{
-                      background: '#F4A460',
-                      color: '#fff',
-                      borderWidth: 2,
-                      borderColor: '#000',
-                    }}
-                  >
-                    <Icon
-                      name="exclamation triangle"
-                      style={{ color: '#fff' }}
-                    />
+                  <div className="name_icon_status">
+                    <Icon name="exclamation triangle" />
                     PENDENTE
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    textAlign: 'center',
-                    background: '#FDC995',
-                    width: '20%',
-                    height: 40,
-                    color: '#fff',
-                    margin: 1,
-                    borderWidth: 2,
-                    borderColor: '#000',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: '#F4A460',
-                      color: '#fff',
-                      borderWidth: 2,
-                      borderColor: '#000',
-                    }}
-                  >
-                    <Icon name="home" style={{ color: '#fff' }} />
+                <div className="name_status">
+                  <div className="name_icon_status">
+                    <Icon name="home" />
                     PRODUZINDO
                   </div>
                 </div>
-                <div
-                  style={{
-                    textAlign: 'center',
-                    background: '#FDC995',
-                    width: '20%',
-                    height: 40,
-                    color: '#fff',
-                    margin: 1,
-                    borderWidth: 2,
-                    borderColor: '#000',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: '#F4A460',
-                      color: '#fff',
-                      borderWidth: 2,
-                      borderColor: '#000',
-                    }}
-                  >
-                    <Icon name="motorcycle" style={{ color: '#fff' }} />
+                <div className="name_status">
+                  <div className="name_icon_status">
+                    <Icon name="motorcycle" />
                     ENVIADO
                   </div>
                 </div>
-                <div
-                  style={{
-                    textAlign: 'center',
-                    background: '#FDC995',
-                    width: '20%',
-                    height: 40,
-                    color: '#fff',
-                    margin: 1,
-                    borderWidth: 2,
-                    borderColor: '#000',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: '#F4A460',
-                      color: '#fff',
-                      borderWidth: 2,
-                      borderColor: '#000',
-                    }}
-                  >
-                    <Icon name="check" style={{ color: '#fff' }} />
+                <div className="name_status">
+                  <div className="name_icon_status">
+                    <Icon name="check" />
                     ENTREGUE
                   </div>
-                  <Icon name="chevron down" style={{ color: '#fff' }} />
+                  <Icon name="chevron down" />
                 </div>
-                <div
-                  style={{
-                    textAlign: 'center',
-                    background: '#FDC995',
-                    width: '20%',
-                    height: 40,
-                    color: '#fff',
-                    margin: 1,
-                    borderWidth: 2,
-                    borderColor: '#000',
-                  }}
-                >
-                  <div
-                    style={{
-                      background: '#F4A460',
-                      color: '#fff',
-                      borderWidth: 2,
-                      borderColor: '#000',
-                    }}
-                  >
-                    <Icon name="ban" style={{ color: '#fff' }} />
+                <div className="name_status">
+                  <div className="name_icon_status">
+                    <Icon name="ban" />
                     CANCELADO
                   </div>
-                  <Icon name="chevron down" style={{ color: '#fff' }} />
+                  <Icon name="chevron down" />
                 </div>
               </div>
 
-              <div className="menuPedidosstatus" style={{ display: 'flex' }}>
+              <div style={{ display: 'flex' }}>
                 <div style={{ width: '20%', marginTop: 5 }}>
                   <div className="board" id="boardjsplain">
                     <>
@@ -443,7 +184,7 @@ export default function Pedidos() {
                                 type="button"
                                 value="CANCELADO"
                               >
-                                <Icon name="x icon" style={{ color: '#fff' }} />
+                                <Icon name="x icon" />
                               </Button>
 
                               <Button
@@ -543,7 +284,7 @@ export default function Pedidos() {
                                   marginLeft: 4,
                                 }}
                               >
-                                <Icon name="print" style={{ color: '#fff' }} />
+                                <Icon name="print" />
                               </Button>
 
                               <Button
@@ -750,7 +491,7 @@ export default function Pedidos() {
                               <Button
                                 style={{ width: '100%', background: '#999' }}
                               >
-                                <Icon name="print" style={{ color: '#fff' }} />
+                                <Icon name="print" />
                               </Button>
                             </div>
                           </div>

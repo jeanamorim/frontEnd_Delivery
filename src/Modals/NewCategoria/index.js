@@ -39,7 +39,7 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
-      style={{ height: '50vh' }}
+      style={{ height: '55vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
