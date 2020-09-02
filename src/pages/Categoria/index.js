@@ -13,10 +13,17 @@ import { Container, PageActions, Title } from './styles';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
 import EditCategoria from '../../Modals/EditCategoria';
+import Animation from '../../components/Animation';
+import * as loadingData from '../../assets/animations/loading.json';
 
 export default function Categoria() {
   const dispatch = useDispatch();
   const categorias = useSelector(state => state.categorias.Categorias);
+  const loading = useSelector(state => state.categorias.loading);
+
+  const loadingAnimation = (
+    <Animation width={50} height={50} animation={loadingData} />
+  );
 
   useEffect(() => {
     dispatch(getCategoriasRequest());
@@ -64,9 +71,26 @@ export default function Categoria() {
                           <Category />
                         </div>
                       </PageActions>
-                      {categorias.length > 0 ? (
+                      {/* {categorias.length > 0 ? ( */}
+                      {loading ? (
                         <Container>
                           <Divider />
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'column',
+                            }}
+                          >
+                            Carregando categorias
+                          </div>
+                          {loadingAnimation}
+                        </Container>
+                      ) : (
+                        <Container>
+                          <Divider />
+
                           <ul>
                             {categorias.map(categoria => (
                               <li key={categoria.id}>
@@ -109,9 +133,11 @@ export default function Categoria() {
                               </li>
                             ))}
                           </ul>
+
                           <EditCategoria />
                         </Container>
-                      ) : (
+                      )}
+                      {/* ) : (
                         <Container
                           style={{
                             display: 'flex',
@@ -122,7 +148,7 @@ export default function Categoria() {
                         >
                           <div>Nenhum categoria cadastrada...</div>
                         </Container>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>

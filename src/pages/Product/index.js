@@ -34,10 +34,13 @@ import {
   Pagination,
 } from './styles';
 import { editeCategoriaOpen } from '../../store/modules/categorias/actions';
+import Animation from '../../components/Animation';
+import * as loadingData from '../../assets/animations/loading.json';
 
 export default function Products({ location }) {
   const product = useSelector(state => state.product.ProductCategoria);
   const openModal = useSelector(state => state.product.editProduct);
+  const loading = useSelector(state => state.product.loading);
   const [name, setName] = useState('');
   const { state } = location;
   const params = new URLSearchParams(useLocation().search);
@@ -46,6 +49,10 @@ export default function Products({ location }) {
   useEffect(() => {
     dispatch(GetProductRequest(id));
   }, []);
+
+  const loadingAnimation = (
+    <Animation width={50} height={50} animation={loadingData} />
+  );
 
   function handleEditProduct(product) {
     const produto = {
@@ -107,70 +114,99 @@ export default function Products({ location }) {
                       </div>
                     </PageActions>
                     <Divider />
-                    {product.length > 0 ? (
+                    {loading ? (
                       <Container>
-                        <PageContent>
-                          <thead>
-                            <tr>
-                              <th />
-                              <th>NOME DO PRODUTO</th>
-                              <th>PREÇO</th>
-                              <th> QTD. VARIAÇÕES</th>
-
-                              <th>STATUS</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {product.map(delivery => (
-                              <>
-                                <tr
-                                  key={delivery.id}
-                                  onClick={() => handleEditProduct(delivery)}
-                                >
-                                  <td>
-                                    <main>
-                                      <img src={delivery.image.url} alt="" />
-                                    </main>
-                                  </td>
-                                  <td>{delivery.name}</td>
-                                  <td>{formatPrice(delivery.price)}</td>
-                                  <td style={{ color: '#1C1CCE' }}>
-                                    {delivery.variacao.length} (variações)
-                                  </td>
-
-                                  <td>Ativo</td>
-                                </tr>
-                                <br />
-                              </>
-                            ))}
-                          </tbody>
-                          {openModal === true ? (
-                            <ProductEdit idCat={id} />
-                          ) : null}
-                        </PageContent>
-
-                        <Pagination>
-                          <button type="button">
-                            <MdKeyboardArrowLeft size={20} color="#7d40e7" />
-                          </button>
-
-                          <span>Página 1</span>
-
-                          <button type="button">
-                            <MdKeyboardArrowRight size={20} color="#7d40e7" />
-                          </button>
-                        </Pagination>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          Carregando produtos..
+                        </div>
+                        {loadingAnimation}
                       </Container>
                     ) : (
-                      <Container
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'column',
-                        }}
-                      >
-                        <div>Nenhum produto cadastrado nessa categoria...</div>
+                      <Container>
+                        {product.length > 0 ? (
+                          <>
+                            <PageContent>
+                              <thead>
+                                <tr>
+                                  <th />
+                                  <th>NOME DO PRODUTO</th>
+                                  <th>PREÇO</th>
+                                  <th> QTD. VARIAÇÕES</th>
+
+                                  <th>STATUS</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {product.map(delivery => (
+                                  <>
+                                    <tr
+                                      key={delivery.id}
+                                      onClick={() =>
+                                        handleEditProduct(delivery)
+                                      }
+                                    >
+                                      <td>
+                                        <main>
+                                          <img
+                                            src={delivery.image.url}
+                                            alt=""
+                                          />
+                                        </main>
+                                      </td>
+                                      <td>{delivery.name}</td>
+                                      <td>{formatPrice(delivery.price)}</td>
+                                      <td style={{ color: '#1C1CCE' }}>
+                                        {delivery.variacao.length} (variações)
+                                      </td>
+
+                                      <td>Ativo</td>
+                                    </tr>
+                                    <br />
+                                  </>
+                                ))}
+                              </tbody>
+                              {openModal === true ? (
+                                <ProductEdit idCat={id} />
+                              ) : null}
+                            </PageContent>
+
+                            <Pagination>
+                              <button type="button">
+                                <MdKeyboardArrowLeft
+                                  size={20}
+                                  color="#7d40e7"
+                                />
+                              </button>
+
+                              <span>Página 1</span>
+
+                              <button type="button">
+                                <MdKeyboardArrowRight
+                                  size={20}
+                                  color="#7d40e7"
+                                />
+                              </button>
+                            </Pagination>
+                          </>
+                        ) : (
+                          <Container
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'column',
+                            }}
+                          >
+                            <div>Nenhum produto cadastrada...</div>
+                          </Container>
+                        )}
                       </Container>
                     )}
                   </div>

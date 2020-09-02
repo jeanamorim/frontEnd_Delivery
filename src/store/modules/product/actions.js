@@ -5,7 +5,6 @@ export function postProductRequest(product, avatar) {
     payload: { product, avatar },
   };
 }
-
 export function postProductFailure() {
   return {
     type: '@product/POST_PRODUCT_FAILURE',
@@ -34,7 +33,7 @@ export const GetProductSucess = product => ({
 });
 export function GetProductFailure() {
   return {
-    type: '@product/UPDATE_FAILURE',
+    type: '@product/GET_PRODUCT_FAILURE',
   };
 }
 // lista todos os produtos, usado para cadastar uma oferta

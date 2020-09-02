@@ -5,7 +5,6 @@ import api from '../../../services/api';
 import { history } from '../../../services/history';
 
 import { signInSuccess, signInFailure } from './actions';
-import translate from '../../../locales';
 
 export function* signIn({ payload }) {
   try {

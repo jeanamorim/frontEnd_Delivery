@@ -8,6 +8,7 @@ const initialState = {
   ProductCategoria: [],
   ListProducts: [],
   NewVariacao: [],
+  loading: false,
 };
 function Product(state = initialState, action) {
   switch (action.type) {
@@ -15,7 +16,19 @@ function Product(state = initialState, action) {
       return (state = {
         ...state,
         ProductCategoria: action.product,
+        loading: false,
       });
+    case ' @product/GET_PRODUCT_REQUEST':
+      return (state = {
+        ...state,
+        loading: true,
+      });
+    case '@product/GET_PRODUCT_FAILURE':
+      return (state = {
+        ...state,
+        loading: false,
+      });
+
     case '@product/LIST_PRODUCT_SUCCESS':
       return (state = {
         ...state,
