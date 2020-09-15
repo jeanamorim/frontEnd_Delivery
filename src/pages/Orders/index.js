@@ -40,11 +40,6 @@ export default function Pedidos() {
     <Animation width={10} height={10} animation={loadingData} />
   );
 
-  function setupWebSocket() {
-    disconnect();
-    connect();
-  }
-
   async function handleChange(event) {
     setLoading(true);
     const status = event.target.value;
@@ -90,7 +85,7 @@ export default function Pedidos() {
         ),
       }));
       setPendente_(data);
-      setupWebSocket();
+
       if (updatingStatus !== 0) {
         setUpdatingStatus(0);
       }
@@ -118,7 +113,7 @@ export default function Pedidos() {
       }));
 
       setProducao_(data);
-      setupWebSocket();
+
       if (updatingStatus !== 0) {
         setUpdatingStatus(0);
       }
@@ -146,7 +141,7 @@ export default function Pedidos() {
       }));
 
       setEnviado_(data);
-      setupWebSocket();
+
       if (updatingStatus !== 0) {
         setUpdatingStatus(0);
       }
@@ -174,7 +169,7 @@ export default function Pedidos() {
       }));
 
       setCancelado_(data);
-      setupWebSocket();
+
       if (updatingStatus !== 0) {
         setUpdatingStatus(0);
       }
@@ -202,7 +197,7 @@ export default function Pedidos() {
       }));
 
       setEntregue_(data);
-      setupWebSocket();
+
       if (updatingStatus !== 0) {
         setUpdatingStatus(0);
       }
@@ -214,10 +209,6 @@ export default function Pedidos() {
       }
     }
   }
-
-  useEffect(() => {
-    subscribeToNewDevs(item => setPendente_([...pendente, item]));
-  }, [pendente]);
 
   useEffect(() => {
     loadStatusPend();
