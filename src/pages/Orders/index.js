@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/order */
 /* eslint-disable no-unused-expressions */
@@ -17,32 +18,234 @@ import {
   Card,
 } from 'semantic-ui-react';
 import { formatPrice } from '../../util/format';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getPedidosRequest,
-  updateStatus,
-} from '../../store/modules/pedidos/actions';
+import Animation from '../../components/Animation';
+import * as loadingData from '../../assets/animations/loading.json';
+import api from '../../services/api';
+import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
 
 export default function Pedidos() {
-  const dispatch = useDispatch();
-  const pedidos = useSelector(state => state.pedidos);
-  const [pendente, setPendente] = useState([]);
-  const [producao, setProducao] = useState([]);
-  const [enviado, setEnviado] = useState([]);
-  const [entregue, setEntregue] = useState([]);
-  const [cancelado, setCancelado] = useState([]);
+  const [updatingStatus, setUpdatingStatus] = useState(0);
+  const [pendente, setPendente_] = useState([]);
+  const [producao, setProducao_] = useState([]);
+  const [enviado, setEnviado_] = useState([]);
+  const [entregue, setEntregue_] = useState([]);
+  const [cancelado, setCancelado_] = useState([]);
+  const [date] = useState(new Date());
+  const [render, setRender] = useState(false);
+  const [, setValue] = useState({});
+
+  const [loading, setLoading] = useState(false);
+
+  const loadingAnimation = (
+    <Animation width={10} height={10} animation={loadingData} />
+  );
+
+  function setupWebSocket() {
+    disconnect();
+    connect();
+  }
+
+  async function handleChange(event) {
+    setLoading(true);
+    const status = event.target.value;
+    const orderId = event.target.id;
+    setValue({
+      id: Number(orderId),
+      status,
+    });
+
+    if (status !== '') {
+      setUpdatingStatus(orderId);
+      try {
+        await api.put(`/orders/${orderId}`, {
+          status,
+        });
+
+        if (status === 'cancelled') {
+          await api.delete(`/orders/${orderId}`);
+        }
+        setLoading(false);
+        setRender(!render);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Erro ao conectar com o servidor');
+        }
+      }
+    }
+  }
+  async function loadStatusPend() {
+    try {
+      const response = await api.get(`status/PENDENTE`, {
+        params: { date },
+      });
+      console.tron.log(response.data);
+      const data = response.data.map(statusPendenetes => ({
+        ...statusPendenetes,
+        timeDistance: formatDistanceStrict(
+          parseISO(statusPendenetes.date),
+          new Date(),
+          { addSuffix: true, locale: pt },
+        ),
+      }));
+      setPendente_(data);
+      setupWebSocket();
+      if (updatingStatus !== 0) {
+        setUpdatingStatus(0);
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
+  async function loadStatusProd() {
+    try {
+      const response = await api.get(`status/PRODUCAO`, {
+        params: { date },
+      });
+
+      const data = response.data.map(statusAprovado => ({
+        ...statusAprovado,
+        timeDistance: formatDistanceStrict(
+          parseISO(statusAprovado.date),
+          new Date(),
+          { addSuffix: true, locale: pt },
+        ),
+      }));
+
+      setProducao_(data);
+      setupWebSocket();
+      if (updatingStatus !== 0) {
+        setUpdatingStatus(0);
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
+  async function loadStatusEnv() {
+    try {
+      const response = await api.get(`status/ENVIADO`, {
+        params: { date },
+      });
+
+      const data = response.data.map(statusEnviado => ({
+        ...statusEnviado,
+        timeDistance: formatDistanceStrict(
+          parseISO(statusEnviado.date),
+          new Date(),
+          { addSuffix: true, locale: pt },
+        ),
+      }));
+
+      setEnviado_(data);
+      setupWebSocket();
+      if (updatingStatus !== 0) {
+        setUpdatingStatus(0);
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
+  async function loadStatusCanc() {
+    try {
+      const response = await api.get(`status/CANCELADO`, {
+        params: { date },
+      });
+
+      const data = response.data.map(statusCancelado => ({
+        ...statusCancelado,
+        timeDistance: formatDistanceStrict(
+          parseISO(statusCancelado.date),
+          new Date(),
+          { addSuffix: true, locale: pt },
+        ),
+      }));
+
+      setCancelado_(data);
+      setupWebSocket();
+      if (updatingStatus !== 0) {
+        setUpdatingStatus(0);
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
+  async function loadStatusEntre() {
+    try {
+      const response = await api.get(`status/ENTREGUE`, {
+        params: { date },
+      });
+
+      const data = response.data.map(statusEntregue => ({
+        ...statusEntregue,
+        timeDistance: formatDistanceStrict(
+          parseISO(statusEntregue.date),
+          new Date(),
+          { addSuffix: true, locale: pt },
+        ),
+      }));
+
+      setEntregue_(data);
+      setupWebSocket();
+      if (updatingStatus !== 0) {
+        setUpdatingStatus(0);
+      }
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
 
   useEffect(() => {
-    dispatch(getPedidosRequest());
-    setPendente(pedidos.pendente);
-    setProducao(pedidos.producao);
-    setEnviado(pedidos.enviado);
-    setEntregue(pedidos.entregue);
-    setCancelado(pedidos.cancelado);
-  }, [pedidos]);
-  function updateStatuss(status, orderId) {
-    dispatch(updateStatus(status, orderId));
-  }
+    subscribeToNewDevs(item => setPendente_([...pendente, item]));
+  }, [pendente]);
+
+  useEffect(() => {
+    loadStatusPend();
+    loadStatusProd();
+    loadStatusEnv();
+    loadStatusCanc();
+    loadStatusEntre();
+  }, [date, render]);
+
+  // const dispatch = useDispatch();
+  // const pedidos = useSelector(state => state.pedidos);
+  // const [pendente, setPendente] = useState([]);
+  // const [producao, setProducao] = useState([]);
+  // const [enviado, setEnviado] = useState([]);
+  // const [entregue, setEntregue] = useState([]);
+  // const [cancelado, setCancelado] = useState([]);
+
+  // useEffect(() => {
+  //   dispatch(getPedidosRequest());
+  //   setPendente(pedidos.pendente);
+  //   setProducao(pedidos.producao);
+  //   setEnviado(pedidos.enviado);
+  //   setEntregue(pedidos.entregue);
+  //   setCancelado(pedidos.cancelado);
+  // }, [pedidos]);
+  // function updateStatuss(status, orderId) {
+  //   dispatch(updateStatus(status, orderId));
+  // }
 
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
   function refreshPage() {
@@ -81,7 +284,7 @@ export default function Pedidos() {
                     {pendente.length > 0 ? (
                       <>
                         {pendente.map(order => (
-                          <div key={order.id}>
+                          <div key={order.id} style={{ marginLeft: 8 }}>
                             <div
                               className="panel panel-default"
                               style={{ borderColor: '#F4A460' }}
@@ -123,28 +326,36 @@ export default function Pedidos() {
                                 ))}
                               </div>
                               <div className="ui two buttons">
-                                <Button
-                                  color="red"
-                                  type="button"
-                                  value="CANCELADO"
-                                  id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('CANCELADO', order.id)
-                                  }
-                                >
-                                  <Icon name="cancel" />
-                                </Button>
-                                <Button
-                                  color="green"
-                                  id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('PRODUCAO', order.id)
-                                  }
-                                  type="button"
-                                  value="PRODUCAO"
-                                >
-                                  <Icon name="check" />
-                                </Button>
+                                {loading ? (
+                                  <Button loading color="red">
+                                    Loading
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    id={order.id}
+                                    color="red"
+                                    type="button"
+                                    value="CANCELADO"
+                                    onClick={handleChange}
+                                  >
+                                    Cancelar
+                                  </Button>
+                                )}
+                                {loading ? (
+                                  <Button loading color="green">
+                                    Loading
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    id={order.id}
+                                    color="green"
+                                    onClick={handleChange}
+                                    type="button"
+                                    value="PRODUCAO"
+                                  >
+                                    Aceitar
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -211,18 +422,17 @@ export default function Pedidos() {
                               <div className="ui two buttons">
                                 <Button
                                   color="red"
+                                  id={order.id}
+                                  onClick={handleChange}
                                   type="button"
                                   value="CANCELADO"
-                                  id={order.id}
                                 >
                                   <Icon name="cancel" />
                                 </Button>
                                 <Button
                                   color="green"
                                   id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('ENVIADO', order.id)
-                                  }
+                                  onClick={handleChange}
                                   type="button"
                                   value="ENVIADO"
                                 >
@@ -294,18 +504,17 @@ export default function Pedidos() {
                               <div className="ui two buttons">
                                 <Button
                                   color="red"
+                                  id={order.id}
+                                  onClick={handleChange}
                                   type="button"
                                   value="CANCELADO"
-                                  id={order.id}
                                 >
                                   <Icon name="cancel" />
                                 </Button>
                                 <Button
                                   color="green"
                                   id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('ENTREGUE', order.id)
-                                  }
+                                  onClick={handleChange}
                                   type="button"
                                   value="ENTREGUE"
                                 >
@@ -377,18 +586,16 @@ export default function Pedidos() {
                               <div className="ui two buttons">
                                 <Button
                                   color="red"
+                                  id={order.id}
+                                  onClick={handleChange}
                                   type="button"
                                   value="CANCELADO"
-                                  id={order.id}
                                 >
                                   <Icon name="cancel" />
                                 </Button>
                                 <Button
                                   color="green"
                                   id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('PRODUCAO', order.id)
-                                  }
                                   type="button"
                                   value="PRODUCAO"
                                 >
@@ -460,18 +667,16 @@ export default function Pedidos() {
                               <div className="ui two buttons">
                                 <Button
                                   color="red"
+                                  id={order.id}
+                                  onClick={handleChange}
                                   type="button"
                                   value="CANCELADO"
-                                  id={order.id}
                                 >
                                   <Icon name="cancel" />
                                 </Button>
                                 <Button
                                   color="green"
                                   id={order.id}
-                                  onClick={() =>
-                                    updateStatuss('PRODUCAO', order.id)
-                                  }
                                   type="button"
                                   value="PRODUCAO"
                                 >
