@@ -20,7 +20,12 @@ export default function Header() {
   return (
     <div className="ui stackable menu ">
       <div className="item">
-        <img src={profile.image.url} className="Logo" alt="logo" />
+        <img
+          src={profile.image.url}
+          className="Logo"
+          alt="logo"
+          style={{ height: 30, width: 30, borderRadius: 50 }}
+        />
       </div>
 
       <Link className="item" to="/">

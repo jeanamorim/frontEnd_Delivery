@@ -75,7 +75,7 @@ export default function Pedidos() {
       const response = await api.get(`status/PENDENTE`, {
         params: { date },
       });
-      console.tron.log(response.data);
+
       const data = response.data.map(statusPendenetes => ({
         ...statusPendenetes,
         timeDistance: formatDistanceStrict(
@@ -209,13 +209,12 @@ export default function Pedidos() {
       }
     }
   }
-
   useEffect(() => {
-    loadStatusPend();
     loadStatusProd();
     loadStatusEnv();
     loadStatusCanc();
     loadStatusEntre();
+    loadStatusPend();
   }, [date, render]);
 
   // const dispatch = useDispatch();
