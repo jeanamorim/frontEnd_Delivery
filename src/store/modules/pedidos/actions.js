@@ -1,3 +1,11 @@
+export const openViewPedido = pedido => ({
+  type: '@pedido/VIEW_SUCCESS_OPEN',
+  pedido,
+});
+export const CloseViewPedido = () => ({
+  type: '@pedido/VIEW_SUCCESS_CLOSE',
+});
+
 export function getPedidosRequest() {
   return {
     type: '@product/GET_PEDIDOS_REQUEST',

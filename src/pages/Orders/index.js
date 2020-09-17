@@ -1,9 +1,12 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/order */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { parseISO, formatDistanceStrict } from 'date-fns';
@@ -22,9 +25,14 @@ import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 import api from '../../services/api';
 import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
+import OrderDetails from '../../Modals/ViewOrdens';
+
+import { openViewPedido } from '../../store/modules/pedidos/actions';
 
 export default function Pedidos() {
+  const dispatch = useDispatch();
   const [updatingStatus, setUpdatingStatus] = useState(0);
+  const openModal = useSelector(state => state.pedidos.viewModal);
   const [pendente, setPendente_] = useState([]);
   const [producao, setProducao_] = useState([]);
   const [enviado, setEnviado_] = useState([]);
@@ -217,6 +225,10 @@ export default function Pedidos() {
     loadStatusPend();
   }, [date, render]);
 
+  function viewOrdens(order) {
+    dispatch(openViewPedido(order));
+  }
+
   // const dispatch = useDispatch();
   // const pedidos = useSelector(state => state.pedidos);
   // const [pendente, setPendente] = useState([]);
@@ -279,14 +291,8 @@ export default function Pedidos() {
                               className="panel panel-default"
                               style={{ borderColor: '#F4A460' }}
                             >
-                              <Link
-                                to={{
-                                  pathname: '/order',
-                                  search: `?id=${order.id}`,
-                                  state: {
-                                    orderData: order,
-                                  },
-                                }}
+                              <div
+                                onClick={() => viewOrdens(order)}
                                 className="block-anchor panel-footer text-center"
                                 style={{
                                   background: '#F4A460',
@@ -295,7 +301,7 @@ export default function Pedidos() {
                                 }}
                               >
                                 {order.timeDistance}
-                              </Link>
+                              </div>
                               <div className="panel-body bk-secondary text-dark">
                                 <Card.Header style={{ fontSize: 10 }}>
                                   {order.ship_neighborhood}
@@ -306,7 +312,13 @@ export default function Pedidos() {
                                   <strong> {formatPrice(order.total)}</strong>
                                 </Card.Description>
                                 {order.order_details.map(image => (
-                                  <div style={{ float: 'left' }}>
+                                  <div
+                                    style={{
+                                      alignItems: 'center',
+
+                                      float: 'left',
+                                    }}
+                                  >
                                     <Image
                                       src={image.product.image.url}
                                       style={{
@@ -706,6 +718,7 @@ export default function Pedidos() {
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
+              {openModal === true ? <OrderDetails /> : null}
             </div>
           </div>
         </div>

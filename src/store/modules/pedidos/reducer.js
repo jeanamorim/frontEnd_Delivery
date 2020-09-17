@@ -5,9 +5,23 @@ const initialState = {
   enviado: [],
   entregue: [],
   cancelado: [],
+  viewOrdens: [],
+  viewModal: false,
 };
 function Pedidos(state = initialState, action) {
   switch (action.type) {
+    case '@pedido/VIEW_SUCCESS_OPEN':
+      return (state = {
+        ...state,
+        viewModal: true,
+        viewOrdens: action.pedido,
+      });
+    case '@pedido/VIEW_SUCCESS_CLOSE':
+      return (state = {
+        ...state,
+        viewModal: false,
+        viewOrdens: [],
+      });
     case '@product/GET_PENDENTE':
       return (state = {
         ...state,
