@@ -310,7 +310,11 @@ export default function Pedidos() {
                                   <div style={{ float: 'left' }}>
                                     <Image
                                       src={image.product.image.url}
-                                      size="mini"
+                                      style={{
+                                        borderRadius: 50,
+                                        height: 30,
+                                        width: 30,
+                                      }}
                                     />
                                     <div> {image.quantity}x </div>
                                   </div>
@@ -404,7 +408,11 @@ export default function Pedidos() {
                                   <div style={{ float: 'left' }}>
                                     <Image
                                       src={image.product.image.url}
-                                      size="mini"
+                                      style={{
+                                        borderRadius: 50,
+                                        height: 30,
+                                        width: 30,
+                                      }}
                                     />
                                     <div> {image.quantity}x </div>
                                   </div>
@@ -486,7 +494,11 @@ export default function Pedidos() {
                                   <div style={{ float: 'left' }}>
                                     <Image
                                       src={image.product.image.url}
-                                      size="mini"
+                                      style={{
+                                        borderRadius: 50,
+                                        height: 30,
+                                        width: 30,
+                                      }}
                                     />
                                     <div> {image.quantity}x </div>
                                   </div>
@@ -568,7 +580,11 @@ export default function Pedidos() {
                                   <div style={{ float: 'left' }}>
                                     <Image
                                       src={image.product.image.url}
-                                      size="mini"
+                                      style={{
+                                        borderRadius: 50,
+                                        height: 30,
+                                        width: 30,
+                                      }}
                                     />
                                     <div> {image.quantity}x </div>
                                   </div>
@@ -649,7 +665,11 @@ export default function Pedidos() {
                                   <div style={{ float: 'left' }}>
                                     <Image
                                       src={image.product.image.url}
-                                      size="mini"
+                                      style={{
+                                        borderRadius: 50,
+                                        height: 30,
+                                        width: 30,
+                                      }}
                                     />
                                     <div> {image.quantity}x </div>
                                   </div>
