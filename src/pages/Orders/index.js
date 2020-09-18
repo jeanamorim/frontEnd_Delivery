@@ -5,7 +5,7 @@
 /* eslint-disable import/order */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable react/button-has-type */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -26,7 +26,7 @@ import * as loadingData from '../../assets/animations/loading.json';
 import api from '../../services/api';
 import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
 import OrderDetails from '../../Modals/ViewOrdens';
-
+import socketio from 'socket.io-client';
 import { openViewPedido } from '../../store/modules/pedidos/actions';
 
 export default function Pedidos() {
@@ -41,8 +41,21 @@ export default function Pedidos() {
   const [date] = useState(new Date());
   const [render, setRender] = useState(false);
   const [, setValue] = useState({});
-
   const [loading, setLoading] = useState(false);
+  const profile_id = useSelector(state => state.user.profile.id);
+
+  const socket = useMemo(
+    () =>
+      socketio('https://backend-delivery.herokuapp.com', {
+        query: { profile_id },
+      }),
+    [profile_id],
+  );
+  useEffect(() => {
+    socket.on('new-order', data => {
+      setPendente_([...pendente, data]);
+    });
+  }, [pendente, socket]);
 
   const loadingAnimation = (
     <Animation width={10} height={10} animation={loadingData} />
