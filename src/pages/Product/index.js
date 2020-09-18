@@ -13,12 +13,12 @@ import {
   MdKeyboardArrowLeft,
   MdKeyboardArrowRight,
 } from 'react-icons/md';
-
+import { toast } from 'react-toastify';
 import {
   openEditProduct,
   GetProductRequest,
 } from '../../store/modules/product/actions';
-
+import api from '../../services/api';
 import { history } from '../../services/history';
 import { formatPrice } from '../../util/format';
 import Product from '../../Modals/NewProduct';
@@ -38,17 +38,34 @@ import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 
 export default function Products({ location }) {
-  const product = useSelector(state => state.product.ProductCategoria);
   const openModal = useSelector(state => state.product.editProduct);
-  const loading = useSelector(state => state.product.loading);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const { state } = location;
   const params = new URLSearchParams(useLocation().search);
   const dispatch = useDispatch();
   const id = params.get('id');
+
   useEffect(() => {
-    dispatch(GetProductRequest(id));
-  }, []);
+    async function loadOrder() {
+      setLoading(true);
+      try {
+        const response = await api.get(`products/${id}`);
+
+        setProducts(response.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Falha ao conectar com o servidor');
+        }
+      }
+    }
+
+    loadOrder();
+  }, [state]);
 
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
@@ -136,7 +153,7 @@ export default function Products({ location }) {
                       </Container>
                     ) : (
                       <Container>
-                        {product.length > 0 ? (
+                        {products.length > 0 ? (
                           <>
                             <PageContent>
                               <thead>
@@ -150,7 +167,7 @@ export default function Products({ location }) {
                                 </tr>
                               </thead>
                               <tbody>
-                                {product.map(delivery => (
+                                {products.map(delivery => (
                                   <>
                                     <tr
                                       key={delivery.id}

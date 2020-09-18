@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { Advertisement, Divider, Button, Icon } from 'semantic-ui-react';
 import { MdSearch } from 'react-icons/md';
@@ -15,18 +16,42 @@ import Category from '../../Modals/NewCategoria';
 import EditCategoria from '../../Modals/EditCategoria';
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
+import api from '../../services/api';
 
 export default function Categoria() {
   const dispatch = useDispatch();
-  const categorias = useSelector(state => state.categorias.Categorias);
-  const loading = useSelector(state => state.categorias.loading);
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(false);
+  // const categorias = useSelector(state => state.categorias.Categorias);
+  // const loading = useSelector(state => state.categorias.loading);
 
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
 
+  // useEffect(() => {
+  //   dispatch(getCategoriasRequest());
+  // }, []);
+
   useEffect(() => {
-    dispatch(getCategoriasRequest());
+    async function loadCategories() {
+      setLoading(true);
+      try {
+        const response = await api.get('/categories');
+
+        setCategorias(response.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Erro ao conectar com o servidor');
+        }
+      }
+    }
+
+    loadCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleEditCategoria(categoria) {
