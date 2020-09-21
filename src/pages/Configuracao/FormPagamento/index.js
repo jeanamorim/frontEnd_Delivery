@@ -1,7 +1,8 @@
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
 
-import { Modal, Button, Container, Icon } from 'semantic-ui-react';
+import { Input, Button, Label, Icon } from 'semantic-ui-react';
+import { Container, Time } from './styles';
 
 export default function FormPagamento() {
   return (
@@ -19,7 +20,26 @@ export default function FormPagamento() {
                   </div>
                   <div className="content-wrapper">
                     <div className="panel-body">
-                      <h2>Pagina em desenvolvimento</h2>
+                      <Container>
+                        <ul>
+                          <Time>
+                            <strong>ADEMAR DE CARVALHO</strong>
+                            <Input label="R$" placeholder="valor" />
+                          </Time>
+                          <Time>
+                            <strong>ADEMAR DE CARVALHO</strong>
+                            <Input label="R$" placeholder="valor" />
+                          </Time>
+                          <Time>
+                            <strong>ADEMAR DE CARVALHO</strong>
+                            <Input label="R$" placeholder="valor" />
+                          </Time>
+                          <Time>
+                            <strong>ADEMAR DE CARVALHO</strong>
+                            <Input label="R$" placeholder="valor" />
+                          </Time>
+                        </ul>
+                      </Container>
                     </div>
                   </div>
                 </div>

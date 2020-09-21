@@ -6,7 +6,8 @@ import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { toast } from 'react-toastify';
+import api from '../../services/api';
 import {
   editCategoriaRequest,
   editeCategoriaClose,
@@ -21,19 +22,35 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(false);
   const category = useSelector(state => state.categorias.CategoriaToEdit);
   const openModal = useSelector(state => state.categorias.editCategoria);
   const avatar = useSelector(state => state.uploads.avatar);
-  const loading = useSelector(state => state.categorias.loading);
+  // const loading = useSelector(state => state.categorias.loading);
 
   async function handleSubmitEdit(data) {
+    setLoading(true);
+    const { id } = category;
     const categoria = {
-      ...data,
-      id: category.id,
-      avatar,
+      name: data.name,
+      image_id: avatar.id,
     };
-    dispatch(editCategoriaRequest(categoria));
+
+    try {
+      await api.put(`categories/${id}`, categoria);
+      setLoading(false);
+      toast.success('Categoria atualizado com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+        setLoading(false);
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+        setLoading(false);
+      }
+    }
+
+    dispatch(editeCategoriaClose());
   }
 
   function handleCloseCreateProduct() {

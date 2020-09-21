@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useSelector, useDispatch } from 'react-redux';
 import { Advertisement, Divider, Button, Icon } from 'semantic-ui-react';
 import { MdSearch } from 'react-icons/md';
+import socketio from 'socket.io-client';
 import {
   getCategoriasRequest,
   editeCategoriaOpen,
@@ -22,16 +23,24 @@ export default function Categoria() {
   const dispatch = useDispatch();
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const categorias = useSelector(state => state.categorias.Categorias);
-  // const loading = useSelector(state => state.categorias.loading);
-
+  const profile_id = useSelector(state => state.user.profile.id);
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
 
-  // useEffect(() => {
-  //   dispatch(getCategoriasRequest());
-  // }, []);
+  const socket = useMemo(
+    () =>
+      socketio('https://backend-delivery.herokuapp.com', {
+        query: { profile_id },
+      }),
+    [profile_id],
+  );
+  useEffect(() => {
+    socket.on('NEW_CATEGORIAS', data => {
+      const newCategories = categorias.concat(data);
+      setCategorias(newCategories);
+    });
+  }, [categorias, socket]);
 
   useEffect(() => {
     async function loadCategories() {

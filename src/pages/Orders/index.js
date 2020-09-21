@@ -1,3 +1,4 @@
+/* eslint-disable no-multi-assign */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-unused-vars */
@@ -28,6 +29,11 @@ import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
 import OrderDetails from '../../Modals/ViewOrdens';
 import socketio from 'socket.io-client';
 import { openViewPedido } from '../../store/modules/pedidos/actions';
+import Pendente from '../../components/Pedidos/Pendente';
+import Producao from '../../components/Pedidos/Producao';
+import Enviado from '../../components/Pedidos/Enviado';
+import Entregue from '../../components/Pedidos/Entregue';
+import Cancelado from '../../components/Pedidos/Cancelado';
 
 export default function Pedidos() {
   const dispatch = useDispatch();
@@ -44,6 +50,13 @@ export default function Pedidos() {
   const [loading, setLoading] = useState(false);
   const profile_id = useSelector(state => state.user.profile.id);
 
+  function executeAudio() {
+    const audio = new Audio(
+      'https://assets.coderrocketfuel.com/pomodoro-times-up.mp3',
+    );
+    audio.play();
+  }
+
   const socket = useMemo(
     () =>
       socketio('https://backend-delivery.herokuapp.com', {
@@ -53,7 +66,17 @@ export default function Pedidos() {
   );
   useEffect(() => {
     socket.on('new-order', data => {
-      setPendente_([...pendente, data]);
+      const newValor = {
+        ...data,
+        timeDistance: formatDistanceStrict(parseISO(data.date), new Date(), {
+          addSuffix: true,
+          locale: pt,
+        }),
+      };
+
+      setPendente_([...pendente, newValor]);
+      executeAudio();
+      toast('Novo pedido');
     });
   }, [pendente, socket]);
 
@@ -242,26 +265,6 @@ export default function Pedidos() {
     dispatch(openViewPedido(order));
   }
 
-  // const dispatch = useDispatch();
-  // const pedidos = useSelector(state => state.pedidos);
-  // const [pendente, setPendente] = useState([]);
-  // const [producao, setProducao] = useState([]);
-  // const [enviado, setEnviado] = useState([]);
-  // const [entregue, setEntregue] = useState([]);
-  // const [cancelado, setCancelado] = useState([]);
-
-  // useEffect(() => {
-  //   dispatch(getPedidosRequest());
-  //   setPendente(pedidos.pendente);
-  //   setProducao(pedidos.producao);
-  //   setEnviado(pedidos.enviado);
-  //   setEntregue(pedidos.entregue);
-  //   setCancelado(pedidos.cancelado);
-  // }, [pedidos]);
-  // function updateStatuss(status, orderId) {
-  //   dispatch(updateStatus(status, orderId));
-  // }
-
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
   function refreshPage() {
     window.location.reload();
@@ -282,7 +285,7 @@ export default function Pedidos() {
                   <Button onClick={refreshPage}>
                     <Icon name="sync" /> Atualizar
                   </Button>
-                  <Button onClick={refreshPage}>
+                  <Button onClick={executeAudio}>
                     <Icon name="volume up" /> Testar som
                   </Button>
                 </div>
@@ -290,445 +293,36 @@ export default function Pedidos() {
 
               <Grid columns="equal" divided padded>
                 <Grid.Row style={{ background: '#fff' }} textAlign="center">
-                  <Grid.Column>
-                    <div>
-                      <Icon name="exclamation triangle" />
-                      PENDENTE
-                    </div>
-                    <Divider />
-                    {pendente.length > 0 ? (
-                      <>
-                        {pendente.map(order => (
-                          <div key={order.id} style={{ marginLeft: 8 }}>
-                            <div
-                              className="panel panel-default"
-                              style={{ borderColor: '#F4A460' }}
-                            >
-                              <div
-                                onClick={() => viewOrdens(order)}
-                                className="block-anchor panel-footer text-center"
-                                style={{
-                                  background: '#F4A460',
-                                  color: '#fff',
-                                  height: 35,
-                                }}
-                              >
-                                {order.timeDistance}
-                              </div>
-                              <div className="panel-body bk-secondary text-dark">
-                                <Card.Header style={{ fontSize: 10 }}>
-                                  {order.ship_neighborhood}
-                                </Card.Header>
-                                <Card.Meta> #{order.id}</Card.Meta>
-                                <Card.Description>
-                                  {order.payment_method}
-                                  <strong> {formatPrice(order.total)}</strong>
-                                </Card.Description>
-                                {order.order_details.map(image => (
-                                  <div
-                                    style={{
-                                      alignItems: 'center',
-
-                                      float: 'left',
-                                    }}
-                                  >
-                                    <Image
-                                      src={image.product.image.url}
-                                      style={{
-                                        borderRadius: 50,
-                                        height: 30,
-                                        width: 30,
-                                      }}
-                                    />
-                                    <div> {image.quantity}x </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="ui two buttons">
-                                {loading ? (
-                                  <Button loading color="red">
-                                    Loading
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    id={order.id}
-                                    color="red"
-                                    type="button"
-                                    value="CANCELADO"
-                                    onClick={handleChange}
-                                  >
-                                    Cancelar
-                                  </Button>
-                                )}
-                                {loading ? (
-                                  <Button loading color="green">
-                                    Loading
-                                  </Button>
-                                ) : (
-                                  <Button
-                                    id={order.id}
-                                    color="green"
-                                    onClick={handleChange}
-                                    type="button"
-                                    value="PRODUCAO"
-                                  >
-                                    Aceitar
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div style={{ color: '#999' }}>
-                        Nenhum pedido pendente
-                        <Divider />
-                      </div>
-                    )}
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <div className="grid">
-                      <Icon name="home" />
-                      PRODUZINDO
-                    </div>
-                    <Divider />
-                    {producao.length > 0 ? (
-                      <>
-                        {producao.map(order => (
-                          <div key={order.id}>
-                            <div
-                              className="panel panel-default"
-                              style={{ borderColor: '#F4A460' }}
-                            >
-                              <Link
-                                to={{
-                                  pathname: '/order',
-                                  search: `?id=${order.id}`,
-                                  state: {
-                                    orderData: order,
-                                  },
-                                }}
-                                className="block-anchor panel-footer text-center"
-                                style={{
-                                  background: '#F4A460',
-                                  color: '#fff',
-                                  height: 35,
-                                }}
-                              >
-                                {order.timeDistance}
-                              </Link>
-                              <div className="panel-body bk-secondary text-dark">
-                                <Card.Header style={{ fontSize: 10 }}>
-                                  {order.ship_neighborhood}
-                                </Card.Header>
-                                <Card.Meta> #{order.id}</Card.Meta>
-                                <Card.Description>
-                                  {order.payment_method}
-                                  <strong> {formatPrice(order.total)}</strong>
-                                </Card.Description>
-                                {order.order_details.map(image => (
-                                  <div style={{ float: 'left' }}>
-                                    <Image
-                                      src={image.product.image.url}
-                                      style={{
-                                        borderRadius: 50,
-                                        height: 30,
-                                        width: 30,
-                                      }}
-                                    />
-                                    <div> {image.quantity}x </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="ui two buttons">
-                                <Button
-                                  color="red"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="CANCELADO"
-                                >
-                                  <Icon name="cancel" />
-                                </Button>
-                                <Button
-                                  color="green"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="ENVIADO"
-                                >
-                                  <Icon name="check" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div style={{ color: '#999' }}>
-                        Nenhum pedido em produção
-                        <Divider />
-                      </div>
-                    )}
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <div className="grid">
-                      <Icon name="motorcycle" />
-                      ENVIADO
-                    </div>
-                    <Divider />
-                    {enviado.length > 0 ? (
-                      <>
-                        {enviado.map(order => (
-                          <div key={order.id}>
-                            <div
-                              className="panel panel-default"
-                              style={{ borderColor: '#F4A460' }}
-                            >
-                              <Link
-                                to={{
-                                  pathname: '/order',
-                                  search: `?id=${order.id}`,
-                                  state: {
-                                    orderData: order,
-                                  },
-                                }}
-                                className="block-anchor panel-footer text-center"
-                                style={{
-                                  background: '#F4A460',
-                                  color: '#fff',
-                                  height: 35,
-                                }}
-                              >
-                                {order.timeDistance}
-                              </Link>
-                              <div className="panel-body bk-secondary text-dark">
-                                <Card.Header style={{ fontSize: 10 }}>
-                                  {order.ship_neighborhood}
-                                </Card.Header>
-                                <Card.Meta> #{order.id}</Card.Meta>
-                                <Card.Description>
-                                  {order.payment_method}
-                                  <strong> {formatPrice(order.total)}</strong>
-                                </Card.Description>
-                                {order.order_details.map(image => (
-                                  <div style={{ float: 'left' }}>
-                                    <Image
-                                      src={image.product.image.url}
-                                      style={{
-                                        borderRadius: 50,
-                                        height: 30,
-                                        width: 30,
-                                      }}
-                                    />
-                                    <div> {image.quantity}x </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="ui two buttons">
-                                <Button
-                                  color="red"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="CANCELADO"
-                                >
-                                  <Icon name="cancel" />
-                                </Button>
-                                <Button
-                                  color="green"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="ENTREGUE"
-                                >
-                                  <Icon name="check" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div style={{ color: '#999' }}>
-                        Nenhum pedido enviado
-                        <Divider />
-                      </div>
-                    )}
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <div className="grid">
-                      <Icon name="check" />
-                      ENTREGUE
-                    </div>
-                    <Divider />
-                    {entregue.length > 0 ? (
-                      <>
-                        {entregue.map(order => (
-                          <div key={order.id}>
-                            <div
-                              className="panel panel-default"
-                              style={{ borderColor: '#F4A460' }}
-                            >
-                              <Link
-                                to={{
-                                  pathname: '/order',
-                                  search: `?id=${order.id}`,
-                                  state: {
-                                    orderData: order,
-                                  },
-                                }}
-                                className="block-anchor panel-footer text-center"
-                                style={{
-                                  background: '#F4A460',
-                                  color: '#fff',
-                                  height: 35,
-                                }}
-                              >
-                                {order.timeDistance}
-                              </Link>
-                              <div className="panel-body bk-secondary text-dark">
-                                <Card.Header style={{ fontSize: 10 }}>
-                                  {order.ship_neighborhood}
-                                </Card.Header>
-                                <Card.Meta> #{order.id}</Card.Meta>
-                                <Card.Description>
-                                  {order.payment_method}
-                                  <strong> {formatPrice(order.total)}</strong>
-                                </Card.Description>
-                                {order.order_details.map(image => (
-                                  <div style={{ float: 'left' }}>
-                                    <Image
-                                      src={image.product.image.url}
-                                      style={{
-                                        borderRadius: 50,
-                                        height: 30,
-                                        width: 30,
-                                      }}
-                                    />
-                                    <div> {image.quantity}x </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="ui two buttons">
-                                <Button
-                                  color="red"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="CANCELADO"
-                                >
-                                  <Icon name="cancel" />
-                                </Button>
-                                <Button
-                                  color="green"
-                                  id={order.id}
-                                  type="button"
-                                  value="PRODUCAO"
-                                >
-                                  <Icon name="check" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div style={{ color: '#999' }}>
-                        Nenhum pedido entregue
-                        <Divider />
-                      </div>
-                    )}
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <div className="grid">
-                      <Icon name="ban" />
-                      CANCELADO
-                    </div>
-                    <Divider />
-                    {cancelado.length > 0 ? (
-                      <>
-                        {cancelado.map(order => (
-                          <div key={order.id}>
-                            <div
-                              className="panel panel-default"
-                              style={{ borderColor: '#F4A460' }}
-                            >
-                              <Link
-                                to={{
-                                  pathname: '/order',
-                                  search: `?id=${order.id}`,
-                                  state: {
-                                    orderData: order,
-                                  },
-                                }}
-                                className="block-anchor panel-footer text-center"
-                                style={{
-                                  background: '#F4A460',
-                                  color: '#fff',
-                                  height: 35,
-                                }}
-                              >
-                                {order.timeDistance}
-                              </Link>
-                              <div className="panel-body bk-secondary text-dark">
-                                <Card.Header style={{ fontSize: 10 }}>
-                                  {order.ship_neighborhood}
-                                </Card.Header>
-                                <Card.Meta> #{order.id}</Card.Meta>
-                                <Card.Description>
-                                  {order.payment_method}
-                                  <strong> {formatPrice(order.total)}</strong>
-                                </Card.Description>
-                                {order.order_details.map(image => (
-                                  <div style={{ float: 'left' }}>
-                                    <Image
-                                      src={image.product.image.url}
-                                      style={{
-                                        borderRadius: 50,
-                                        height: 30,
-                                        width: 30,
-                                      }}
-                                    />
-                                    <div> {image.quantity}x </div>
-                                  </div>
-                                ))}
-                              </div>
-                              <div className="ui two buttons">
-                                <Button
-                                  color="red"
-                                  id={order.id}
-                                  onClick={handleChange}
-                                  type="button"
-                                  value="CANCELADO"
-                                >
-                                  <Icon name="cancel" />
-                                </Button>
-                                <Button
-                                  color="green"
-                                  id={order.id}
-                                  type="button"
-                                  value="PRODUCAO"
-                                >
-                                  <Icon name="check" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    ) : (
-                      <div style={{ color: '#999' }}>
-                        Nenhum pedido cancelado
-                        <Divider />
-                      </div>
-                    )}
-                  </Grid.Column>
+                  <Pendente
+                    pendente={pendente}
+                    loading={loading}
+                    handleChange={handleChange}
+                    viewOrdens={viewOrdens}
+                  />
+                  <Producao
+                    producao={producao}
+                    loading={loading}
+                    handleChange={handleChange}
+                    viewOrdens={viewOrdens}
+                  />
+                  <Enviado
+                    enviado={enviado}
+                    loading={loading}
+                    handleChange={handleChange}
+                    viewOrdens={viewOrdens}
+                  />
+                  <Entregue
+                    entregue={entregue}
+                    loading={loading}
+                    handleChange={handleChange}
+                    viewOrdens={viewOrdens}
+                  />
+                  <Cancelado
+                    cancelado={cancelado}
+                    loading={loading}
+                    handleChange={handleChange}
+                    viewOrdens={viewOrdens}
+                  />
                 </Grid.Row>
               </Grid>
               {openModal === true ? <OrderDetails /> : null}

@@ -2,7 +2,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable func-names */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -14,6 +14,7 @@ import {
   MdKeyboardArrowRight,
 } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import socketio from 'socket.io-client';
 import {
   openEditProduct,
   GetProductRequest,
@@ -23,7 +24,6 @@ import { history } from '../../services/history';
 import { formatPrice } from '../../util/format';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
-
 import ProductEdit from '../../Modals/EditProduct';
 import EditCategoria from '../../Modals/EditCategoria';
 import {
@@ -46,6 +46,22 @@ export default function Products({ location }) {
   const params = new URLSearchParams(useLocation().search);
   const dispatch = useDispatch();
   const id = params.get('id');
+
+  // const profile_id = useSelector(state => state.user.profile.id);
+
+  // const socket = useMemo(
+  //   () =>
+  //     socketio('https://backend-delivery.herokuapp.com', {
+  //       query: { profile_id },
+  //     }),
+  //   [profile_id],
+  // );
+  // useEffect(() => {
+  //   socket.on('NEW_PRODUCT', data => {
+  //     const naewProduts = products.concat(data);
+  //     setProducts(naewProduts);
+  //   });
+  // }, [products, socket]);
 
   useEffect(() => {
     async function loadOrder() {
