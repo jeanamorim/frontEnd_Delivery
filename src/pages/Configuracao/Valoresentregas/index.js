@@ -1,6 +1,13 @@
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
-import { Input, Button, Divider, Icon } from 'semantic-ui-react';
+import {
+  Input,
+  Button,
+  Divider,
+  Icon,
+  Dropdown,
+  Menu,
+} from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
 import Animation from '../../../components/Animation';
@@ -35,13 +42,20 @@ export default function FormPagamento() {
   }, [render]);
   async function updateZona(id) {
     try {
+      if (novoValor.length === 0) {
+        toast.success('Area de entrega atualizada com sucesso');
+        return;
+      }
       await api.put(`frete/${id}`, {
-        price: 123456789,
+        price: novoValor.price,
       });
 
+      const response = await api.get('/frete');
+      selValores(response.data);
+
       toast.success('Area de entrega atualizada com sucesso');
+      setNovoValor('');
       setLoading(false);
-      setRender(id);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -71,6 +85,7 @@ export default function FormPagamento() {
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
+
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
       <div className="container-fluid">
@@ -143,7 +158,14 @@ export default function FormPagamento() {
                                     Salvar
                                   </Button>
                                 </div>
-                                <span>Entrega {item.status}</span>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                  }}
+                                >
+                                  <span>Entrega {item.status}</span>
+                                </div>
                               </Time>
                             ))}
                           </ul>

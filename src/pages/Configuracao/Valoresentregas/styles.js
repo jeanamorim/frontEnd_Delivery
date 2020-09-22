@@ -55,7 +55,7 @@ export const Time = styled.li`
   }
   span {
     display: block;
-    margin-top: 3px;
+    margin-top: 10px;
     color: #09a30c;
   }
 `;
