@@ -59,3 +59,16 @@ export const Time = styled.li`
     color: #09a30c;
   }
 `;
+export const ContainerText = styled.div`
+  padding: 15px;
+  border-radius: 4px;
+  background: #dcdcdc;
+  display: flex;
+`;
+export const Text = styled.text`
+  padding: 12px;
+
+  display: flex;
+  color: #000;
+  font-weight: normal;
+`;

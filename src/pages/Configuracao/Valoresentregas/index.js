@@ -5,11 +5,13 @@ import { toast } from 'react-toastify';
 import api from '../../../services/api';
 import Animation from '../../../components/Animation';
 import * as loadingData from '../../../assets/animations/loading.json';
-import { Container, Time, Header } from './styles';
+import { Container, Time, Header, ContainerText, Text } from './styles';
 
 export default function FormPagamento() {
   const [valores, selValores] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [novoValor, setNovoValor] = useState([]);
+  const [render, setRender] = useState(0);
 
   useEffect(() => {
     async function loadCategories() {
@@ -30,17 +32,16 @@ export default function FormPagamento() {
 
     loadCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  async function handleCreateClass(e) {
-    e.preventDefault();
-
+  }, [render]);
+  async function updateZona(id) {
     try {
-      const response = await api.put('/frete', {
-        frete: valores,
+      await api.put(`frete/${id}`, {
+        price: 123456789,
       });
 
-      selValores(response.data);
+      toast.success('Area de entrega atualizada com sucesso');
       setLoading(false);
+      setRender(id);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -53,6 +54,7 @@ export default function FormPagamento() {
   function setFreteItemValue(position, field, value) {
     const updateFreteItems = valores.map((valor, index) => {
       if (index === position) {
+        setNovoValor({ ...valor, [field]: value });
         return { ...valor, [field]: value };
       }
 
@@ -89,6 +91,13 @@ export default function FormPagamento() {
                           <div> Valores das Entregas</div>
                         </Header>
                         <Divider />
+                        <ContainerText>
+                          <Text>
+                            Ao editar uma zona de entrega em seguida clique em -
+                            SALVAR - se voçê for editar outra zona sem salvar a
+                            anterior, o valor da anterior será perdido.
+                          </Text>
+                        </ContainerText>
                         {loading ? (
                           <Container>
                             <div
@@ -108,36 +117,37 @@ export default function FormPagamento() {
                             {valores.map((item, index) => (
                               <Time key={item.id}>
                                 <strong>{item.name}</strong>
-                                <Input
-                                  label="R$"
-                                  placeholder="valor"
-                                  value={item.price}
-                                  onChange={e =>
-                                    setFreteItemValue(
-                                      index,
-                                      'price',
-                                      e.target.value,
-                                    )
-                                  }
-                                />
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                  }}
+                                >
+                                  <Input
+                                    label="R$"
+                                    placeholder="valor"
+                                    value={item.price}
+                                    style={{ width: 120 }}
+                                    onChange={e =>
+                                      setFreteItemValue(
+                                        index,
+                                        'price',
+                                        e.target.value,
+                                      )
+                                    }
+                                  />
+                                  <Button
+                                    positive
+                                    style={{ marginLeft: 50 }}
+                                    onClick={() => updateZona(item.id)}
+                                  >
+                                    Salvar
+                                  </Button>
+                                </div>
                                 <span>Entrega {item.status}</span>
                               </Time>
                             ))}
                           </ul>
                         )}
-
-                        <div style={{ marginTop: 50, display: 'flex' }}>
-                          <Button negative style={{ width: 100 }}>
-                            Cancelar
-                          </Button>
-                          <Button
-                            positive
-                            style={{ width: 100 }}
-                            onClick={handleCreateClass}
-                          >
-                            Salvar
-                          </Button>
-                        </div>
                       </Container>
                     </div>
                   </div>
