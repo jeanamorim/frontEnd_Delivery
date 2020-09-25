@@ -17,6 +17,7 @@ import { Container, Time, Header, ContainerText, Text } from './styles';
 export default function FormPagamento() {
   const [valores, selValores] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingButton, setLoadingButton] = useState(false);
   const [novoValor, setNovoValor] = useState([]);
   const [render, setRender] = useState(0);
 
@@ -41,11 +42,8 @@ export default function FormPagamento() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [render]);
   async function updateZona(id) {
+    setLoadingButton(true);
     try {
-      if (novoValor.length === 0) {
-        toast.success('Area de entrega atualizada com sucesso');
-        return;
-      }
       await api.put(`frete/${id}`, {
         price: novoValor.price,
       });
@@ -55,7 +53,7 @@ export default function FormPagamento() {
 
       toast.success('Area de entrega atualizada com sucesso');
       setNovoValor('');
-      setLoading(false);
+      setLoadingButton(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -106,13 +104,13 @@ export default function FormPagamento() {
                           <div> Valores das Entregas</div>
                         </Header>
                         <Divider />
-                        <ContainerText>
+                        {/* <ContainerText>
                           <Text>
                             Ao editar uma zona de entrega em seguida clique em -
                             SALVAR - se voçê for editar outra zona sem salvar a
                             anterior, o valor da anterior será perdido.
                           </Text>
-                        </ContainerText>
+                        </ContainerText> */}
                         {loading ? (
                           <Container>
                             <div
@@ -150,13 +148,36 @@ export default function FormPagamento() {
                                       )
                                     }
                                   />
-                                  <Button
-                                    positive
-                                    style={{ marginLeft: 50 }}
-                                    onClick={() => updateZona(item.id)}
-                                  >
-                                    Salvar
-                                  </Button>
+                                  {novoValor.id === item.id ? (
+                                    <div>
+                                      {loadingButton ? (
+                                        <Button
+                                          loading
+                                          positive
+                                          style={{ marginLeft: 50 }}
+                                        >
+                                          loading
+                                        </Button>
+                                      ) : (
+                                        <Button
+                                          positive
+                                          style={{ marginLeft: 50 }}
+                                          onClick={() => updateZona(item.id)}
+                                        >
+                                          Salvar
+                                        </Button>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <Button
+                                      style={{
+                                        marginLeft: 50,
+                                        backgroundColor: '#9999',
+                                      }}
+                                    >
+                                      Salvar
+                                    </Button>
+                                  )}
                                 </div>
                                 <div
                                   style={{
