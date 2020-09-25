@@ -2,8 +2,9 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/extensions */
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Form, Input } from '@rocketseat/unform';
-import { Icon, Button } from 'semantic-ui-react';
+import { Icon, Button, Divider } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -51,26 +52,28 @@ function HorFuncionamento() {
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
-  const [date] = useState(new Date());
-  console.log(schedule);
+  const idLoja = useSelector(state => state.user.profile.id);
+  const status = useSelector(state => state.user.profile.status);
+  const [data] = useState(new Date());
 
   const classes = useStyles();
 
-  async function Schedule() {
-    setLoading(true);
-    try {
-      const response = await api.get('/schedule');
-      setScheduleItems(response.data);
-      setLoading(false);
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Falha ao conectar com o servidor');
+  useEffect(() => {
+    async function Schedule() {
+      setLoading(true);
+      try {
+        const response = await api.get('/schedule');
+
+        setScheduleItems(response.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Falha ao conectar com o servidor');
+        }
       }
     }
-  }
-  useEffect(() => {
     Schedule();
   }, []);
 
@@ -97,22 +100,30 @@ function HorFuncionamento() {
     }
   }
 
-  const date1 = new Date();
-  console.log(date1);
-  const date2 = new Date('2020-25-09 01:54:00');
-
-  // Verificamos se primeira data é igual, maior ou menor que a segunda
+  function novaHora() {
+    function pad(s) {
+      return s < 10 ? `0${s}` : s;
+    }
+    const date = new Date();
+    return [date.getHours(), date.getMinutes()].map(pad).join(':');
+  }
+  const result = scheduleItems.map(
+    item =>
+      item.week_day === data.getDay() &&
+      novaHora() <= item.to &&
+      novaHora() >= item.from,
+  );
 
   useEffect(() => {
     async function requestLoja() {
-      if (date1.getTime() === date2.getTime()) {
-        await api.put(`estabelecimento/${34}`, {
+      if (result) {
+        await api.put(`estabelecimento/${idLoja}`, {
           status: 'ABERTO',
         });
       }
     }
     requestLoja();
-  }, [date1, date2]);
+  }, [data, result, idLoja]);
 
   function setFreteItemValue(position, field, value) {
     const updateScheduleItems = scheduleItems.map((scheduleItem, index) => {
@@ -126,9 +137,14 @@ function HorFuncionamento() {
 
     setScheduleItems(updateScheduleItems);
   }
+
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
+
+  function refreshPage() {
+    window.location.reload();
+  }
   return (
     <div className="content-wrapper">
       <div className="content-wrapper">
@@ -137,9 +153,40 @@ function HorFuncionamento() {
             <div className="col-md-12">
               <h2 className="page-title">Horários de funcionamento</h2>
               <div className="panel panel-default">
-                <div className="panel-heading">Seus horários</div>
+                <div className="panel-heading">
+                  <Button onClick={refreshPage}>
+                    <Icon name="sync" /> Atualizar
+                  </Button>
+                </div>
                 <div className="panel-body">
-                  {/* <Container>
+                  <div>
+                    {status === 'FECHADO' ? (
+                      <Button
+                        type="button"
+                        negative
+                        variant="contained"
+                        style={{ borderRadius: 20 }}
+                      >
+                        {status}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        positive
+                        variant="contained"
+                        style={{ borderRadius: 20 }}
+                      >
+                        {status}
+                      </Button>
+                    )}
+                  </div>
+
+                  <Container>
+                    <Header>
+                      <div> Horários de funcionamento</div>
+                    </Header>
+                    <Divider />
+                    {/* <Container>
                     <ContainerText>
                       <Text>
                         Ao editar um horário em seguida clique em - SALVAR - se
@@ -148,107 +195,112 @@ function HorFuncionamento() {
                       </Text>
                     </ContainerText>
                   </Container> */}
-                  {loading ? (
-                    <Container>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'column',
-                        }}
-                      >
-                        Carregando...
-                      </div>
-                      {loadingAnimation}
-                    </Container>
-                  ) : (
-                    <Container>
-                      {scheduleItems.map((item, index) => (
-                        <form className={classes.container} noValidate>
-                          <FormControl className={classes.formControl}>
-                            <Select
-                              disabled
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={item.week_day}
-                              // onChange={handleChange}
-                            >
-                              <MenuItem value={1}>Domingo</MenuItem>
-                              <MenuItem value={2}>Segunda-feira</MenuItem>
-                              <MenuItem value={3}>Terça-feira</MenuItem>
-                              <MenuItem value={4}>Quarta-feira</MenuItem>
-                              <MenuItem value={5}>Quinta-feira</MenuItem>
-                              <MenuItem value={6}>Sexta-feira</MenuItem>
-                              <MenuItem value={7}>Sabado</MenuItem>
-                            </Select>
-                          </FormControl>
+                    {loading ? (
+                      <Container>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          Carregando...
+                        </div>
+                        {loadingAnimation}
+                      </Container>
+                    ) : (
+                      <Container>
+                        {scheduleItems.map((item, index) => (
+                          <form
+                            className={classes.container}
+                            noValidate
+                            key={item.id}
+                          >
+                            <FormControl className={classes.formControl}>
+                              <Select
+                                disabled
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={item.week_day}
+                                // onChange={handleChange}
+                              >
+                                <MenuItem value={1}>Segunda-feira</MenuItem>
+                                <MenuItem value={2}>Terça-feira</MenuItem>
+                                <MenuItem value={3}>Quarta-feira</MenuItem>
+                                <MenuItem value={4}>Quinta-feira</MenuItem>
+                                <MenuItem value={5}>Sexta-feira</MenuItem>
+                                <MenuItem value={6}>Sabado</MenuItem>
+                                <MenuItem value={7}>Domingo</MenuItem>
+                              </Select>
+                            </FormControl>
 
-                          <TextField
-                            id="datetime-local"
-                            label="Que horas quer abrir?"
-                            type="time"
-                            defaultValue={item.from}
-                            className={classes.textField}
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                            onChange={e =>
-                              setFreteItemValue(index, 'from', e.target.value)
-                            }
-                          />
-
-                          <TextField
-                            id="datetime-local"
-                            label="Quer horas quer fechar?"
-                            type="time"
-                            defaultValue={item.to}
-                            className={classes.textField}
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
-                            onChange={e =>
-                              setFreteItemValue(index, 'to', e.target.value)
-                            }
-                          />
-                          {schedule.week_day === item.week_day ? (
-                            <div>
-                              {loadingButton ? (
-                                <Button
-                                  type="button"
-                                  loading
-                                  positive
-                                  variant="contained"
-                                >
-                                  loading
-                                </Button>
-                              ) : (
-                                <Button
-                                  type="button"
-                                  loading={loading}
-                                  positive
-                                  variant="contained"
-                                  onClick={() => updateHours(item.id)}
-                                >
-                                  Salvar
-                                </Button>
-                              )}
-                            </div>
-                          ) : (
-                            <Button
-                              type="button"
-                              variant="contained"
-                              style={{
-                                backgroundColor: '#9999',
+                            <TextField
+                              id="datetime-local"
+                              label="Que horas quer abrir?"
+                              type="time"
+                              defaultValue={item.from}
+                              className={classes.textField}
+                              InputLabelProps={{
+                                shrink: true,
                               }}
-                            >
-                              Salvar
-                            </Button>
-                          )}
-                        </form>
-                      ))}
-                    </Container>
-                  )}
+                              onChange={e =>
+                                setFreteItemValue(index, 'from', e.target.value)
+                              }
+                            />
+
+                            <TextField
+                              id="datetime-local"
+                              label="Quer horas quer fechar?"
+                              type="time"
+                              defaultValue={item.to}
+                              className={classes.textField}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              onChange={e =>
+                                setFreteItemValue(index, 'to', e.target.value)
+                              }
+                            />
+                            {schedule.week_day === item.week_day ? (
+                              <div>
+                                {loadingButton ? (
+                                  <Button
+                                    type="button"
+                                    loading
+                                    positive
+                                    variant="contained"
+                                  >
+                                    loading
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    type="button"
+                                    loading={loading}
+                                    positive
+                                    variant="contained"
+                                    onClick={() => updateHours(item.id)}
+                                  >
+                                    Salvar
+                                  </Button>
+                                )}
+                              </div>
+                            ) : (
+                              <Button
+                                type="button"
+                                variant="contained"
+                                style={{
+                                  backgroundColor: '#9999',
+                                }}
+                              >
+                                Salvar
+                              </Button>
+                            )}
+                          </form>
+                        ))}
+                      </Container>
+                    )}
+                  </Container>
                 </div>
               </div>
             </div>
