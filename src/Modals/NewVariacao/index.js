@@ -20,22 +20,6 @@ import {
   postVariacaoRequest,
 } from '../../store/modules/variacao/actions';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  category_id: Yup.string().required('A categoria é obrigatória'),
-  description: Yup.string().required('A descrição é obrigatória'),
-  quantity: Yup.string()
-    .matches(/^[+]?([.]\d+|\d+[.]?\d*)$/, 'O valor precisa ser um número')
-    .required('O número precisa ser maior que zero'),
-  unit: Yup.string().required('A unidade é obrigatória'),
-  price: Yup.string()
-    .matches(
-      /^[+]?([.]\d+|\d+[.]?\d*)$/,
-      'Insira um número válido. Ex: 3, 1.5, 0.46',
-    )
-    .required('O preço é obrigatório'),
-});
-
 export default function Neew({ idCat }) {
   const dispatch = useDispatch();
   const [newVariacao, setNewVariacao] = useState([]);

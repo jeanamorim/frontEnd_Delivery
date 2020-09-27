@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useMemo } from 'react';
@@ -7,10 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Advertisement, Divider, Button, Icon } from 'semantic-ui-react';
 import { MdSearch } from 'react-icons/md';
 import socketio from 'socket.io-client';
-import {
-  getCategoriasRequest,
-  editeCategoriaOpen,
-} from '../../store/modules/categorias/actions';
+import { editeCategoriaOpen } from '../../store/modules/categorias/actions';
 import { Container, PageActions, Title } from './styles';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
@@ -35,32 +33,36 @@ export default function Categoria() {
       }),
     [profile_id],
   );
+
+  async function loadCategories() {
+    setLoading(true);
+    try {
+      const response = await api.get('/categories');
+
+      setCategorias(response.data);
+      setLoading(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
   useEffect(() => {
     socket.on('NEW_CATEGORIAS', data => {
       const newCategories = categorias.concat(data);
       setCategorias(newCategories);
     });
   }, [categorias, socket]);
+  useEffect(() => {
+    socket.on('UPDATE_CATEGORIAS', data => {
+      loadCategories();
+    });
+  }, [categorias, socket]);
 
   useEffect(() => {
-    async function loadCategories() {
-      setLoading(true);
-      try {
-        const response = await api.get('/categories');
-
-        setCategorias(response.data);
-        setLoading(false);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Erro ao conectar com o servidor');
-        }
-      }
-    }
-
     loadCategories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleEditCategoria(categoria) {
@@ -171,18 +173,6 @@ export default function Categoria() {
                           <EditCategoria />
                         </Container>
                       )}
-                      {/* ) : (
-                        <Container
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'column',
-                          }}
-                        >
-                          <div>Nenhum categoria cadastrada...</div>
-                        </Container>
-                      )} */}
                     </div>
                   </div>
                 </div>

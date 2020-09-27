@@ -12,6 +12,7 @@ import {
   MdKeyboardArrowRight,
   MdSearch,
 } from 'react-icons/md';
+import { toast } from 'react-toastify';
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 
@@ -29,12 +30,34 @@ import {
   PageActions,
   Title,
 } from './styles';
+import api from '../../services/api';
 
 export default function Offers() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const ofertas = useSelector(state => state.ofertas.Ofertas);
-  const loading = useSelector(state => state.ofertas.loading);
+  const [loading, setLoading] = useState(false);
+  const [ofertas, setOfertas] = useState([]);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function loadCategories() {
+      setLoading(true);
+      try {
+        const response = await api.get('/offers');
+
+        setOfertas(response.data);
+        setLoading(false);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Erro ao conectar com o servidor');
+        }
+      }
+    }
+
+    loadCategories();
+  }, []);
 
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
@@ -83,159 +106,140 @@ export default function Offers() {
                         </div>
                       </PageActions>
                       <Divider />
-                      {loading ? (
-                        <Container>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexDirection: 'column',
-                            }}
-                          >
-                            Carregando ofertas..
-                          </div>
-                          {loadingAnimation}
-                        </Container>
-                      ) : (
-                        <Container>
-                          <PageContent>
-                            <thead>
-                              <tr>
-                                <th />
-                                <th>NOME DO PRODUTO</th>
-                                <th>QUANTIDADE</th>
-                                <th> UNIDADE</th>
-                                <th>DE</th>
-                                <th>PARA</th>
-                                <th>STATUS</th>
-                                <th>EXPIRAÇÃO</th>
-                                <th>AÇÕES</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {ofertas.map(delivery => (
-                                <>
-                                  <tr key={delivery.id}>
-                                    <td>
-                                      <main>
-                                        <img
-                                          src={delivery.product.image.url}
-                                          alt=""
-                                        />
-                                      </main>
-                                    </td>
-                                    <td>{delivery.product.name}</td>
-                                    <td>{delivery.quantity}</td>
-                                    <td>{delivery.unit}</td>
-                                    <td>
-                                      {formatPrice(delivery.product.price)}
-                                    </td>
-                                    <td>{formatPrice(delivery.to)}</td>
-                                    <td
-                                      className={
-                                        isAfter(
+
+                      <div>
+                        {loading ? (
+                          <Container>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                              }}
+                            >
+                              Carregando ofertas..
+                            </div>
+                            {loadingAnimation}
+                          </Container>
+                        ) : (
+                          <Container>
+                            <PageContent>
+                              <thead>
+                                <tr>
+                                  <th />
+                                  <th>NOME DO PRODUTO</th>
+                                  <th>QUANTIDADE</th>
+                                  <th> UNIDADE</th>
+                                  <th>DE</th>
+                                  <th>PARA</th>
+                                  <th>STATUS</th>
+                                  <th>EXPIRAÇÃO</th>
+                                  <th>AÇÕES</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {ofertas.map(delivery => (
+                                  <>
+                                    <tr key={delivery.id}>
+                                      <td>
+                                        <main>
+                                          <img
+                                            src={delivery.product.image.url}
+                                            alt=""
+                                          />
+                                        </main>
+                                      </td>
+                                      <td>{delivery.product.name}</td>
+                                      <td>{delivery.quantity}</td>
+                                      <td>{delivery.unit}</td>
+                                      <td>
+                                        {formatPrice(delivery.product.price)}
+                                      </td>
+                                      <td>{formatPrice(delivery.to)}</td>
+                                      <td
+                                        className={
+                                          isAfter(
+                                            parseISO(delivery.expiration_date),
+                                            new Date(),
+                                          )
+                                            ? 'text-success'
+                                            : 'text-danger'
+                                        }
+                                      >
+                                        {isAfter(
                                           parseISO(delivery.expiration_date),
                                           new Date(),
                                         )
-                                          ? 'text-success'
-                                          : 'text-danger'
-                                      }
+                                          ? 'ATIVO'
+                                          : 'iNATIVO'}
+                                      </td>
+
+                                      <td>
+                                        {format(
+                                          parseISO(delivery.expiration_date),
+                                          'PPPpp',
+                                          {
+                                            locale: dateLanguage,
+                                          },
+                                        )}
+                                      </td>
+                                      <td>
+                                        <Icon
+                                          title="Terminar ofertas"
+                                          color="red"
+                                          name="delete"
+                                          size="large"
+                                          onClick={() =>
+                                            setOpenDeleteModal(true)
+                                          }
+                                        />
+                                      </td>
+                                    </tr>
+                                    <br />
+                                    <Modal
+                                      closeIcon
+                                      onClose={() => setOpenDeleteModal(false)}
+                                      onOpen={() => setOpenDeleteModal(true)}
+                                      open={openDeleteModal}
                                     >
-                                      {isAfter(
-                                        parseISO(delivery.expiration_date),
-                                        new Date(),
-                                      )
-                                        ? 'ATIVO'
-                                        : 'iNATIVO'}
-                                    </td>
-
-                                    <td>
-                                      {' '}
-                                      {format(
-                                        parseISO(delivery.expiration_date),
-                                        'PPPpp',
-                                        {
-                                          locale: dateLanguage,
-                                        },
-                                      )}
-                                    </td>
-                                    <td>
-                                      <Icon
-                                        title="Terminar ofertas"
-                                        color="red"
-                                        name="delete"
-                                        size="large"
-                                        onClick={() => setOpenDeleteModal(true)}
+                                      <Header
+                                        icon="archive"
+                                        content="Deletar produto"
                                       />
-                                    </td>
-                                  </tr>
-                                  <br />
-                                  <Modal
-                                    closeIcon
-                                    onClose={() => setOpenDeleteModal(false)}
-                                    onOpen={() => setOpenDeleteModal(true)}
-                                    open={openDeleteModal}
-                                  >
-                                    <Header
-                                      icon="archive"
-                                      content="Deletar produto"
-                                    />
-                                    <Modal.Content>
-                                      <p>
-                                        Voçê tem certeza que deseja remover a
-                                        oferta do produto{' '}
-                                        {delivery.product.name}?
-                                      </p>
-                                    </Modal.Content>
-                                    <Modal.Actions>
-                                      <Button
-                                        color="red"
-                                        onClick={() =>
-                                          setOpenDeleteModal(false)
-                                        }
-                                      >
-                                        <Icon name="remove" /> Não
-                                      </Button>
-                                      <Button
-                                        color="green"
-                                        onClick={() =>
-                                          handleDeleteOferta(delivery.id)
-                                        }
-                                      >
-                                        <Icon name="checkmark" /> Sim
-                                      </Button>
-                                    </Modal.Actions>
-                                  </Modal>
-                                </>
-                              ))}
-                            </tbody>
-                          </PageContent>
-
-                          <Pagination>
-                            <button type="button">
-                              <MdKeyboardArrowLeft size={20} color="#7d40e7" />
-                            </button>
-
-                            <span>Página 1</span>
-
-                            <button type="button">
-                              <MdKeyboardArrowRight size={20} color="#7d40e7" />
-                            </button>
-                          </Pagination>
-                        </Container>
-                        // ) : (
-                        //   <Container
-                        //     style={{
-                        //       display: 'flex',
-                        //       alignItems: 'center',
-                        //       justifyContent: 'center',
-                        //       flexDirection: 'column',
-                        //     }}
-                        //   >
-                        //     <div>Nenhum oferta cadastrada...</div>
-                        //   </Container>
-                      )}
+                                      <Modal.Content>
+                                        <p>
+                                          Voçê tem certeza que deseja remover a
+                                          oferta do produto{' '}
+                                          {delivery.product.name}?
+                                        </p>
+                                      </Modal.Content>
+                                      <Modal.Actions>
+                                        <Button
+                                          color="red"
+                                          onClick={() =>
+                                            setOpenDeleteModal(false)
+                                          }
+                                        >
+                                          <Icon name="remove" /> Não
+                                        </Button>
+                                        <Button
+                                          color="green"
+                                          onClick={() =>
+                                            handleDeleteOferta(delivery.id)
+                                          }
+                                        >
+                                          <Icon name="checkmark" /> Sim
+                                        </Button>
+                                      </Modal.Actions>
+                                    </Modal>
+                                  </>
+                                ))}
+                              </tbody>
+                            </PageContent>
+                          </Container>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

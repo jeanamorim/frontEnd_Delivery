@@ -7,14 +7,15 @@ import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import translate from '../../locales';
 import { resetUploads } from '../../store/modules/uploads/actions';
+import api from '../../services/api';
 import {
-  postProductRequest,
   openModalCadastarProduct,
   fecharModalCadastarProduct,
 } from '../../store/modules/product/actions';
-import { getCategoriasRequest } from '../../store/modules/categorias/actions';
+
 import Avatar from './Image';
 import { ModalArea, TwoInput, AutocompleteStyle } from './style';
 
@@ -33,25 +34,57 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const modal = useSelector(state => state.product.modalCadastrarProduct);
-  const categorias = useSelector(state => state.categorias.Categorias);
-  const loading = useSelector(state => state.product.loading);
 
-  const avatar = useSelector(state => state.uploads);
+  const avatar = useSelector(state => state.uploads.avatar);
 
   useEffect(() => {
-    dispatch(getCategoriasRequest());
+    async function getCategoria() {
+      try {
+        const response = await api.get('/categories');
+        setCategories(response.data);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Falha ao conectar com o servidor');
+        }
+      }
+    }
+    getCategoria();
   }, []);
 
   async function handleSubmit(data) {
-    dispatch(postProductRequest(data, avatar));
-    dispatch(resetUploads());
+    setLoading(true);
+    try {
+      if (avatar === null) {
+        toast.error('A imagem é obrigatória, favor verificar!');
+        return;
+      }
+      await api.post('products', {
+        ...data,
+        image_id: avatar.id,
+      });
+      dispatch(fecharModalCadastarProduct());
+      dispatch(resetUploads());
+      setLoading(false);
+      toast.success('Produto Cadastrado com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
   }
 
-  const options = categorias.map(category => ({
+  const options = categories.map(category => ({
     id: category.id,
     title: category.name,
   }));
+
   function handleAbrirModal() {
     dispatch(openModalCadastarProduct());
     dispatch(resetUploads());

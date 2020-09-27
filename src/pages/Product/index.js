@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable radix */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-shadow */
 /* eslint-disable func-names */
@@ -8,17 +10,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Icon, Button, Divider } from 'semantic-ui-react';
-import {
-  MdSearch,
-  MdKeyboardArrowLeft,
-  MdKeyboardArrowRight,
-} from 'react-icons/md';
+import { MdSearch } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import socketio from 'socket.io-client';
-import {
-  openEditProduct,
-  GetProductRequest,
-} from '../../store/modules/product/actions';
+import { openEditProduct } from '../../store/modules/product/actions';
 import api from '../../services/api';
 import { history } from '../../services/history';
 import { formatPrice } from '../../util/format';
@@ -26,14 +21,8 @@ import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
 import ProductEdit from '../../Modals/EditProduct';
 import EditCategoria from '../../Modals/EditCategoria';
-import {
-  Container,
-  Title,
-  PageActions,
-  PageContent,
-  Pagination,
-} from './styles';
-import { editeCategoriaOpen } from '../../store/modules/categorias/actions';
+import { Container, Title, PageActions, PageContent } from './styles';
+import { getCategoriasRequest } from '../../store/modules/categorias/actions';
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 
@@ -46,40 +35,48 @@ export default function Products({ location }) {
   const params = new URLSearchParams(useLocation().search);
   const dispatch = useDispatch();
   const id = params.get('id');
+  const idInt = parseInt(id);
+  const profile_id = useSelector(state => state.user.profile.id);
 
-  // const profile_id = useSelector(state => state.user.profile.id);
-
-  // const socket = useMemo(
-  //   () =>
-  //     socketio('https://backend-delivery.herokuapp.com', {
-  //       query: { profile_id },
-  //     }),
-  //   [profile_id],
-  // );
-  // useEffect(() => {
-  //   socket.on('NEW_PRODUCT', data => {
-  //     const naewProduts = products.concat(data);
-  //     setProducts(naewProduts);
-  //   });
-  // }, [products, socket]);
-
+  const socket = useMemo(
+    () =>
+      socketio('https://backend-delivery.herokuapp.com', {
+        query: { profile_id },
+      }),
+    [profile_id],
+  );
   useEffect(() => {
-    async function loadOrder() {
-      setLoading(true);
-      try {
-        const response = await api.get(`products/${id}`);
+    socket.on('NEW_PRODUCT', data => {
+      const verificar = data[0].category.id === idInt;
+      if (verificar) {
+        const naewProduts = products.concat(data);
+        setProducts(naewProduts);
+      }
+    });
+  }, [products, socket]);
+  useEffect(() => {
+    socket.on('UPDATE_PRODUCT', data => {
+      loadOrder();
+    });
+  }, [products, socket]);
 
-        setProducts(response.data);
-        setLoading(false);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Falha ao conectar com o servidor');
-        }
+  async function loadOrder() {
+    setLoading(true);
+    try {
+      const response = await api.get(`products/${id}`);
+      dispatch(getCategoriasRequest());
+      setProducts(response.data);
+      setLoading(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
       }
     }
+  }
 
+  useEffect(() => {
     loadOrder();
   }, [state]);
 
@@ -94,9 +91,7 @@ export default function Products({ location }) {
     };
     dispatch(openEditProduct(produto));
   }
-  function handleEditCategoria() {
-    dispatch(editeCategoriaOpen(state.categoria));
-  }
+
   function refreshPage() {
     window.location.reload();
   }
@@ -126,13 +121,6 @@ export default function Products({ location }) {
                       <strong style={{ textTransform: 'uppercase' }}>
                         {state.categoria.name}
                       </strong>
-                      <Icon
-                        style={{ marginTop: -10, marginLeft: 5 }}
-                        name="pencil alternate"
-                        color="orange"
-                        size="large"
-                        onClick={() => handleEditCategoria()}
-                      />
                     </Title>
                     <EditCategoria />
                     <PageActions>
@@ -211,28 +199,8 @@ export default function Products({ location }) {
                                   </>
                                 ))}
                               </tbody>
-                              {openModal === true ? (
-                                <ProductEdit idCat={id} />
-                              ) : null}
+                              {openModal === true ? <ProductEdit /> : null}
                             </PageContent>
-
-                            <Pagination>
-                              <button type="button">
-                                <MdKeyboardArrowLeft
-                                  size={20}
-                                  color="#7d40e7"
-                                />
-                              </button>
-
-                              <span>Página 1</span>
-
-                              <button type="button">
-                                <MdKeyboardArrowRight
-                                  size={20}
-                                  color="#7d40e7"
-                                />
-                              </button>
-                            </Pagination>
                           </>
                         ) : (
                           <Container

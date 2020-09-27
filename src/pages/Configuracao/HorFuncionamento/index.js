@@ -121,6 +121,9 @@ function HorFuncionamento() {
           status: 'ABERTO',
         });
       }
+      await api.put(`estabelecimento/${idLoja}`, {
+        status: 'FECHADO',
+      });
     }
     requestLoja();
   }, [data, result, idLoja]);

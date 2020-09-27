@@ -1,20 +1,3 @@
-// cadastrar um produto
-export function postProductRequest(product, avatar) {
-  return {
-    type: '@product/POST_PRODUCT_REQUEST',
-    payload: { product, avatar },
-  };
-}
-export function postProductSucess() {
-  return {
-    type: '@product/POST_PRODUCT_SUCCESS',
-  };
-}
-export function postProductFailure() {
-  return {
-    type: '@product/POST_PRODUCT_FAILURE',
-  };
-}
 export function openModalCadastarProduct() {
   return {
     type: '@product/OPEN_MODAL_CADASTRAR_PRODUCT',
@@ -25,22 +8,7 @@ export function fecharModalCadastarProduct() {
     type: '@product/CLOSE_MODAL_CADASTRAR_PRODUCT',
   };
 }
-// lista os produtos por categorias
-export function GetProductRequest(id) {
-  return {
-    type: '@product/GET_PRODUCT_REQUEST',
-    payload: { id },
-  };
-}
-export const GetProductSucess = product => ({
-  type: '@product/GET_PRODUCT_SUCCESS',
-  product,
-});
-export function GetProductFailure() {
-  return {
-    type: '@product/GET_PRODUCT_FAILURE',
-  };
-}
+
 // lista todos os produtos, usado para cadastar uma oferta
 export function listProductsRequest() {
   return {
@@ -58,12 +26,6 @@ export function listProductFailure() {
 }
 // Edita os produtos
 
-export function updateProductRequest(data, avatar, id, idCat) {
-  return {
-    type: '@product/EDIT_REQUEST',
-    payload: { data, avatar, id, idCat },
-  };
-}
 export const openEditProduct = product => ({
   type: '@product/EDIT_SUCCESS_OPEN',
   product,
@@ -71,41 +33,3 @@ export const openEditProduct = product => ({
 export const closeEditProduct = () => ({
   type: '@product/EDIT_SUCCESS_CLOSE',
 });
-
-// delete product
-export function deleteProductRequest(id, idCat) {
-  return {
-    type: '@product/DELETE_PRODUCT_REQUEST',
-    payload: { id, idCat },
-  };
-}
-export function deleteProductSucess() {
-  return {
-    type: '@product/DELETE_PRODUCT_SUCESS',
-  };
-}
-export function deleteProductFailure() {
-  return {
-    type: '@product/DELETE_PRODUCT_FAILURE',
-  };
-}
-// delete a variacao do estado do redux, por id
-export function deleteVariacao(id) {
-  return {
-    type: '@product/REMOVE_VARIACAO',
-    id,
-  };
-}
-// delete a opção da variação do estado do redux, por id
-export function deleteOpcao(id) {
-  return {
-    type: '@product/REMOVE_OPCAO',
-    id,
-  };
-}
-export function adicionarVariacao(data) {
-  return {
-    type: '@product/ADICIONAR_VARIACAO',
-    payload: { data },
-  };
-}

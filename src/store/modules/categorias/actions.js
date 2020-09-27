@@ -1,36 +1,5 @@
-// CADASTRAR UMA CATEGORIA
-export function postCategoriaRequest(categoria) {
-  return {
-    type: '@product/POST_CATEGORIA_REQUEST',
-    payload: { categoria },
-  };
-}
-
-export function postCategoriaSucess() {
-  return {
-    type: '@product/POST_CATEGORIA_SUCCESS',
-  };
-}
-export function postCategoriaFailure() {
-  return {
-    type: '@product/POST_CATEGORIA_FAILURE',
-  };
-}
 // LISTAR CATEGORIAS
-export function getCategoriasRequest() {
-  return {
-    type: '@product/GET_CATEGORIA_REQUEST',
-  };
-}
-export const getCategoriasSuccess = product => ({
-  type: '@product/GET_CATEGORIA_SUCCESS',
-  product,
-});
-export function getCategoriaFailure() {
-  return {
-    type: '@product/GET_CATEGORIA_FAILURE',
-  };
-}
+
 // DELETAR UMA CATEGORIA
 export function deletOfemrtasRequest(id) {
   return {
@@ -59,25 +28,18 @@ export function editeCategoriaClose() {
     type: '@product/EDIT_CATEGORIA_CLOSE',
   };
 }
-// editar a categoria
-export function editCategoriaRequest(categoria) {
+// LISTAR CATEGORIAS
+export function getCategoriasRequest() {
   return {
-    type: '@product/EDIT_CATEGORIA_REQUEST',
-    payload: { categoria },
+    type: '@product/GET_CATEGORIA_REQUEST',
   };
 }
-export function editCategoriaSuccess() {
+export const getCategoriasSuccess = product => ({
+  type: '@product/GET_CATEGORIA_SUCCESS',
+  product,
+});
+export function getCategoriaFailure() {
   return {
-    type: '@product/EDIT_CATEGORIA_SUCCESS',
-  };
-}
-export function editCategoriaSucess() {
-  return {
-    type: '@product/EDIT_CATEGORIA_CLOSE',
-  };
-}
-export function editCategoriaFailure() {
-  return {
-    type: '@product/EDIT_CATEGORIA_FAILURE',
+    type: '@product/GET_CATEGORIA_FAILURE',
   };
 }

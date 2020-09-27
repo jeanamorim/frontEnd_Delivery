@@ -6,10 +6,12 @@ import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { toast } from 'react-toastify';
+import api from '../../services/api';
 import { postCategoriaRequest } from '../../store/modules/categorias/actions';
 import Avatar from './Image';
 import { ModalArea } from './style';
+import { resetUploads } from '../../store/modules/uploads/actions';
 
 const schema = Yup.object().shape({
   name: Yup.string().required('O nome é obrigatório'),
@@ -18,21 +20,37 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-
+  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const avatar = useSelector(state => state.uploads);
-  const loading = useSelector(state => state.categorias.loading);
+  const avatar = useSelector(state => state.uploads.avatar);
 
   async function handleSubmit(data) {
-    const categoria = {
-      ...data,
-      image_id: avatar.avatar.id,
-    };
-    dispatch(postCategoriaRequest(categoria));
-    setOpenModal(false);
+    setLoading(true);
+    try {
+      if (avatar === null) {
+        toast.error('A imagem é obrigatória, favor verificar!');
+        setLoading(false);
+        return;
+      }
+      await api.post('categories', {
+        ...data,
+        image_id: avatar.id,
+      });
+      dispatch(resetUploads());
+      setOpenModal(false);
+
+      setLoading(false);
+      toast.success('Categoria Cadastrado com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
   }
 
-  function handleCloseCreateProduct() {
+  function handleCloseCreatCategoria() {
     setOpenModal(false);
   }
 
@@ -51,7 +69,7 @@ export default function Neew() {
         Cadastrar categoria
         <MdClose
           style={{ float: 'right' }}
-          onClick={handleCloseCreateProduct}
+          onClick={handleCloseCreatCategoria}
         />
       </Modal.Header>
       <Form onSubmit={handleSubmit} schema={schema}>

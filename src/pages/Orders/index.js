@@ -37,7 +37,6 @@ import Cancelado from '../../components/Pedidos/Cancelado';
 
 export default function Pedidos() {
   const dispatch = useDispatch();
-  const [updatingStatus, setUpdatingStatus] = useState(0);
   const openModal = useSelector(state => state.pedidos.viewModal);
   const [pendente, setPendente_] = useState([]);
   const [producao, setProducao_] = useState([]);
@@ -45,8 +44,7 @@ export default function Pedidos() {
   const [entregue, setEntregue_] = useState([]);
   const [cancelado, setCancelado_] = useState([]);
   const [date] = useState(new Date());
-  const [render, setRender] = useState(false);
-  const [, setValue] = useState({});
+
   const [loading, setLoading] = useState(false);
   const profile_id = useSelector(state => state.user.profile.id);
 
@@ -59,6 +57,7 @@ export default function Pedidos() {
 
   const socket = useMemo(
     () =>
+      // socketio('http://localhost:3005', {
       socketio('https://backend-delivery.herokuapp.com', {
         query: { profile_id },
       }),
@@ -84,182 +83,65 @@ export default function Pedidos() {
     <Animation width={10} height={10} animation={loadingData} />
   );
 
+  async function Orders() {
+    try {
+      const response = await api.get('orders', {
+        params: { date },
+      });
+
+      const data = response.data.map(item => ({
+        ...item,
+        timeDistance: formatDistanceStrict(parseISO(item.date), new Date(), {
+          addSuffix: true,
+          locale: pt,
+        }),
+      }));
+      const pendentes = data.filter(item => item.status === 'PENDENTE');
+      const producaos = data.filter(item => item.status === 'PRODUCAO');
+      const enviados = data.filter(item => item.status === 'ENVIADO');
+      const entregues = data.filter(item => item.status === 'ENTREGUE');
+      const cancelados = data.filter(item => item.status === 'CANCELADO');
+
+      setPendente_(pendentes);
+      setProducao_(producaos);
+      setEnviado_(enviados);
+      setEntregue_(entregues);
+      setCancelado_(cancelados);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Falha ao conectar com o servidor');
+      }
+    }
+  }
+
   async function handleChange(event) {
     setLoading(true);
     const status = event.target.value;
     const orderId = event.target.id;
-    setValue({
-      id: Number(orderId),
-      status,
-    });
 
-    if (status !== '') {
-      setUpdatingStatus(orderId);
-      try {
-        await api.put(`/orders/${orderId}`, {
-          status,
-        });
-
-        if (status === 'cancelled') {
-          await api.delete(`/orders/${orderId}`);
-        }
-        setLoading(false);
-        setRender(!render);
-      } catch (err) {
-        if (err.response) {
-          toast.error('Erro no servidor');
-        } else {
-          toast.error('Erro ao conectar com o servidor');
-        }
-      }
-    }
-  }
-  async function loadStatusPend() {
     try {
-      const response = await api.get(`status/PENDENTE`, {
-        params: { date },
+      await api.put(`/orders/${orderId}`, {
+        status,
       });
 
-      const data = response.data.map(statusPendenetes => ({
-        ...statusPendenetes,
-        timeDistance: formatDistanceStrict(
-          parseISO(statusPendenetes.date),
-          new Date(),
-          { addSuffix: true, locale: pt },
-        ),
-      }));
-      setPendente_(data);
-
-      if (updatingStatus !== 0) {
-        setUpdatingStatus(0);
+      if (status === 'CANCELADO') {
+        await api.delete(`/orders/${orderId}`);
       }
+      Orders();
+      setLoading(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
       } else {
-        toast.error('Falha ao conectar com o servidor');
-      }
-    }
-  }
-  async function loadStatusProd() {
-    try {
-      const response = await api.get(`status/PRODUCAO`, {
-        params: { date },
-      });
-
-      const data = response.data.map(statusAprovado => ({
-        ...statusAprovado,
-        timeDistance: formatDistanceStrict(
-          parseISO(statusAprovado.date),
-          new Date(),
-          { addSuffix: true, locale: pt },
-        ),
-      }));
-
-      setProducao_(data);
-
-      if (updatingStatus !== 0) {
-        setUpdatingStatus(0);
-      }
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Falha ao conectar com o servidor');
-      }
-    }
-  }
-  async function loadStatusEnv() {
-    try {
-      const response = await api.get(`status/ENVIADO`, {
-        params: { date },
-      });
-
-      const data = response.data.map(statusEnviado => ({
-        ...statusEnviado,
-        timeDistance: formatDistanceStrict(
-          parseISO(statusEnviado.date),
-          new Date(),
-          { addSuffix: true, locale: pt },
-        ),
-      }));
-
-      setEnviado_(data);
-
-      if (updatingStatus !== 0) {
-        setUpdatingStatus(0);
-      }
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Falha ao conectar com o servidor');
-      }
-    }
-  }
-  async function loadStatusCanc() {
-    try {
-      const response = await api.get(`status/CANCELADO`, {
-        params: { date },
-      });
-
-      const data = response.data.map(statusCancelado => ({
-        ...statusCancelado,
-        timeDistance: formatDistanceStrict(
-          parseISO(statusCancelado.date),
-          new Date(),
-          { addSuffix: true, locale: pt },
-        ),
-      }));
-
-      setCancelado_(data);
-
-      if (updatingStatus !== 0) {
-        setUpdatingStatus(0);
-      }
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Falha ao conectar com o servidor');
-      }
-    }
-  }
-  async function loadStatusEntre() {
-    try {
-      const response = await api.get(`status/ENTREGUE`, {
-        params: { date },
-      });
-
-      const data = response.data.map(statusEntregue => ({
-        ...statusEntregue,
-        timeDistance: formatDistanceStrict(
-          parseISO(statusEntregue.date),
-          new Date(),
-          { addSuffix: true, locale: pt },
-        ),
-      }));
-
-      setEntregue_(data);
-
-      if (updatingStatus !== 0) {
-        setUpdatingStatus(0);
-      }
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Falha ao conectar com o servidor');
+        toast.error('Erro ao conectar com o servidor');
       }
     }
   }
   useEffect(() => {
-    loadStatusProd();
-    loadStatusEnv();
-    loadStatusCanc();
-    loadStatusEntre();
-    loadStatusPend();
-  }, [date, render]);
+    Orders();
+  }, [date]);
 
   function viewOrdens(order) {
     dispatch(openViewPedido(order));
@@ -287,6 +169,35 @@ export default function Pedidos() {
                   </Button>
                   <Button onClick={executeAudio}>
                     <Icon name="volume up" /> Testar som
+                  </Button>
+                </div>
+                <div
+                  style={{
+                    float: 'right',
+                  }}
+                >
+                  <Button
+                    type="button"
+                    negative
+                    variant="contained"
+                    style={{
+                      borderRadius: 5,
+                      float: 'right',
+                      marginTop: -35,
+                    }}
+                  >
+                    FECHADO
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    style={{
+                      borderRadius: 5,
+                      float: 'right',
+                      marginTop: -35,
+                    }}
+                  >
+                    Entrega 20-30 min
                   </Button>
                 </div>
               </div>
