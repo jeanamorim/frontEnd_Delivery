@@ -6,14 +6,20 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
 import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon, Header } from 'semantic-ui-react';
+import { Modal, Button, Icon, Header, Divider } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 
 import Avatar from './Image';
-import { ModalArea, TwoInput, AutocompleteStyle } from './style';
+import {
+  ModalArea,
+  TwoInput,
+  AutocompleteStyle,
+  Variacoes,
+  VariacaoList,
+} from './style';
 
 import { closeEditProduct } from '../../store/modules/product/actions';
 
@@ -32,27 +38,28 @@ const schema = Yup.object().shape({
     )
     .required('O preço é obrigatório'),
 });
-// const schemaVariacao = Yup.object().shape({
-//   name: Yup.string().required('Obrigatório'),
-//   calculoPrice: Yup.string().required('Obrigatório'),
+const schemaVariacao = Yup.object().shape({
+  name: Yup.string().required('Obrigatório'),
+  calculoPrice: Yup.string().required('Obrigatório'),
 
-//   minimo: Yup.string()
-//     .matches(
-//       /^[+]?([.]\d+|\d+[.]?\d*)$/,
-//       'Insira um número válido. Ex: 3, 1.5, 0.46',
-//     )
-//     .required('Obrigatório'),
-//   maximo: Yup.string()
-//     .matches(
-//       /^[+]?([.]\d+|\d+[.]?\d*)$/,
-//       'Insira um número válido. Ex: 3, 1.5, 0.46',
-//     )
-//     .required('Obrigatório'),
-// });
+  minimo: Yup.string()
+    .matches(
+      /^[+]?([.]\d+|\d+[.]?\d*)$/,
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
+    )
+    .required('Obrigatório'),
+  maximo: Yup.string()
+    .matches(
+      /^[+]?([.]\d+|\d+[.]?\d*)$/,
+      'Insira um número válido. Ex: 3, 1.5, 0.46',
+    )
+    .required('Obrigatório'),
+});
 
 export default function Neew() {
   const dispatch = useDispatch();
-
+  const [variacao, setVariacao] = useState([]);
+  const [editVariacao, setEditeVariacao] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const product = useSelector(state => state.product.ProductToEdit);
@@ -93,6 +100,31 @@ export default function Neew() {
       }
     }
   }
+  async function handleSubmitVariacao(data) {
+    try {
+      const response = await api.post('variacao', {
+        ...data,
+        product_id: product.id,
+      });
+
+      toast.success('Categoria cadastrada com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+  useEffect(() => {
+    async function loadOrders() {
+      const response = await api.get('/variacao');
+      setVariacao(response.data);
+    }
+
+    loadOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const options = categories.map(category => ({
     id: category.id,
@@ -101,6 +133,18 @@ export default function Neew() {
 
   function handleCloseModal() {
     dispatch(closeEditProduct());
+  }
+  function setVariacaoItemValue(position, field, value) {
+    const variacoes = variacao.map((scheduleItem, index) => {
+      if (index === position) {
+        setEditeVariacao({ ...scheduleItem, [field]: value });
+        return { ...scheduleItem, [field]: value };
+      }
+
+      return scheduleItem;
+    });
+
+    setVariacao(variacoes);
   }
 
   return (
@@ -187,13 +231,17 @@ export default function Neew() {
               <div
                 style={{
                   display: 'flex',
-                  right: 40,
-                  position: 'fixed',
-                  marginTop: 55,
-                  padding: 0,
-                  bottom: 25,
+                  marginTop: 35,
+                  float: 'right',
                 }}
               >
+                <Button
+                  negative
+                  icon="times"
+                  content="Deletar"
+                  onClick={() => setOpenDeleteModal(true)}
+                />
+
                 <Button
                   negative
                   onClick={handleCloseModal}
@@ -231,24 +279,173 @@ export default function Neew() {
             </div>
           </ModalArea>
         </Form>
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            marginBottom: 40,
-            marginLeft: 20,
-          }}
-        >
-          <Button.Group vertical labeled icon>
-            <Button icon="clipboard outline" content="Variação" />
-            <Button
-              negative
-              icon="times"
-              content="Deletar"
-              onClick={() => setOpenDeleteModal(true)}
-            />
-          </Button.Group>
-        </div>
+        <Divider />
+        <Form schemaVariacao={schemaVariacao} onSubmit={handleSubmitVariacao}>
+          <Variacoes>
+            <div
+              style={{
+                display: 'flex',
+              }}
+            >
+              <div>
+                <label>
+                  Nome <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input name="name" type="text" placeholder="NOME DA VARIAÇÃO" />
+              </div>
+              <div>
+                <label>
+                  Quant. Mínima
+                  <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input name="minimo" type="text" placeholder="QUANT. MÍNIMA" />
+              </div>
+              <div>
+                <label>
+                  Quant. Máxima
+                  <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Input name="maximo" type="text" placeholder="QUANT. MÁXIMA" />
+              </div>
+              <div>
+                <label>
+                  Logica <span style={{ color: 'red' }}>*</span>
+                </label>
+                <Select
+                  placeholder="LOGICA"
+                  name="calculoPrice"
+                  options={[
+                    { id: 'MAIOR VALOR', title: 'MAIOR VALOR' },
+                    { id: 'SOMA TOTAL', title: 'SOMA TOTAL' },
+                  ]}
+                />
+              </div>
+              <div>
+                <Button
+                  type="submit"
+                  positive
+                  style={{
+                    border: 0,
+                    height: 40,
+                    marginTop: 18,
+                    marginLeft: 10,
+                  }}
+                >
+                  Cadastrar
+                </Button>
+              </div>
+            </div>
+          </Variacoes>
+        </Form>
+        <Divider />
+        {variacao.map((item, index) => (
+          <VariacaoList>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  marginBottom: 6,
+                }}
+              >
+                <div>
+                  <label>
+                    Nome <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <Input
+                    name="name"
+                    value={item.name}
+                    type="text"
+                    placeholder="NOME DA VARIAÇÃO"
+                    onChange={e =>
+                      setVariacaoItemValue(index, 'name', e.target.value)
+                    }
+                  />
+                </div>
+                <div>
+                  <label>
+                    Quant. Mínima
+                    <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <Input
+                    name="minimo"
+                    value={item.minimo}
+                    type="text"
+                    placeholder="QUANT. MÍNIMA"
+                    onChange={e =>
+                      setVariacaoItemValue(index, 'minimo', e.target.value)
+                    }
+                  />
+                </div>
+                <div>
+                  <label>
+                    Quant. Máxima
+                    <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <Input
+                    name="maximo"
+                    value={item.maximo}
+                    type="text"
+                    placeholder="QUANT. MÁXIMA"
+                    onChange={e =>
+                      setVariacaoItemValue(index, 'maximo', e.target.value)
+                    }
+                  />
+                </div>
+                <div>
+                  <label>
+                    Logica <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <Select
+                    placeholder="LOGICA"
+                    name="calculoPrice"
+                    options={[
+                      { id: 'MAIOR VALOR', title: 'MAIOR VALOR' },
+                      { id: 'SOMA TOTAL', title: 'SOMA TOTAL' },
+                    ]}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    marginLeft: 10,
+                    height: 40,
+                    marginTop: 18,
+                  }}
+                >
+                  {editVariacao.id === item.id ? (
+                    <Button positive icon="check" />
+                  ) : (
+                    <Button
+                      icon="check"
+                      style={{ background: '#999', color: '#fff' }}
+                    />
+                  )}
+
+                  <Button negative icon="times" />
+                </div>
+              </div>
+              <Button
+                style={{
+                  background: ' #e6dfdf',
+                  borderColor: ' #e6dfdf',
+                  borderRadius: 6,
+                }}
+              >
+                <text style={{ fontSize: 17, color: '#0B9F03' }}>
+                  Mostrar opções(5)
+                </text>
+              </Button>
+            </div>
+          </VariacaoList>
+        ))}
+        <Divider />
       </Modal>
 
       <Modal

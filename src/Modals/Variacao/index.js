@@ -2,56 +2,84 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-shadow */
 /* eslint-disable react/button-has-type */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
 import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon, Header } from 'semantic-ui-react';
+import { Modal, Button, Header } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { toast } from 'react-toastify';
+import api from '../../services/api';
 import { ModalArea, TwoInput, AutocompleteStyle } from './style';
-import {
-  closeEditProduct,
-  updateProductRequest,
-  deleteProductRequest,
-} from '../../store/modules/product/actions';
+
 import {
   closeModalCadastarVariacao,
-  postVariacaoRequest,
-} from '../../store/modules/variacao/actions';
+  openModalCadastarVariacao,
+} from '../../store/modules/opcaoVariacao/actions';
 
-export default function Neew({ idCat }) {
+export default function Neew() {
   const dispatch = useDispatch();
   const [newVariacao, setNewVariacao] = useState([]);
-  const openModal = useSelector(state => state.variacao.openModal);
+  const [products, setProducts] = useState([]);
+  const openModal = useSelector(state => state.opcao.openModal);
 
-  function handleSubmit(data) {
-    dispatch(postVariacaoRequest(data));
-  }
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const response = await api.get('/productsList');
+        setProducts(response.data);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Erro ao conectar com o servidor');
+        }
+      }
+    }
 
-  function handleCloseModal() {
+    loadCategories();
+  }, []);
+
+  function fecharModal() {
     dispatch(closeModalCadastarVariacao());
   }
-  function handleDeleteProduct(id) {
-    dispatch(deleteProductRequest(id, idCat));
+  function abrirModal() {
+    dispatch(openModalCadastarVariacao());
   }
-  function addNewVariacao() {
-    setNewVariacao([...newVariacao, { name: '', minimo: '', maximo: '' }]);
-  }
+  const options = products.map(product => ({
+    id: product.id,
+    title: product.name,
+  }));
 
   return (
     <>
-      <Modal open={openModal} style={{}}>
+      <Modal
+        open={openModal}
+        style={{}}
+        trigger={
+          <Button
+            style={{ background: '#ff7f00', color: '#fff' }}
+            onClick={() => abrirModal()}
+          >
+            Variação do produto
+          </Button>
+        }
+      >
         <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
-          Variação
-          <MdClose
-            style={{ float: 'right' }}
-            onClick={() => handleCloseModal()}
-          />
+          Variação do produto
+          <MdClose style={{ float: 'right' }} onClick={() => fecharModal()} />
         </Modal.Header>
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <ModalArea forR>
             <div>
+              <label>
+                Selecione o produto <span style={{ color: 'red' }}>*</span>
+              </label>
+              <Select
+                name="product_id"
+                placeholder="SELECIONE O PRODUTO"
+                options={options}
+              />
               {newVariacao.map((variacao, index) => {
                 return (
                   <TwoInput>

@@ -20,7 +20,7 @@ import { formatPrice } from '../../util/format';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
 import ProductEdit from '../../Modals/EditProduct';
-import EditCategoria from '../../Modals/EditCategoria';
+
 import { Container, Title, PageActions, PageContent } from './styles';
 import { getCategoriasRequest } from '../../store/modules/categorias/actions';
 import Animation from '../../components/Animation';
@@ -29,6 +29,7 @@ import * as loadingData from '../../assets/animations/loading.json';
 export default function Products({ location }) {
   const openModal = useSelector(state => state.product.editProduct);
   const [products, setProducts] = useState([]);
+  const [modal, setModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const { state } = location;
@@ -122,7 +123,7 @@ export default function Products({ location }) {
                         {state.categoria.name}
                       </strong>
                     </Title>
-                    <EditCategoria />
+
                     <PageActions>
                       <div>
                         <i>

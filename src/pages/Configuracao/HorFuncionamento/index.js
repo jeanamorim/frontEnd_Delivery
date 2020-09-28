@@ -110,23 +110,24 @@ function HorFuncionamento() {
   const result = scheduleItems.map(
     item =>
       item.week_day === data.getDay() &&
-      novaHora() <= item.to &&
-      novaHora() >= item.from,
+      novaHora() >= item.from &&
+      novaHora() <= item.to,
   );
+  const newResult = result.some(item => item);
 
   useEffect(() => {
     async function requestLoja() {
-      if (result) {
+      if (newResult) {
         await api.put(`estabelecimento/${idLoja}`, {
           status: 'ABERTO',
         });
+        await api.put(`estabelecimento/${idLoja}`, {
+          status: 'FECHADO',
+        });
       }
-      await api.put(`estabelecimento/${idLoja}`, {
-        status: 'FECHADO',
-      });
     }
     requestLoja();
-  }, [data, result, idLoja]);
+  }, [data, newResult, idLoja]);
 
   function setFreteItemValue(position, field, value) {
     const updateScheduleItems = scheduleItems.map((scheduleItem, index) => {
@@ -234,7 +235,7 @@ function HorFuncionamento() {
                                 <MenuItem value={4}>Quinta-feira</MenuItem>
                                 <MenuItem value={5}>Sexta-feira</MenuItem>
                                 <MenuItem value={6}>Sabado</MenuItem>
-                                <MenuItem value={7}>Domingo</MenuItem>
+                                <MenuItem value={0}>Domingo</MenuItem>
                               </Select>
                             </FormControl>
 
