@@ -68,7 +68,7 @@ export default function Dashboard() {
                             {status ? status.orders : loading}
                           </div>
                           <div className="stat-panel-title text-uppercase">
-                            {translate('orders_dashboard')}
+                            Pedidos
                           </div>
                         </div>
                       </div>

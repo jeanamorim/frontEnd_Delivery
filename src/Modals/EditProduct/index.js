@@ -1,25 +1,22 @@
+/* eslint-disable func-names */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-shadow */
 /* eslint-disable react/button-has-type */
 import React, { useState, useEffect } from 'react';
-import { Input, Form, Select } from '@rocketseat/unform';
+
 import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon, Header, Divider } from 'semantic-ui-react';
+import { Modal, Button, Divider } from 'semantic-ui-react';
 import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import FormProduct from './Product';
+import FormVariacao from './NovaVariacao';
 
-import Avatar from './Image';
-import {
-  ModalArea,
-  TwoInput,
-  AutocompleteStyle,
-  Variacoes,
-  VariacaoList,
-} from './style';
+import DeletarProduto from './DeletarProduto';
+import Variacoes from './Variacoes';
 
 import { closeEditProduct } from '../../store/modules/product/actions';
 
@@ -59,7 +56,19 @@ const schemaVariacao = Yup.object().shape({
 export default function Neew() {
   const dispatch = useDispatch();
   const [variacao, setVariacao] = useState([]);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [status, setStatus] = useState('');
+
+  const [loadingEditVar, setLoadingEditVar] = useState(false);
+  const [loadingPostVar, setLoadingPostVar] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [visibleOp, setVisibleOp] = useState(false);
+  const [novaOp, setNovaOp] = useState(false);
+  const [novaVari, setNovaVariacao] = useState(false);
   const [editVariacao, setEditeVariacao] = useState([]);
+  const [editOpcao, setEditOpcao] = useState([]);
+  const [render, setRender] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const product = useSelector(state => state.product.ProductToEdit);
@@ -67,6 +76,27 @@ export default function Neew() {
   const openModal = useSelector(state => state.product.editProduct);
   const avatar = useSelector(state => state.uploads.avatar);
   const id = useSelector(state => state.product.ProductToEdit.id);
+
+  const exibirVariacao = () => setVisible(!visible);
+  const exibirOpcao = () => setVisibleOp(!visibleOp);
+  const novaOpcao = () => setNovaOp(!novaOp);
+  const novaVariacao = () => setNovaVariacao(!novaVari);
+
+  useEffect(() => {
+    async function loadOrder() {
+      try {
+        const response = await api.get(`productsEdit/${id}`);
+        setVariacao(response.data[0].variacao);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Falha ao conectar com o servidor');
+        }
+      }
+    }
+    loadOrder();
+  }, [render]);
 
   async function handleSubmit(data) {
     setLoading(true);
@@ -86,12 +116,26 @@ export default function Neew() {
       }
     }
   }
-  async function handleDeleteProduct(id) {
+
+  async function handleSubmitVariacao(data) {
+    const idvar = variacao.map(function(item) {
+      return item.id;
+    });
+    setLoadingPostVar(true);
     try {
-      await api.delete(`products/${id}`);
-      dispatch(closeEditProduct());
-      setOpenDeleteModal(false);
-      toast.success('Produto deletado com sucesso');
+      const response = await api.post('variacao', data);
+      const ids = response.data.id;
+
+      await api.put(`products/${id}`, {
+        variacao: [...idvar, ids],
+      });
+      setRender(!render);
+      setVisibleOp(false);
+      toast.success('Variacao cadastrada com sucesso');
+
+      document.getElementById('vd-form').reset();
+      setLoadingPostVar(false);
+      setNovaVariacao(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -100,14 +144,38 @@ export default function Neew() {
       }
     }
   }
-  async function handleSubmitVariacao(data) {
+  async function deletarVariação(id) {
     try {
-      const response = await api.post('variacao', {
-        ...data,
-        product_id: product.id,
+      await api.delete(`variacao/${id}`);
+      setRender(!render);
+      toast.success('Variação deletada com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+  async function handleSubmitOpcao(name, price, status, itemId) {
+    const data = {
+      name,
+      price,
+      status,
+    };
+    try {
+      const response = await api.post('opcaovariacao', data);
+      const ids = response.data.id;
+
+      await api.put(`variacao/${itemId}`, {
+        opcao: [ids],
       });
 
-      toast.success('Categoria cadastrada com sucesso');
+      setName('');
+      setPrice('');
+      setStatus('');
+      setRender(!render);
+      toast.success('Variacao cadastrada com sucesso');
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -116,15 +184,46 @@ export default function Neew() {
       }
     }
   }
-  useEffect(() => {
-    async function loadOrders() {
-      const response = await api.get('/variacao');
-      setVariacao(response.data);
-    }
+  async function editarVariacao(idvar) {
+    setLoadingEditVar(true);
+    try {
+      await api.put(`variacao/${idvar}`, {
+        name: editVariacao.name,
+        minimo: editVariacao.minimo,
+        maximo: editVariacao.maximo,
+      });
 
-    loadOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      toast.success('Variacao editada com sucesso');
+      setEditeVariacao('');
+      setLoadingEditVar(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+  async function editarOpção(idOp) {
+    setLoadingEditVar(true);
+    try {
+      await api.put(`opcaovariacao/${idOp}`, {
+        name: editVariacao.name,
+        minimo: editVariacao.minimo,
+        maximo: editVariacao.maximo,
+      });
+
+      toast.success('Variacao editada com sucesso');
+      setEditeVariacao('');
+      setLoadingEditVar(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
 
   const options = categories.map(category => ({
     id: category.id,
@@ -146,6 +245,18 @@ export default function Neew() {
 
     setVariacao(variacoes);
   }
+  function setOpcaoItemValue(position, field, value) {
+    const opcao = variacao.map((scheduleItem, index) => {
+      if (index === position) {
+        setEditOpcao({ ...scheduleItem.opcao, [field]: value });
+        return { ...scheduleItem.opcao, [field]: value };
+      }
+
+      return scheduleItem;
+    });
+
+    setVariacao(opcao);
+  }
 
   return (
     <>
@@ -157,316 +268,113 @@ export default function Neew() {
             onClick={() => handleCloseModal()}
           />
         </Modal.Header>
-        <Form onSubmit={handleSubmit} initialData={product} schema={schema}>
-          <ModalArea forR>
-            <Avatar />
-            <div>
-              <div>
-                <label>
-                  Nome do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input name="name" type="text" placeholder="NOME DO PRODUTO" />
-              </div>
-              <label>
-                Descrição do produto <span style={{ color: 'red' }}>*</span>
-              </label>
-              <Input
-                name="description"
-                type="text"
-                placeholder="DESCRIÇÃO DO PRODUTO"
-              />
-              <TwoInput>
-                <div style={{ width: '50%' }}>
-                  <label>
-                    Preço do produto <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Input
-                    name="price"
-                    type="text"
-                    placeholder=" R$ PREÇO DO PRODUTO"
-                  />
-                </div>
-                <div style={{ width: '50%', marginLeft: 5 }}>
-                  <label>
-                    Quantidade do produto{' '}
-                    <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Input
-                    name="quantity"
-                    type="text"
-                    placeholder="QUANTIDADE DISPONIVEL"
-                  />
-                </div>
-              </TwoInput>
-
-              <AutocompleteStyle>
-                <div style={{ width: '50%' }}>
-                  <label>
-                    Unidade do produto <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Select
-                    placeholder="UNIDADE"
-                    name="unit"
-                    options={[
-                      { id: 'kg', title: 'kg' },
-                      { id: 'g', title: 'g' },
-                      { id: 'dz', title: 'dz' },
-                      { id: 'un', title: 'un' },
-                      { id: '0', title: 'Nenhum' },
-                    ]}
-                  />
-                </div>
-                <div style={{ width: '50%', marginLeft: 5 }}>
-                  <label>
-                    Categoria do produto <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Select
-                    name="category_id"
-                    placeholder="CATEGORIA"
-                    options={options}
-                  />
-                </div>
-              </AutocompleteStyle>
-
-              <div
-                style={{
-                  display: 'flex',
-                  marginTop: 35,
-                  float: 'right',
-                }}
-              >
-                <Button
-                  negative
-                  icon="times"
-                  content="Deletar"
-                  onClick={() => setOpenDeleteModal(true)}
-                />
-
-                <Button
-                  negative
-                  onClick={handleCloseModal}
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Cancelar
-                </Button>
-                {loading ? (
-                  <Button
-                    positive
-                    loading
-                    style={{
-                      width: 140,
-                      border: 0,
-                    }}
-                  >
-                    Loading
-                  </Button>
-                ) : (
-                  <Button
-                    positive
-                    type="submit"
-                    style={{
-                      width: 140,
-                      border: 0,
-                    }}
-                  >
-                    Salvar
-                  </Button>
-                )}
-              </div>
-            </div>
-          </ModalArea>
-        </Form>
-        <Divider />
-        <Form schemaVariacao={schemaVariacao} onSubmit={handleSubmitVariacao}>
-          <Variacoes>
+        <FormProduct
+          handleSubmit={handleSubmit}
+          product={product}
+          schema={schema}
+          options={options}
+          loading={loading}
+          handleCloseModal={handleCloseModal}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            marginTop: -145,
+            marginLeft: 70,
+          }}
+        >
+          <Button.Group vertical labeled icon>
+            <Button
+              icon="clipboard outline"
+              content="Variação"
+              style={{ background: '#999', color: '#fff' }}
+              onClick={exibirVariacao}
+            />
+            <Button
+              icon="times"
+              negative
+              content="Deletar"
+              onClick={() => setOpenDeleteModal(true)}
+            />
+          </Button.Group>
+        </div>
+        {visible ? (
+          <>
+            <text style={{ fontSize: 20, marginLeft: 15, fontWeight: 'bold' }}>
+              Cadastrar variação
+            </text>
+            <Divider />
             <div
               style={{
                 display: 'flex',
               }}
             >
-              <div>
-                <label>
-                  Nome <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input name="name" type="text" placeholder="NOME DA VARIAÇÃO" />
-              </div>
-              <div>
-                <label>
-                  Quant. Mínima
-                  <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input name="minimo" type="text" placeholder="QUANT. MÍNIMA" />
-              </div>
-              <div>
-                <label>
-                  Quant. Máxima
-                  <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input name="maximo" type="text" placeholder="QUANT. MÁXIMA" />
-              </div>
-              <div>
-                <label>
-                  Logica <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  placeholder="LOGICA"
-                  name="calculoPrice"
-                  options={[
-                    { id: 'MAIOR VALOR', title: 'MAIOR VALOR' },
-                    { id: 'SOMA TOTAL', title: 'SOMA TOTAL' },
-                  ]}
-                />
-              </div>
-              <div>
-                <Button
-                  type="submit"
-                  positive
-                  style={{
-                    border: 0,
-                    height: 40,
-                    marginTop: 18,
-                    marginLeft: 10,
-                  }}
-                >
-                  Cadastrar
-                </Button>
-              </div>
-            </div>
-          </Variacoes>
-        </Form>
-        <Divider />
-        {variacao.map((item, index) => (
-          <VariacaoList>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  marginBottom: 6,
-                }}
-              >
-                <div>
-                  <label>
-                    Nome <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Input
-                    name="name"
-                    value={item.name}
-                    type="text"
-                    placeholder="NOME DA VARIAÇÃO"
-                    onChange={e =>
-                      setVariacaoItemValue(index, 'name', e.target.value)
-                    }
-                  />
-                </div>
-                <div>
-                  <label>
-                    Quant. Mínima
-                    <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Input
-                    name="minimo"
-                    value={item.minimo}
-                    type="text"
-                    placeholder="QUANT. MÍNIMA"
-                    onChange={e =>
-                      setVariacaoItemValue(index, 'minimo', e.target.value)
-                    }
-                  />
-                </div>
-                <div>
-                  <label>
-                    Quant. Máxima
-                    <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Input
-                    name="maximo"
-                    value={item.maximo}
-                    type="text"
-                    placeholder="QUANT. MÁXIMA"
-                    onChange={e =>
-                      setVariacaoItemValue(index, 'maximo', e.target.value)
-                    }
-                  />
-                </div>
-                <div>
-                  <label>
-                    Logica <span style={{ color: 'red' }}>*</span>
-                  </label>
-                  <Select
-                    placeholder="LOGICA"
-                    name="calculoPrice"
-                    options={[
-                      { id: 'MAIOR VALOR', title: 'MAIOR VALOR' },
-                      { id: 'SOMA TOTAL', title: 'SOMA TOTAL' },
-                    ]}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    marginLeft: 10,
-                    height: 40,
-                    marginTop: 18,
-                  }}
-                >
-                  {editVariacao.id === item.id ? (
-                    <Button positive icon="check" />
-                  ) : (
-                    <Button
-                      icon="check"
-                      style={{ background: '#999', color: '#fff' }}
-                    />
-                  )}
-
-                  <Button negative icon="times" />
-                </div>
-              </div>
               <Button
                 style={{
-                  background: ' #e6dfdf',
-                  borderColor: ' #e6dfdf',
-                  borderRadius: 6,
+                  background: ' #fff',
+                  borderColor: ' #fff',
                 }}
+                onClick={novaVariacao}
               >
-                <text style={{ fontSize: 17, color: '#0B9F03' }}>
-                  Mostrar opções(5)
+                <text
+                  style={{ fontSize: 17, color: '#0B9F03', fontWeight: 'bold' }}
+                >
+                  + Cadastrar nova variação
                 </text>
               </Button>
             </div>
-          </VariacaoList>
-        ))}
-        <Divider />
+            <FormVariacao
+              novaVari={novaVari}
+              schemaVariacao={schemaVariacao}
+              handleSubmitVariacao={handleSubmitVariacao}
+              loadingPostVar={loadingPostVar}
+            />
+            {variacao.length > 0 ? (
+              <div
+                style={{
+                  marginTop: 20,
+                }}
+              >
+                <text
+                  style={{
+                    fontSize: 20,
+                    marginLeft: 15,
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Variações do produto
+                </text>
+              </div>
+            ) : null}
+            <Divider style={{ marginTop: 20 }} />
+            <Variacoes
+              variacao={variacao}
+              setVariacaoItemValue={setVariacaoItemValue}
+              editVariacao={editVariacao}
+              loadingEditVar={loadingEditVar}
+              editarVariacao={editarVariacao}
+              setOpcaoItemValue={setOpcaoItemValue}
+              visibleOp={visibleOp}
+              novaOpcao={novaOpcao}
+              novaOp={novaOp}
+              handleSubmitOpcao={handleSubmitOpcao}
+              exibirOpcao={exibirOpcao}
+              deletarVariação={deletarVariação}
+              name={name}
+              price={price}
+              status={status}
+              setName={setName}
+              setPrice={setPrice}
+              setStatus={setStatus}
+            />
+          </>
+        ) : null}
       </Modal>
-
-      <Modal
-        closeIcon
-        onClose={() => setOpenDeleteModal(false)}
-        onOpen={() => setOpenDeleteModal(true)}
-        open={openDeleteModal}
-      >
-        <Header icon="archive" content="Deletar produto" />
-        <Modal.Content>
-          <p>Voçê tem certeza que deseja remover o produto {product.name}?</p>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button color="red" onClick={() => setOpenDeleteModal(false)}>
-            <Icon name="remove" /> Não
-          </Button>
-          <Button color="green" onClick={() => handleDeleteProduct(product.id)}>
-            <Icon name="checkmark" /> Sim
-          </Button>
-        </Modal.Actions>
-      </Modal>
+      <DeletarProduto
+        setOpenDeleteModal={setOpenDeleteModal}
+        openDeleteModal={openDeleteModal}
+        product={product}
+      />
     </>
   );
 }

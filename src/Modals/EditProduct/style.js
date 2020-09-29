@@ -112,7 +112,10 @@ export const ModalArea = styled.div`
 `;
 export const Variacoes = styled.div`
   display: flex;
-  padding: 10px 40px 80px 10px;
+  padding: 10px 40px 30px 10px;
+  background: #e6dfdf;
+  margin-left: 17px;
+  margin-right: 15px;
 
   > div {
     width: 100%;
@@ -121,7 +124,7 @@ export const Variacoes = styled.div`
 
     input {
       border-radius: 4px;
-      border: 1px solid #999999;
+      border: 1px solid #9999;
       margin-bottom: 15px;
       padding: 15px;
       height: 40px;
@@ -137,7 +140,7 @@ export const Variacoes = styled.div`
 
     select {
       border-radius: 4px;
-      border: 1px solid #999999;
+      border: 1px solid #9999;
       margin-bottom: 25px;
       padding: 10px;
       height: 40px;
@@ -160,6 +163,98 @@ export const VariacaoList = styled.div`
   margin-bottom: 10px;
   margin-left: 17px;
   margin-right: 15px;
+
+  > div {
+    width: 100%;
+    margin-left: 20px;
+    justify-content: space-between;
+
+    input {
+      border-radius: 4px;
+      border: 1px solid #f1eded;
+      margin-bottom: 15px;
+      padding: 15px;
+      height: 40px;
+      width: 100%;
+      font-size: 15px;
+
+      &::placeholder {
+        color: #999;
+        font-size: 14px;
+        font-family: 'Square721 BT', serif;
+      }
+    }
+
+    select {
+      border-radius: 4px;
+      border: 1px solid #f1eded;
+      margin-bottom: 25px;
+      padding: 10px;
+      height: 40px;
+      width: 100%;
+      font-size: 15px;
+      background: #fff;
+
+      &::placeholder {
+        color: #999;
+        font-size: 14px;
+        font-family: 'Square721 BT', serif;
+      }
+    }
+  }
+`;
+export const Opcao = styled.div`
+  display: flex;
+  padding: 10px 40px 0px 10px;
+  background: #fff;
+  margin-bottom: 10px;
+  margin-left: 17px;
+  margin-right: 15px;
+
+  > div {
+    width: 100%;
+    margin-left: 20px;
+    justify-content: space-between;
+
+    input {
+      border-radius: 4px;
+      border: 1px solid #f1eded;
+      margin-bottom: 15px;
+      padding: 15px;
+      height: 40px;
+      width: 100%;
+      font-size: 15px;
+
+      &::placeholder {
+        color: #999;
+        font-size: 14px;
+        font-family: 'Square721 BT', serif;
+      }
+    }
+
+    select {
+      border-radius: 4px;
+      border: 1px solid #f1eded;
+      margin-bottom: 25px;
+      padding: 10px;
+      height: 40px;
+      width: 100%;
+      font-size: 15px;
+      background: #fff;
+
+      &::placeholder {
+        color: #999;
+        font-size: 14px;
+        font-family: 'Square721 BT', serif;
+      }
+    }
+  }
+`;
+export const NovaOpcao = styled.div`
+  display: flex;
+  padding: 10px 40px 0px 10px;
+  background: #fff;
+  margin-bottom: 10px;
 
   > div {
     width: 100%;

@@ -1,12 +1,11 @@
 import I18n from 'i18n-js';
-import { ptBR as pt_BR, enUS as en_US } from 'date-fns/locale';
+import { ptBR as pt_BR } from 'date-fns/locale';
 
 // suported languages
-import en from './en-US';
+
 import pt from './pt-BR';
 
 I18n.translations = {
-  en_US: en,
   pt_BR: pt,
 };
 
@@ -16,7 +15,7 @@ export const locale = (navigator.language || navigator.userLanguage).replace(
   '_',
 );
 
-const dateLanguages = { pt_BR, en_US };
+const dateLanguages = { pt_BR };
 
 // date-fns language based in your locale
 export const dateLanguage = dateLanguages[locale];

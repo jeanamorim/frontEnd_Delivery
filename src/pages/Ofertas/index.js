@@ -124,119 +124,146 @@ export default function Offers() {
                           </Container>
                         ) : (
                           <Container>
-                            <PageContent>
-                              <thead>
-                                <tr>
-                                  <th />
-                                  <th>NOME DO PRODUTO</th>
-                                  <th>QUANTIDADE</th>
-                                  <th> UNIDADE</th>
-                                  <th>DE</th>
-                                  <th>PARA</th>
-                                  <th>STATUS</th>
-                                  <th>EXPIRAÇÃO</th>
-                                  <th>AÇÕES</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {ofertas.map(delivery => (
-                                  <>
-                                    <tr key={delivery.id}>
-                                      <td>
-                                        <main>
-                                          <img
-                                            src={delivery.product.image.url}
-                                            alt=""
-                                          />
-                                        </main>
-                                      </td>
-                                      <td>{delivery.product.name}</td>
-                                      <td>{delivery.quantity}</td>
-                                      <td>{delivery.unit}</td>
-                                      <td>
-                                        {formatPrice(delivery.product.price)}
-                                      </td>
-                                      <td>{formatPrice(delivery.to)}</td>
-                                      <td
-                                        className={
-                                          isAfter(
-                                            parseISO(delivery.expiration_date),
-                                            new Date(),
-                                          )
-                                            ? 'text-success'
-                                            : 'text-danger'
-                                        }
-                                      >
-                                        {isAfter(
-                                          parseISO(delivery.expiration_date),
-                                          new Date(),
-                                        )
-                                          ? 'ATIVO'
-                                          : 'iNATIVO'}
-                                      </td>
-
-                                      <td>
-                                        {format(
-                                          parseISO(delivery.expiration_date),
-                                          'PPPpp',
-                                          {
-                                            locale: dateLanguage,
-                                          },
-                                        )}
-                                      </td>
-                                      <td>
-                                        <Icon
-                                          title="Terminar ofertas"
-                                          color="red"
-                                          name="delete"
-                                          size="large"
-                                          onClick={() =>
-                                            setOpenDeleteModal(true)
-                                          }
-                                        />
-                                      </td>
+                            {ofertas.length > 0 ? (
+                              <>
+                                <PageContent>
+                                  <thead>
+                                    <tr>
+                                      <th />
+                                      <th>NOME DO PRODUTO</th>
+                                      <th>QUANTIDADE</th>
+                                      <th> UNIDADE</th>
+                                      <th>DE</th>
+                                      <th>PARA</th>
+                                      <th>STATUS</th>
+                                      <th>EXPIRAÇÃO</th>
+                                      <th>AÇÕES</th>
                                     </tr>
-                                    <br />
-                                    <Modal
-                                      closeIcon
-                                      onClose={() => setOpenDeleteModal(false)}
-                                      onOpen={() => setOpenDeleteModal(true)}
-                                      open={openDeleteModal}
-                                    >
-                                      <Header
-                                        icon="archive"
-                                        content="Deletar produto"
-                                      />
-                                      <Modal.Content>
-                                        <p>
-                                          Voçê tem certeza que deseja remover a
-                                          oferta do produto{' '}
-                                          {delivery.product.name}?
-                                        </p>
-                                      </Modal.Content>
-                                      <Modal.Actions>
-                                        <Button
-                                          color="red"
-                                          onClick={() =>
+                                  </thead>
+                                  <tbody>
+                                    {ofertas.map(delivery => (
+                                      <>
+                                        <tr key={delivery.id}>
+                                          <td>
+                                            <main>
+                                              <img
+                                                src={delivery.product.image.url}
+                                                alt=""
+                                              />
+                                            </main>
+                                          </td>
+                                          <td>{delivery.product.name}</td>
+                                          <td>{delivery.quantity}</td>
+                                          <td>{delivery.unit}</td>
+                                          <td>
+                                            {formatPrice(
+                                              delivery.product.price,
+                                            )}
+                                          </td>
+                                          <td>{formatPrice(delivery.to)}</td>
+                                          <td
+                                            className={
+                                              isAfter(
+                                                parseISO(
+                                                  delivery.expiration_date,
+                                                ),
+                                                new Date(),
+                                              )
+                                                ? 'text-success'
+                                                : 'text-danger'
+                                            }
+                                          >
+                                            {isAfter(
+                                              parseISO(
+                                                delivery.expiration_date,
+                                              ),
+                                              new Date(),
+                                            )
+                                              ? 'ATIVO'
+                                              : 'iNATIVO'}
+                                          </td>
+
+                                          <td>
+                                            {format(
+                                              parseISO(
+                                                delivery.expiration_date,
+                                              ),
+                                              'PPPpp',
+                                              {
+                                                locale: dateLanguage,
+                                              },
+                                            )}
+                                          </td>
+                                          <td>
+                                            <Icon
+                                              title="Terminar ofertas"
+                                              color="red"
+                                              name="delete"
+                                              size="large"
+                                              onClick={() =>
+                                                setOpenDeleteModal(true)
+                                              }
+                                            />
+                                          </td>
+                                        </tr>
+                                        <br />
+                                        <Modal
+                                          closeIcon
+                                          onClose={() =>
                                             setOpenDeleteModal(false)
                                           }
-                                        >
-                                          <Icon name="remove" /> Não
-                                        </Button>
-                                        <Button
-                                          color="green"
-                                          onClick={() =>
-                                            handleDeleteOferta(delivery.id)
+                                          onOpen={() =>
+                                            setOpenDeleteModal(true)
                                           }
+                                          open={openDeleteModal}
                                         >
-                                          <Icon name="checkmark" /> Sim
-                                        </Button>
-                                      </Modal.Actions>
-                                    </Modal>
-                                  </>
-                                ))}
-                              </tbody>
-                            </PageContent>
+                                          <Header
+                                            icon="archive"
+                                            content="Deletar produto"
+                                          />
+                                          <Modal.Content>
+                                            <p>
+                                              Voçê tem certeza que deseja
+                                              remover a oferta do produto{' '}
+                                              {delivery.product.name}?
+                                            </p>
+                                          </Modal.Content>
+                                          <Modal.Actions>
+                                            <Button
+                                              color="red"
+                                              onClick={() =>
+                                                setOpenDeleteModal(false)
+                                              }
+                                            >
+                                              <Icon name="remove" /> Não
+                                            </Button>
+                                            <Button
+                                              color="green"
+                                              onClick={() =>
+                                                handleDeleteOferta(delivery.id)
+                                              }
+                                            >
+                                              <Icon name="checkmark" /> Sim
+                                            </Button>
+                                          </Modal.Actions>
+                                        </Modal>
+                                      </>
+                                    ))}
+                                  </tbody>
+                                </PageContent>
+                              </>
+                            ) : (
+                              <Container
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexDirection: 'column',
+                                }}
+                              >
+                                <div>Nenhum produto cadastrada...</div>
+                              </Container>
+                            )}
                           </Container>
                         )}
                       </div>

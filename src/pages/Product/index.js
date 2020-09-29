@@ -55,11 +55,11 @@ export default function Products({ location }) {
       }
     });
   }, [products, socket]);
-  useEffect(() => {
-    socket.on('UPDATE_PRODUCT', data => {
-      loadOrder();
-    });
-  }, [products, socket]);
+  // useEffect(() => {
+  //   socket.on('UPDATE_PRODUCT', data => {
+  //     loadOrder();
+  //   });
+  // }, [products, socket]);
 
   async function loadOrder() {
     setLoading(true);
