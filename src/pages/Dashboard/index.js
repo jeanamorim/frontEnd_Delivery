@@ -49,15 +49,15 @@ export default function Dashboard() {
   const loading = <Animation width={40} height={40} animation={loadingData} />;
 
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper" style={{ marginTop: 50 }}>
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <h2 className="page-title">Painel de controle</h2>
             <div className="row">
               <div className="col-md-12">
-                <div className="row">
-                  <div className="col-md-3">
+                <div className="panel panel-default">
+                  <div className="panel-heading">Home</div>
+                  <div className="col-md-3" style={{ marginTop: 40 }}>
                     <div className="panel panel-default">
                       <div
                         className="panel-body text-light"
@@ -81,7 +81,7 @@ export default function Dashboard() {
                       </Link>
                     </div>
                   </div>
-                  <div className="col-md-3">
+                  <div className="col-md-3" style={{ marginTop: 40 }}>
                     <div className="panel panel-default">
                       <div className="panel-body bk-success text-light">
                         <div className="stat-panel text-center">
@@ -103,7 +103,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-3" style={{ marginTop: 40 }}>
                     <div className="panel panel-default">
                       <div className="panel-body bk-warning text-light">
                         <div className="stat-panel text-center">
@@ -125,7 +125,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="col-md-3">
+                  <div className="col-md-3" style={{ marginTop: 40 }}>
                     <div className="panel panel-default">
                       <div className="panel-body bk-warning text-light">
                         <div className="stat-panel text-center">

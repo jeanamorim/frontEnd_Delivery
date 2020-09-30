@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { format, subDays, addDays, parseISO } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { Icon, Button } from 'semantic-ui-react';
 import pt from 'date-fns/locale/pt';
 import {
   MdChevronLeft,
@@ -154,6 +155,9 @@ export default function Analises() {
         return '';
     }
   };
+  function refreshPage() {
+    window.location.reload();
+  }
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
       <div className="container-fluid">
@@ -162,7 +166,11 @@ export default function Analises() {
             <div className="row">
               <div className="col-md-12">
                 <div className="panel panel-default">
-                  <div className="panel-heading">Minhas análises</div>
+                  <div className="panel-heading">
+                    <Button onClick={refreshPage}>
+                      <Icon name="sync" /> Atualizar
+                    </Button>
+                  </div>
                   <div className="panel-body">
                     <Header>
                       <header>

@@ -15,12 +15,11 @@ export default function Variacoes({
   loadingEditVar,
   editarVariacao,
   setOpcaoItemValue,
-  visibleOp,
-  novaOpcao,
-  novaOp,
+
   handleSubmitOpcao,
-  exibirOpcao,
+  loadingPostOp,
   deletarVariação,
+  deletarOpcao,
   name,
   price,
   status,
@@ -161,25 +160,12 @@ export default function Variacoes({
                   </div>
                 </div>
 
-                {visibleOp ? (
-                  <>
-                    <div>
-                      <Button
-                        style={{
-                          background: ' #fff',
-                          borderColor: ' #fff',
-                          borderRadius: 6,
-                        }}
-                        onClick={novaOpcao}
-                      >
-                        <text style={{ fontSize: 17, color: '#0B9F03' }}>
-                          + Cadastrar nova opção
-                        </text>
-                      </Button>
-                    </div>
+                <>
+                  {item.opcao.map((item, index) => {
+                    item.tipo = tipo;
 
-                    {novaOp ? (
-                      <NovaOpcao>
+                    return (
+                      <Opcao>
                         <div
                           style={{
                             display: 'flex',
@@ -200,10 +186,16 @@ export default function Variacoes({
                               </label>
                               <Input
                                 name="name"
+                                value={item.name}
                                 type="text"
-                                placeholder="NOME DA OPÇÃO"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
+                                placeholder="NOME DA VARIAÇÃO"
+                                onChange={e =>
+                                  setOpcaoItemValue(
+                                    index,
+                                    'name',
+                                    e.target.value,
+                                  )
+                                }
                               />
                             </div>
                             <div>
@@ -213,177 +205,184 @@ export default function Variacoes({
                               </label>
                               <Input
                                 name="price"
+                                value={item.price}
                                 type="text"
                                 placeholder="PREÇO"
-                                value={price}
-                                onChange={e => setPrice(e.target.value)}
+                                onChange={e =>
+                                  setOpcaoItemValue(
+                                    index,
+                                    'price',
+                                    e.target.value,
+                                  )
+                                }
                               />
                             </div>
 
                             <div>
                               <label>
-                                Status <span style={{ color: 'red' }}>*</span>
+                                Status
+                                <span style={{ color: 'red' }}>*</span>
                               </label>
                               <Select
                                 placeholder="STATUS"
                                 name="status"
+                                value={item.status}
+                                onChange={e =>
+                                  setOpcaoItemValue(
+                                    index,
+                                    'status',
+                                    e.target.value,
+                                  )
+                                }
                                 options={[
                                   { id: 'ATIVO', title: 'ATIVO' },
                                   { id: 'INATIVO', title: 'INATIVO' },
                                 ]}
-                                value={status}
-                                onChange={e => setStatus(e.target.value)}
                               />
                             </div>
-
-                            <Button
-                              positive
-                              onClick={() =>
-                                handleSubmitOpcao(name, price, status, item.id)
-                              }
-                              style={{
-                                height: 39,
-                                marginTop: 18,
-                                marginLeft: 10,
-                              }}
-                            >
-                              Salvar
-                            </Button>
-                          </div>
-                        </div>
-                      </NovaOpcao>
-                    ) : null}
-
-                    {item.opcao.map((item, index) => {
-                      item.tipo = tipo;
-                      return (
-                        <Opcao>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexDirection: 'column',
-                            }}
-                          >
                             <div
                               style={{
                                 display: 'flex',
-                                marginBottom: 6,
+                                marginLeft: 10,
+                                height: 40,
+                                marginTop: 18,
                               }}
                             >
-                              <div>
-                                <label>
-                                  Nome <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Input
-                                  name="name"
-                                  value={item.name}
-                                  type="text"
-                                  placeholder="NOME DA VARIAÇÃO"
-                                  onChange={e =>
-                                    setOpcaoItemValue(
-                                      index,
-                                      'name',
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <label>
-                                  Preço
-                                  <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Input
-                                  name="price"
-                                  value={item.price}
-                                  type="text"
-                                  placeholder="PREÇO"
-                                  onChange={e =>
-                                    setOpcaoItemValue(
-                                      index,
-                                      'price',
-                                      e.target.value,
-                                    )
-                                  }
-                                />
-                              </div>
-
-                              <div>
-                                <label>
-                                  Status
-                                  <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <Select
-                                  placeholder="STATUS"
-                                  name="status"
-                                  value={item.status}
-                                  onChange={e =>
-                                    setOpcaoItemValue(
-                                      index,
-                                      'status',
-                                      e.target.value,
-                                    )
-                                  }
-                                  options={[
-                                    { id: 'ATIVO', title: 'ATIVO' },
-                                    { id: 'INATIVO', title: 'INATIVO' },
-                                  ]}
-                                />
-                              </div>
-                              <div
+                              <Button
+                                icon="check"
                                 style={{
-                                  display: 'flex',
-                                  marginLeft: 10,
-                                  height: 40,
-                                  marginTop: 18,
+                                  background: '#F98424',
+                                  color: '#fff',
                                 }}
-                              >
-                                <Button
-                                  icon="check"
-                                  style={{
-                                    background: '#999',
-                                    color: '#fff',
-                                  }}
-                                />
+                              />
 
-                                <Button negative icon="times" />
-                              </div>
+                              <Button
+                                negative
+                                icon="times"
+                                onClick={() => {
+                                  if (
+                                    window.confirm(
+                                      `Tem certeza que deseja remover a opção ${item.name} ?`,
+                                    )
+                                  )
+                                    deletarOpcao(item.id);
+                                }}
+                              />
                             </div>
                           </div>
-                        </Opcao>
-                      );
-                    })}
-                  </>
-                ) : null}
-                {visibleOp ? (
-                  <Button
+                        </div>
+                      </Opcao>
+                    );
+                  })}
+
+                  <NovaOpcao>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          marginBottom: 6,
+                        }}
+                      >
+                        <div>
+                          <label>
+                            Nome <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Input
+                            name="name"
+                            type="text"
+                            placeholder="NOME DA OPÇÃO"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <label>
+                            Preço
+                            <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Input
+                            name="price"
+                            type="text"
+                            placeholder="PREÇO"
+                            value={price}
+                            onChange={e => setPrice(e.target.value)}
+                          />
+                        </div>
+
+                        <div>
+                          <label>
+                            Status <span style={{ color: 'red' }}>*</span>
+                          </label>
+                          <Select
+                            placeholder="STATUS"
+                            name="status"
+                            options={[
+                              { id: 'ATIVO', title: 'ATIVO' },
+                              { id: 'INATIVO', title: 'INATIVO' },
+                            ]}
+                            value={status}
+                            onChange={e => setStatus(e.target.value)}
+                          />
+                        </div>
+
+                        {loadingPostOp ? (
+                          <Button
+                            positive
+                            loading
+                            style={{
+                              height: 39,
+                              marginTop: 18,
+                              marginLeft: 10,
+                              width: 95,
+                            }}
+                          >
+                            loading
+                          </Button>
+                        ) : (
+                          <Button
+                            positive
+                            onClick={() =>
+                              handleSubmitOpcao(name, price, status, item.id)
+                            }
+                            style={{
+                              height: 39,
+                              marginTop: 18,
+                              marginLeft: 10,
+                              width: 95,
+                            }}
+                          >
+                            Nova
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </NovaOpcao>
+                </>
+
+                <Button
+                  style={{
+                    background: ' #fff',
+                    borderColor: ' #fff',
+                    borderRadius: 6,
+                  }}
+                >
+                  <text
                     style={{
-                      background: ' #fff',
-                      borderColor: ' #fff',
-                      borderRadius: 6,
+                      fontSize: 17,
+                      color: '#0B9F03',
+                      fontWeight: 'bold',
                     }}
-                    onClick={exibirOpcao}
                   >
-                    <text style={{ fontSize: 17, color: '#0B9F03' }}>
-                      Ocultar opções (0)
-                    </text>
-                  </Button>
-                ) : (
-                  <Button
-                    style={{
-                      background: ' #fff',
-                      borderColor: ' #fff',
-                      borderRadius: 6,
-                    }}
-                    onClick={exibirOpcao}
-                  >
-                    <text style={{ fontSize: 17, color: '#0B9F03' }}>
-                      Mostrar opções (0)
-                    </text>
-                  </Button>
-                )}
+                    Opção ({item.opcao.length})
+                  </text>
+                </Button>
 
                 <Divider />
               </>

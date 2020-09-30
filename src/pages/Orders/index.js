@@ -44,7 +44,7 @@ export default function Pedidos() {
   const [entregue, setEntregue_] = useState([]);
   const [cancelado, setCancelado_] = useState([]);
   const [date] = useState(new Date());
-
+  const profile = useSelector(state => state.user.profile);
   const [loading, setLoading] = useState(false);
   const profile_id = useSelector(state => state.user.profile.id);
 
@@ -74,6 +74,7 @@ export default function Pedidos() {
       };
 
       setPendente_([...pendente, newValor]);
+
       executeAudio();
       toast('Novo pedido');
     });
@@ -174,20 +175,9 @@ export default function Pedidos() {
                 <div
                   style={{
                     float: 'right',
+                    display: 'flex',
                   }}
                 >
-                  <Button
-                    type="button"
-                    negative
-                    variant="contained"
-                    style={{
-                      borderRadius: 5,
-                      float: 'right',
-                      marginTop: -35,
-                    }}
-                  >
-                    FECHADO
-                  </Button>
                   <Button
                     type="button"
                     variant="contained"
@@ -199,6 +189,37 @@ export default function Pedidos() {
                   >
                     Entrega 20-30 min
                   </Button>
+                  {profile.status === 'ABERTO' ? (
+                    <Button
+                      type="button"
+                      positive
+                      variant="contained"
+                      style={{
+                        borderRadius: 5,
+                        width: 140,
+                        height: 40,
+                        float: 'right',
+                        marginTop: -35,
+                      }}
+                    >
+                      {profile.status}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      negative
+                      variant="contained"
+                      style={{
+                        borderRadius: 5,
+                        width: 140,
+                        height: 40,
+                        float: 'right',
+                        marginTop: -35,
+                      }}
+                    >
+                      {profile.status}
+                    </Button>
+                  )}
                 </div>
               </div>
 

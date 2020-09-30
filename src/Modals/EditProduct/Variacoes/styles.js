@@ -4,7 +4,7 @@ import { shade } from 'polished';
 export const VariacaoList = styled.div`
   display: flex;
   padding: 10px 40px 30px 10px;
-
+  background: '#999';
   margin-bottom: 20px;
   margin-left: 17px;
   margin-right: 15px;
@@ -101,13 +101,15 @@ export const Opcao = styled.div`
 `;
 export const NovaOpcao = styled.div`
   display: flex;
-  padding: 10px 10px 10px 30px;
-  background: #f2f1f1;
+  padding: 10px 30px 0px 10px;
+  background: #f0efef;
   margin-bottom: 10px;
-  margin-left: 20px;
-  margin-right: 20px;
-  border-color: #999;
-  border-width: 2px;
+  margin-left: -35px;
+  margin-right: 15px;
+  margin-top: 10px;
+  border-radius: 7px;
+  border-color: #000;
+  border-width: 5px;
 
   > div {
     width: 100%;

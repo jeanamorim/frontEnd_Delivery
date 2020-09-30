@@ -130,7 +130,7 @@ export const ContainerAceito = styled.div`
 
 export const Time = styled.li`
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 2px;
   background: #dcdcdc;
   display: flex;
   flex-direction: column;

@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable func-names */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable jsx-a11y/label-has-associated-control */
@@ -56,18 +57,19 @@ const schemaVariacao = Yup.object().shape({
 export default function Neew() {
   const dispatch = useDispatch();
   const [variacao, setVariacao] = useState([]);
+  const [opcao, setOpcao] = useState([]);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [status, setStatus] = useState('');
 
   const [loadingEditVar, setLoadingEditVar] = useState(false);
   const [loadingPostVar, setLoadingPostVar] = useState(false);
+  const [loadingPostOp, setLoadingPostOp] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [visibleOp, setVisibleOp] = useState(false);
-  const [novaOp, setNovaOp] = useState(false);
+
   const [novaVari, setNovaVariacao] = useState(false);
   const [editVariacao, setEditeVariacao] = useState([]);
-  const [editOpcao, setEditOpcao] = useState([]);
+
   const [render, setRender] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -78,8 +80,7 @@ export default function Neew() {
   const id = useSelector(state => state.product.ProductToEdit.id);
 
   const exibirVariacao = () => setVisible(!visible);
-  const exibirOpcao = () => setVisibleOp(!visibleOp);
-  const novaOpcao = () => setNovaOp(!novaOp);
+
   const novaVariacao = () => setNovaVariacao(!novaVari);
 
   useEffect(() => {
@@ -130,7 +131,7 @@ export default function Neew() {
         variacao: [...idvar, ids],
       });
       setRender(!render);
-      setVisibleOp(false);
+
       toast.success('Variacao cadastrada com sucesso');
 
       document.getElementById('vd-form').reset();
@@ -157,7 +158,28 @@ export default function Neew() {
       }
     }
   }
+  async function deletarOpcao(id) {
+    try {
+      await api.delete(`opcaovariacao/${id}`);
+      setRender(!render);
+      toast.success('Opção deletada com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+
   async function handleSubmitOpcao(name, price, status, itemId) {
+    setLoadingPostOp(true);
+    const newArray = variacao.filter(item => item.id === itemId);
+    const newArray1 = newArray[0].opcao;
+    const idOp = newArray1.map(function(item) {
+      return item.id;
+    });
+
     const data = {
       name,
       price,
@@ -168,13 +190,14 @@ export default function Neew() {
       const ids = response.data.id;
 
       await api.put(`variacao/${itemId}`, {
-        opcao: [ids],
+        opcao: [...idOp, ids],
       });
 
       setName('');
       setPrice('');
       setStatus('');
       setRender(!render);
+      setLoadingPostOp(false);
       toast.success('Variacao cadastrada com sucesso');
     } catch (err) {
       if (err.response) {
@@ -246,16 +269,16 @@ export default function Neew() {
     setVariacao(variacoes);
   }
   function setOpcaoItemValue(position, field, value) {
-    const opcao = variacao.map((scheduleItem, index) => {
+    const variacoes = opcao.map((scheduleItem, index) => {
       if (index === position) {
-        setEditOpcao({ ...scheduleItem.opcao, [field]: value });
-        return { ...scheduleItem.opcao, [field]: value };
+        console.log(variacoes);
+        return { ...scheduleItem, [field]: value };
       }
 
       return scheduleItem;
     });
 
-    setVariacao(opcao);
+    setOpcao(variacoes);
   }
 
   return (
@@ -300,9 +323,6 @@ export default function Neew() {
         </div>
         {visible ? (
           <>
-            <text style={{ fontSize: 20, marginLeft: 15, fontWeight: 'bold' }}>
-              Cadastrar variação
-            </text>
             <Divider />
             <div
               style={{
@@ -354,12 +374,10 @@ export default function Neew() {
               loadingEditVar={loadingEditVar}
               editarVariacao={editarVariacao}
               setOpcaoItemValue={setOpcaoItemValue}
-              visibleOp={visibleOp}
-              novaOpcao={novaOpcao}
-              novaOp={novaOp}
               handleSubmitOpcao={handleSubmitOpcao}
-              exibirOpcao={exibirOpcao}
               deletarVariação={deletarVariação}
+              deletarOpcao={deletarOpcao}
+              loadingPostOp={loadingPostOp}
               name={name}
               price={price}
               status={status}

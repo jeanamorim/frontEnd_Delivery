@@ -30,7 +30,7 @@ export default function NovaVariacao({
                 <label>
                   Nome <span style={{ color: 'red' }}>*</span>
                 </label>
-                <Input name="name" type="text" placeholder="NOME DA VARIAÇÃO" />
+                <Input name="name" type="text" placeholder="NOME" />
               </div>
               <div>
                 <label>

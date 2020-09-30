@@ -154,14 +154,14 @@ export default function FormPagamento() {
                                         <Button
                                           loading
                                           positive
-                                          style={{ marginLeft: 50 }}
+                                          style={{ marginLeft: 50, width: 90 }}
                                         >
                                           loading
                                         </Button>
                                       ) : (
                                         <Button
                                           positive
-                                          style={{ marginLeft: 50 }}
+                                          style={{ marginLeft: 50, width: 90 }}
                                           onClick={() => updateZona(item.id)}
                                         >
                                           Salvar
@@ -173,6 +173,7 @@ export default function FormPagamento() {
                                       style={{
                                         marginLeft: 50,
                                         backgroundColor: '#9999',
+                                        width: 90,
                                       }}
                                     >
                                       Salvar

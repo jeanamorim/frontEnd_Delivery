@@ -11,7 +11,7 @@ import Orders from '../pages/Orders';
 import Order from '../pages/Order';
 
 import Profile from '../pages/Profile';
-import Users from '../pages/Users';
+
 import Banners from '../pages/Banners';
 import Estabelecimento from '../pages/Estabelecimento';
 import Settings from '../pages/Settings';
@@ -46,7 +46,6 @@ export default function Routes() {
       {/* <Route path="/admin" exact component={Admin} isPrivate /> */}
       <Route path="/admin/add" component={AddAdmin} isPrivate />
 
-      <Route path="/users" component={Users} isPrivate />
       <Route path="/profile" component={Profile} isPrivate />
 
       <Route path="/banners" exact component={Banners} isPrivate />
