@@ -269,16 +269,15 @@ export default function Neew() {
     setVariacao(variacoes);
   }
   function setOpcaoItemValue(position, field, value) {
-    const variacoes = opcao.map((scheduleItem, index) => {
-      if (index === position) {
-        console.log(variacoes);
-        return { ...scheduleItem, [field]: value };
-      }
-
-      return scheduleItem;
+    variacao.map(item => {
+      const opcoes = item.opcao.map((scheduleItem, index) => {
+        if (index === position) {
+          return { ...scheduleItem, [field]: value };
+        }
+        return scheduleItem;
+      });
+      setVariacao(opcoes);
     });
-
-    setOpcao(variacoes);
   }
 
   return (

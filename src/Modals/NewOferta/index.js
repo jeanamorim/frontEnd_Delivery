@@ -9,10 +9,11 @@ import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon } from 'semantic-ui-react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
+import { toast } from 'react-toastify';
 import { formatPrice } from '../../util/format';
 import { ModalArea, TwoInput, AutocompleteStyle } from './style';
 import { postOfertaRequest } from '../../store/modules/ofertas/actions';
-import { listProductsRequest } from '../../store/modules/product/actions';
+import api from '../../services/api';
 
 const schema = Yup.object().shape({
   product_id: Yup.number()
@@ -45,12 +46,11 @@ const schema = Yup.object().shape({
 
 export default function Neew() {
   const dispatch = useDispatch();
-
+  const [products, setProducts] = useState([]);
   const [nameProduct, setNameProduct] = useState('');
   const [ImageProduct, setImageProduct] = useState('');
   const [openModal, setOpenModal] = useState(false);
 
-  const products = useSelector(state => state.product.ListProducts);
   const loading = useSelector(state => state.ofertas.loading);
   const [productInfo, setProductInfo] = useState({
     from: `${'R$'} 0`,
@@ -59,9 +59,23 @@ export default function Neew() {
   });
 
   useEffect(() => {
-    dispatch(listProductsRequest());
-  }, []);
+    async function loadProducts() {
+      try {
+        const response = await api.get('/productsList');
 
+        setProducts(response.data);
+      } catch (err) {
+        if (err.response) {
+          toast.error('Erro no servidor');
+        } else {
+          toast.error('Falha ao conectar com o servidor');
+        }
+      }
+    }
+
+    loadProducts();
+  }, []);
+  console.log(products);
   function handleChange(event) {
     const { price, unit, name, image } = products.find(product => {
       return product.id === Number(event.target.value);
