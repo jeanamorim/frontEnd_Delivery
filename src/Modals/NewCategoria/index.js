@@ -8,9 +8,9 @@ import * as Yup from 'yup';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
-import { postCategoriaRequest } from '../../store/modules/categorias/actions';
+
 import Avatar from './Image';
-import { ModalArea } from './style';
+import { ModalArea, ButtonSalve } from './style';
 import { resetUploads } from '../../store/modules/uploads/actions';
 
 const schema = Yup.object().shape({
@@ -57,7 +57,6 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
-      style={{ height: '55vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
@@ -96,16 +95,7 @@ export default function Neew() {
                 ]}
               />
             </div>
-            <div
-              style={{
-                display: 'flex',
-                right: 40,
-                position: 'fixed',
-                marginTop: 55,
-                padding: 0,
-                bottom: 25,
-              }}
-            >
+            <ButtonSalve>
               <Button
                 negative
                 onClick={() => setOpenModal(false)}
@@ -139,7 +129,7 @@ export default function Neew() {
                   Salvar
                 </Button>
               )}
-            </div>
+            </ButtonSalve>
           </div>
         </ModalArea>
       </Form>

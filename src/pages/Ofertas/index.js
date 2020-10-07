@@ -130,9 +130,8 @@ export default function Offers() {
                                   <thead>
                                     <tr>
                                       <th />
-                                      <th>NOME DO PRODUTO</th>
-                                      <th>QUANTIDADE</th>
-                                      <th> UNIDADE</th>
+                                      <th>PRODUTO</th>
+
                                       <th>DE</th>
                                       <th>PARA</th>
                                       <th>STATUS</th>
@@ -153,8 +152,7 @@ export default function Offers() {
                                             </main>
                                           </td>
                                           <td>{delivery.product.name}</td>
-                                          <td>{delivery.quantity}</td>
-                                          <td>{delivery.unit}</td>
+
                                           <td>
                                             {formatPrice(
                                               delivery.product.price,

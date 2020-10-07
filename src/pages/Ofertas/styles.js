@@ -31,6 +31,16 @@ export const Title = styled.div`
 export const PageActions = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media only screen and (max-width: 450px) {
+    flex-direction: column;
+    display: block;
+
+    div {
+      align-items: center;
+      justify-content: center;
+    }
+  }
   div {
     align-items: center;
     justify-content: center;

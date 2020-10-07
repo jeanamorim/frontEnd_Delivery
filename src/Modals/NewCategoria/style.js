@@ -7,6 +7,29 @@ export const ModalArea = styled.div`
   display: flex;
   padding: 40px 40px 80px 40px;
 
+  @media only screen and (max-width: 450px) {
+    display: grid;
+    padding: opx;
+
+    img {
+      margin-left: 20%;
+    }
+    > div {
+      display: grid;
+      width: 100%;
+    }
+    input {
+      border-radius: 4px;
+      border: 1px solid #999999;
+      margin-bottom: 15px;
+
+      font-size: 15px;
+    }
+    select {
+      flex: 1;
+    }
+  }
+
   > div {
     display: block;
     width: 100%;
@@ -52,19 +75,21 @@ export const ModalArea = styled.div`
       }
     }
   }
+`;
+export const ButtonSalve = styled.div`
+  display: flex;
+  right: 40px;
+  position: fixed;
+  margin-top: 55px;
+  padding: 0px;
+  bottom: 25px;
 
-  /* button {
-    position: absolute;
-    bottom: 25px;
-    right: 40px;
-    padding: 10px 20px 10px 20px;
-    border-radius: 8px;
-    border: 0;
-    color: #fff;
-    background: #f4a460;
-
-    &:hover {
-      background: ${shade(0.2, '#F4A460')};
-    }
-  } */
+  @media only screen and (max-width: 350px) {
+    flex-direction: column;
+    display: block;
+    right: 20px;
+    position: fixed;
+    padding: 0px;
+    margin-left: 20%;
+  }
 `;
