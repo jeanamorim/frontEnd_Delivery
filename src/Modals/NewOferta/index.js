@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../util/format';
-import { ModalArea, TwoInput, AutocompleteStyle } from './style';
+import { ModalArea, TwoInput, AutocompleteStyle, ButtonSalve } from './style';
 import { postOfertaRequest } from '../../store/modules/ofertas/actions';
 import api from '../../services/api';
 
@@ -75,7 +75,7 @@ export default function Neew() {
 
     loadProducts();
   }, []);
-  console.log(products);
+
   function handleChange(event) {
     const { price, unit, name, image } = products.find(product => {
       return product.id === Number(event.target.value);
@@ -119,7 +119,6 @@ export default function Neew() {
   return (
     <Modal
       open={openModal}
-      style={{ height: '60vh' }}
       trigger={
         <Button positive onClick={() => setOpenModal(true)}>
           <Icon name="plus" />
@@ -223,16 +222,7 @@ export default function Neew() {
                 />
               </div>
             </TwoInput>
-            <div
-              style={{
-                display: 'flex',
-                right: 40,
-                position: 'fixed',
-                marginTop: 55,
-                padding: 0,
-                bottom: 25,
-              }}
-            >
+            <ButtonSalve>
               <Button
                 negative
                 onClick={() => setOpenModal(false)}
@@ -266,7 +256,7 @@ export default function Neew() {
                   Salvar
                 </Button>
               )}
-            </div>
+            </ButtonSalve>
           </div>
         </ModalArea>
       </Form>
