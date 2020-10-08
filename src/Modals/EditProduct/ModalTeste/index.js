@@ -177,25 +177,14 @@ function ModalExampleModal({ open, setOpen }) {
         <Button color="black" onClick={() => setOpen(false)}>
           Cancelar
         </Button>
-        {loading ? (
-          <Button
-            loading
-            labelPosition="right"
-            icon="checkmark"
-            positive
-            style={{ width: 118 }}
-          >
-            loading
-          </Button>
-        ) : (
-          <Button
-            content="Salvar"
-            labelPosition="right"
-            icon="checkmark"
-            positive
-            onClick={handleSubmit}
-          />
-        )}
+
+        <Button
+          content="Salvar"
+          labelPosition="right"
+          icon="checkmark"
+          positive
+          onClick={handleSubmit}
+        />
       </Modal.Actions>
     </Modal>
   );
