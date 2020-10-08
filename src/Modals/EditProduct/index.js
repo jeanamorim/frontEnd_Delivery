@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import api from '../../services/api';
 import FormProduct from './Product';
 import FormVariacao from './NovaVariacao';
-
+import Testar from './ModalTeste';
 import DeletarProduto from './DeletarProduto';
 import Variacoes from './Variacoes';
 
@@ -57,6 +57,7 @@ const schemaVariacao = Yup.object().shape({
 export default function Neew() {
   const dispatch = useDispatch();
   const [variacao, setVariacao] = useState([]);
+  const [open, setOpen] = React.useState(false);
   const [opcao, setOpcao] = useState([]);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -158,19 +159,6 @@ export default function Neew() {
       }
     }
   }
-  async function deletarOpcao(id) {
-    try {
-      await api.delete(`opcaovariacao/${id}`);
-      setRender(!render);
-      toast.success('Opção deletada com sucesso');
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Erro ao conectar com o servidor');
-      }
-    }
-  }
 
   async function handleSubmitOpcao(name, price, status, itemId) {
     setLoadingPostOp(true);
@@ -211,26 +199,6 @@ export default function Neew() {
     setLoadingEditVar(true);
     try {
       await api.put(`variacao/${idvar}`, {
-        name: editVariacao.name,
-        minimo: editVariacao.minimo,
-        maximo: editVariacao.maximo,
-      });
-
-      toast.success('Variacao editada com sucesso');
-      setEditeVariacao('');
-      setLoadingEditVar(false);
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Erro ao conectar com o servidor');
-      }
-    }
-  }
-  async function editarOpção(idOp) {
-    setLoadingEditVar(true);
-    try {
-      await api.put(`opcaovariacao/${idOp}`, {
         name: editVariacao.name,
         minimo: editVariacao.minimo,
         maximo: editVariacao.maximo,
@@ -290,14 +258,15 @@ export default function Neew() {
             onClick={() => handleCloseModal()}
           />
         </Modal.Header>
-        <FormProduct
+        {/* <FormProduct
           handleSubmit={handleSubmit}
           product={product}
           schema={schema}
           options={options}
           loading={loading}
           handleCloseModal={handleCloseModal}
-        />
+        /> */}
+        <Testar product={product} open={open} setOpen={setOpen} />
         <div
           style={{
             position: 'absolute',
@@ -375,7 +344,6 @@ export default function Neew() {
               setOpcaoItemValue={setOpcaoItemValue}
               handleSubmitOpcao={handleSubmitOpcao}
               deletarVariação={deletarVariação}
-              deletarOpcao={deletarOpcao}
               loadingPostOp={loadingPostOp}
               name={name}
               price={price}
@@ -383,6 +351,7 @@ export default function Neew() {
               setName={setName}
               setPrice={setPrice}
               setStatus={setStatus}
+              product={product}
             />
           </>
         ) : null}

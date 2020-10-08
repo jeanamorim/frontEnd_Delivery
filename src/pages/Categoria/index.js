@@ -20,6 +20,7 @@ import api from '../../services/api';
 export default function Categoria() {
   const dispatch = useDispatch();
   const [categorias, setCategorias] = useState([]);
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const profile_id = useSelector(state => state.user.profile.id);
   const loadingAnimation = (
@@ -67,6 +68,7 @@ export default function Categoria() {
 
   function handleEditCategoria(categoria) {
     dispatch(editeCategoriaOpen(categoria));
+    setOpen(true);
   }
   function refreshPage() {
     window.location.reload();
@@ -170,7 +172,7 @@ export default function Categoria() {
                             ))}
                           </ul>
 
-                          <EditCategoria />
+                          <EditCategoria open={open} setOpen={setOpen} />
                         </Container>
                       )}
                     </div>

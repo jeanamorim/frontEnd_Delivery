@@ -1,58 +1,57 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/button-has-type */
-import React, { useState } from 'react';
-import { Input, Form, Select } from '@rocketseat/unform';
-import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon, Header } from 'semantic-ui-react';
-import * as Yup from 'yup';
+import React, { useState, useEffect } from 'react';
+
+import { Button, Modal, Form, Message, Icon, Header } from 'semantic-ui-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import { editeCategoriaClose } from '../../store/modules/categorias/actions';
-import Avatar from './Image';
-import { ModalArea } from './style';
+import Imagem from './Image';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  status: Yup.string().required('O status é obrigatório'),
-});
-
-export default function Neew() {
+export default function Neew({ open, setOpen }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [categorias, setCategorias] = useState([]);
+  const [error, setError] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const category = useSelector(state => state.categorias.CategoriaToEdit);
-  const openModal = useSelector(state => state.categorias.editCategoria);
-  const avatar = useSelector(state => state.uploads.avatar);
-  // const loading = useSelector(state => state.categorias.loading);
 
-  async function handleSubmitEdit(data) {
-    setLoading(true);
-    const { id } = category;
-    const categoria = {
-      name: data.name,
-      image_id: avatar.id,
-    };
+  const avatar = useSelector(state => state.uploads.avatar);
+
+  useEffect(() => setCategorias(category), [category]);
+
+  const options = [
+    { key: 'ATIVO', text: 'ATIVO', value: 'ATIVO' },
+    { key: 'INATIVO', text: 'INATIVO', value: 'INATIVO' },
+  ];
+
+  async function handleSubmitEdit() {
+    if (categorias.name === '') {
+      setError(true);
+      return;
+    }
 
     try {
-      await api.put(`categories/${id}`, categoria);
-      setLoading(false);
-      dispatch(editeCategoriaClose());
+      setLoading(true);
+      await api.put(`categories/${category.id}`, {
+        name: categorias.name,
+        image_id: avatar.id,
+      });
+
+      setOpen(false);
       toast.success('Categoria atualizado com sucesso');
+      setLoading(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
-        setLoading(false);
       } else {
         toast.error('Falha ao conectar com o servidor');
-        setLoading(false);
       }
     }
   }
 
-  function handleCloseCreateProduct() {
-    dispatch(editeCategoriaClose());
-  }
   async function deleteCategoria(id) {
     try {
       await api.delete(`categories/${id}`);
@@ -69,112 +68,73 @@ export default function Neew() {
     }
   }
 
+  function setProdutosItens(field, value) {
+    setCategorias({ ...categorias, [field]: value });
+  }
+
   return (
     <>
-      <Modal open={openModal}>
+      <Modal
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
+        open={open}
+      >
         <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
           Editar categoria
-          <MdClose
-            style={{ float: 'right' }}
-            onClick={handleCloseCreateProduct}
-          />
         </Modal.Header>
-        <Form
-          onSubmit={handleSubmitEdit}
-          initialData={category}
-          schema={schema}
-        >
-          <ModalArea>
-            <Avatar />
-            <div>
-              <div>
-                <label>
-                  Nome da categoria <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input
-                  name="name"
-                  type="text"
-                  placeholder="NOME DO CATEGORIA"
+        <Modal.Content image>
+          <Imagem wrapped />
+          <Modal.Description style={{ marginLeft: 30 }}>
+            <Form error={error}>
+              {error ? (
+                <Message
+                  error
+                  header="Verifique os dados"
+                  content="Um ou mais campos ficaram sem preencher, os campos * são obrigatórios"
                 />
-              </div>
-              <div>
-                <label>
-                  Status da categoria <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  placeholder="STATUS"
-                  style={{ border: '1px solid #999', height: 40 }}
-                  name="status"
-                  options={[
-                    { id: 'ATIVO', title: 'ATIVO' },
-                    { id: 'INATIVO', title: 'INATIVO' },
-                  ]}
-                />
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  right: 40,
-                  position: 'fixed',
-                  marginTop: 55,
-                  padding: 0,
-                  bottom: 25,
-                }}
-              >
-                <Button
-                  negative
-                  onClick={handleCloseCreateProduct}
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Cancelar
-                </Button>
-                {loading ? (
-                  <Button
-                    positive
-                    loading
-                    style={{
-                      width: 140,
-                      border: 0,
-                    }}
-                  >
-                    Loading
-                  </Button>
-                ) : (
-                  <Button
-                    positive
-                    type="submit"
-                    style={{
-                      width: 140,
-                      border: 0,
-                    }}
-                  >
-                    Salvar
-                  </Button>
-                )}
-              </div>
-            </div>
-          </ModalArea>
-        </Form>
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            marginBottom: 40,
-            marginLeft: 20,
-          }}
-        >
-          <Button.Group vertical labeled icon>
-            <Button
-              negative
-              icon="times"
-              content="Deletar"
-              onClick={() => setOpenDeleteModal(true)}
-            />
-          </Button.Group>
-        </div>
+              ) : null}
+              <Form.Input
+                fluid
+                label="Nome"
+                placeholder="Nome"
+                name="name"
+                value={categorias.name}
+                onChange={e => setProdutosItens('name', e.target.value)}
+                required
+              />
+
+              <Form.Select
+                fluid
+                required
+                label="Status"
+                name="status"
+                options={options}
+                placeholder="Status"
+              />
+            </Form>
+          </Modal.Description>
+          <Modal.Content />
+        </Modal.Content>
+        <Modal.Actions>
+          <Button
+            content="Deletar"
+            labelPosition="right"
+            icon="delete"
+            negative
+            onClick={() => setOpenDeleteModal(true)}
+          />
+          <Button color="black" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+
+          <Button
+            content="Salvar"
+            labelPosition="right"
+            icon="checkmark"
+            positive
+            onClick={handleSubmitEdit}
+          />
+        </Modal.Actions>
       </Modal>
 
       <Modal

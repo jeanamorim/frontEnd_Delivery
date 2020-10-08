@@ -19,7 +19,7 @@ import { history } from '../../services/history';
 import { formatPrice } from '../../util/format';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
-import ProductEdit from '../../Modals/EditProduct';
+import ProductEdit from '../../Modals/EditProduct/ModalTeste';
 
 import { Container, Title, PageActions, PageContent } from './styles';
 import { getCategoriasRequest } from '../../store/modules/categorias/actions';
@@ -27,7 +27,7 @@ import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 
 export default function Products({ location }) {
-  const openModal = useSelector(state => state.product.editProduct);
+  const [open, setOpen] = React.useState(false);
   const [products, setProducts] = useState([]);
   const [modal, setModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,11 +55,11 @@ export default function Products({ location }) {
       }
     });
   }, [products, socket]);
-  // useEffect(() => {
-  //   socket.on('UPDATE_PRODUCT', data => {
-  //     loadOrder();
-  //   });
-  // }, [products, socket]);
+  useEffect(() => {
+    socket.on('UPDATE_PRODUCT', data => {
+      loadOrder();
+    });
+  }, [products, socket]);
 
   async function loadOrder() {
     setLoading(true);
@@ -91,6 +91,7 @@ export default function Products({ location }) {
       category_id: product.category.id,
     };
     dispatch(openEditProduct(produto));
+    setOpen(true);
   }
 
   function refreshPage() {
@@ -200,7 +201,9 @@ export default function Products({ location }) {
                                   </>
                                 ))}
                               </tbody>
-                              {openModal === true ? <ProductEdit /> : null}
+                              {open === true ? (
+                                <ProductEdit open={open} setOpen={setOpen} />
+                              ) : null}
                             </PageContent>
                           </>
                         ) : (

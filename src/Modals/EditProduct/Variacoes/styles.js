@@ -3,7 +3,7 @@ import { shade } from 'polished';
 
 export const VariacaoList = styled.div`
   display: flex;
-  padding: 10px 40px 30px 10px;
+  padding: 0px 0px 30px 10px;
   background: '#999';
   margin-bottom: 20px;
   margin-left: 17px;
@@ -148,5 +148,41 @@ export const NovaOpcao = styled.div`
         font-family: 'Square721 BT', serif;
       }
     }
+  }
+`;
+export const PageContent = styled.table`
+  width: 100%;
+  margin: 25px 0;
+  border-collapse: collapse;
+  th,
+  td {
+    padding: 6px;
+    text-align: center;
+    border-radius: 4px;
+  }
+  td {
+    color: #4c4242;
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    img {
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+      border: 1px solid #eee;
+      margin-top: 4px;
+      margin-right: 10px;
+    }
+  }
+  /*
+  > td.status {
+  } */
+  tbody tr {
+    background: #eeeae6;
+    height: 50px;
+    margin-top: 20px;
   }
 `;
