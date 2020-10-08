@@ -3,19 +3,14 @@
 import React, { useState } from 'react';
 
 import { Button, Modal, Form, Message, Icon } from 'semantic-ui-react';
-import * as Yup from 'yup';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 
 import Imagem from './Image';
-import { ModalArea, ButtonSalve } from './style';
-import { resetUploads } from '../../store/modules/uploads/actions';
 
-const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  status: Yup.string().required('O status é obrigatório'),
-});
+import { resetUploads } from '../../store/modules/uploads/actions';
 
 export default function Neew() {
   const dispatch = useDispatch();

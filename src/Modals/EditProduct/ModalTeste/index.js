@@ -130,6 +130,7 @@ function ModalExampleModal({ open, setOpen }) {
                 value={produtos.price}
                 onChange={e => setProdutosItens('price', e.target.value)}
                 required
+                type="number"
               />
               <Form.Input
                 fluid
@@ -137,6 +138,7 @@ function ModalExampleModal({ open, setOpen }) {
                 label="Qtd. Produto"
                 placeholder="Quantidade"
                 name="quantity"
+                type="number"
                 value={produtos.quantity}
                 onChange={e => setProdutosItens('quantity', e.target.value)}
               />
