@@ -17,7 +17,6 @@ export default function Neew() {
   const [open, setOpen] = React.useState(false);
   const [error, setError] = useState(false);
   const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const avatar = useSelector(state => state.uploads.avatar);
 
@@ -30,7 +29,7 @@ export default function Neew() {
       setError(true);
       return;
     }
-    setLoading(true);
+
     try {
       await api.post('categories', {
         name,
@@ -38,8 +37,9 @@ export default function Neew() {
       });
       dispatch(resetUploads());
       setOpen(false);
+      setName('');
+      setError(false);
 
-      setLoading(false);
       toast.success('Categoria Cadastrado com sucesso');
     } catch (err) {
       if (err.response) {
@@ -54,10 +54,21 @@ export default function Neew() {
     { key: 'INATIVO', text: 'INATIVO', value: 'INATIVO' },
   ];
 
+  function handleAbrirModal() {
+    setOpen(true);
+    setError(false);
+    dispatch(resetUploads());
+  }
+  function handleFecharModal() {
+    setOpen(false);
+    setError(false);
+    dispatch(resetUploads());
+  }
+
   return (
     <Modal
-      onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
+      onClose={() => handleFecharModal()}
+      onOpen={() => handleAbrirModal()}
       open={open}
       trigger={
         <Button positive onClick={() => setOpen(true)}>
@@ -103,7 +114,7 @@ export default function Neew() {
         <Modal.Content />
       </Modal.Content>
       <Modal.Actions>
-        <Button color="black" onClick={() => setOpen(false)}>
+        <Button color="black" onClick={() => handleFecharModal()}>
           Cancelar
         </Button>
 

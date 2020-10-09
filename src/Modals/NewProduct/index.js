@@ -2,41 +2,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
-import { Input, Form, Select } from '@rocketseat/unform';
-import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon } from 'semantic-ui-react';
-import * as Yup from 'yup';
+
+import { Button, Modal, Form, Message, Icon } from 'semantic-ui-react';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
-import translate from '../../locales';
+
 import { resetUploads } from '../../store/modules/uploads/actions';
 import api from '../../services/api';
-import {
-  openModalCadastarProduct,
-  fecharModalCadastarProduct,
-} from '../../store/modules/product/actions';
 
-import Avatar from './Image';
-import { ModalArea, TwoInput, AutocompleteStyle } from './style';
-
-const schema = Yup.object().shape({
-  name: Yup.string().required('O nome é obrigatório'),
-  category_id: Yup.string().required('A categoria é obrigatória'),
-  description: Yup.string().required('A descrição é obrigatória'),
-  quantity: Yup.string()
-    .matches(/^[+]?([.]\d+|\d+[.]?\d*)$/, translate('product_quantity_error_1'))
-    .required(translate('product_quantity_error_2')),
-  unit: Yup.string().required(translate('product_unit_error')),
-  price: Yup.string()
-    .matches(/^[+]?([.]\d+|\d+[.]?\d*)$/, translate('product_price_error_1'))
-    .required(translate('product_price_error_2')),
-});
+import Imagem from './Image';
 
 export default function Neew() {
   const dispatch = useDispatch();
+  const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState();
+  const [quantity, setQuantity] = useState();
+  const [unit, setUnit] = useState('');
+  const [category, setCategory] = useState();
+  const [description, setDescription] = useState('');
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const modal = useSelector(state => state.product.modalCadastrarProduct);
 
   const avatar = useSelector(state => state.uploads.avatar);
 
@@ -56,20 +43,56 @@ export default function Neew() {
     getCategoria();
   }, []);
 
-  async function handleSubmit(data) {
-    setLoading(true);
+  async function handleSubmit() {
+    if (name === '') {
+      setError(true);
+      return;
+    }
+    if (price === '') {
+      setError(true);
+      return;
+    }
+    if (quantity === '') {
+      setError(true);
+      return;
+    }
+    if (unit === '') {
+      setError(true);
+      return;
+    }
+    if (description === '') {
+      setError(true);
+      return;
+    }
+    if (category === '') {
+      setError(true);
+      return;
+    }
+    if (avatar === null) {
+      setError(true);
+      return;
+    }
+
     try {
-      if (avatar === null) {
-        toast.error('A imagem é obrigatória, favor verificar!');
-        return;
-      }
       await api.post('products', {
-        ...data,
+        name,
+        price,
+        unit,
+        description,
+        category_id: category,
+        quantity,
         image_id: avatar.id,
       });
-      dispatch(fecharModalCadastarProduct());
+
       dispatch(resetUploads());
-      setLoading(false);
+      setName('');
+      setPrice('');
+      setQuantity('');
+      setUnit('');
+      setDescription('');
+      setCategory('');
+      setError(false);
+      setOpen(false);
       toast.success('Produto Cadastrado com sucesso');
     } catch (err) {
       if (err.response) {
@@ -80,152 +103,135 @@ export default function Neew() {
     }
   }
 
-  const options = categories.map(category => ({
-    id: category.id,
-    title: category.name,
+  const options = categories.map(item => ({
+    key: item.id,
+    text: item.name,
+    value: item.id,
   }));
+  const unidade = [
+    { key: 'kg', text: 'kg', value: 'kg' },
+    { key: 'g', text: 'g', value: 'g' },
+    { key: 'dz', text: 'dz', value: 'dz' },
+    { key: 'un', text: 'un', value: 'un' },
+    { key: 'Nenhum', text: 'Nenhum', value: 'Nenhum' },
+  ];
 
   function handleAbrirModal() {
-    dispatch(openModalCadastarProduct());
+    setOpen(true);
+    setError(false);
     dispatch(resetUploads());
   }
   function handleFecharModal() {
-    dispatch(fecharModalCadastarProduct());
+    setOpen(false);
+    setError(false);
     dispatch(resetUploads());
   }
 
+  const handleChangeUnit = (e, { value }) => setUnit(value);
+  const handleChangeCategory = (e, { value }) => setCategory(value);
+
   return (
     <Modal
-      open={modal}
+      onClose={() => handleFecharModal()}
+      onOpen={() => handleAbrirModal()}
+      open={open}
       trigger={
-        <Button positive onClick={() => handleAbrirModal()}>
+        <Button positive onClick={() => setOpen(true)}>
           <Icon name="plus" />
           Novo produto
         </Button>
       }
     >
       <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
-        Cadastrar produto
-        <MdClose style={{ float: 'right' }} onClick={handleFecharModal} />
+        Editar produto
       </Modal.Header>
-      <Form onSubmit={handleSubmit} schema={schema} className="form-horizontal">
-        <ModalArea forR>
-          <Avatar name="image_id" />
-
-          <div>
-            <div>
-              <label>
-                Nome do produto <span style={{ color: 'red' }}>*</span>
-              </label>
-              <Input name="name" type="text" placeholder="NOME DO PRODUTO" />
-            </div>
-            <label>
-              Descrição do produto <span style={{ color: 'red' }}>*</span>
-            </label>
-            <Input
-              name="description"
-              type="text"
-              placeholder="DESCRIÇÃO DO PRODUTO"
+      <Modal.Content image>
+        <Imagem wrapped />
+        <Modal.Description style={{ marginLeft: 30 }}>
+          <Form error={error}>
+            {error ? (
+              <Message
+                error
+                header="Verifique os dados"
+                content="Um ou mais campos ficaram sem preencher, os campos * são obrigatórios"
+              />
+            ) : null}
+            <Form.Input
+              fluid
+              label="Nome"
+              placeholder="Nome"
+              name="name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
             />
-            <TwoInput>
-              <div style={{ width: '50%' }}>
-                <label>
-                  Preço do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input
-                  name="price"
-                  type="text"
-                  placeholder=" R$ PREÇO DO PRODUTO"
-                />
-              </div>
-              <div style={{ width: '50%', marginLeft: 5 }}>
-                <label>
-                  Quantidade do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input
-                  name="quantity"
-                  type="text"
-                  placeholder="QUANTIDADE DISPONIVEL"
-                />
-              </div>
-            </TwoInput>
+            <Form.Group widths="equal">
+              <Form.Input
+                fluid
+                label="Preço"
+                placeholder="Preço"
+                name="price"
+                value={price}
+                onChange={e => setPrice(e.target.value)}
+                required
+                type="number"
+              />
+              <Form.Input
+                fluid
+                required
+                label="Qtd. Produto"
+                placeholder="Quantidade"
+                name="quantity"
+                type="number"
+                value={quantity}
+                onChange={e => setQuantity(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Select
+                fluid
+                required
+                label="Unidade"
+                name="unit"
+                options={unidade}
+                placeholder="Unidade"
+                value={unit}
+                onChange={handleChangeUnit}
+              />
+              <Form.Select
+                fluid
+                required
+                label="Categoria"
+                name="category"
+                options={options}
+                placeholder="categoria"
+                value={category}
+                onChange={handleChangeCategory}
+              />
+            </Form.Group>
+            <Form.TextArea
+              label="Drecrição"
+              required
+              placeholder="Caracteristica do produto..."
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+            />
+          </Form>
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button color="black" onClick={() => handleFecharModal()}>
+          Cancelar
+        </Button>
 
-            <AutocompleteStyle>
-              <div style={{ width: '50%' }}>
-                <label>
-                  Unidade do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  placeholder="UNIDADE"
-                  name="unit"
-                  options={[
-                    { id: 'kg', title: 'kg' },
-                    { id: 'g', title: 'g' },
-                    { id: 'dz', title: 'dz' },
-                    { id: 'un', title: 'un' },
-                    { id: '0', title: 'Nenhum' },
-                  ]}
-                />
-              </div>
-              <div style={{ width: '50%', marginLeft: 5 }}>
-                <label>
-                  Categoria do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  name="category_id"
-                  placeholder="CATEGORIA"
-                  options={options}
-                />
-              </div>
-            </AutocompleteStyle>
-
-            <div
-              style={{
-                display: 'flex',
-                right: 40,
-                position: 'fixed',
-                marginTop: 55,
-                padding: 0,
-                bottom: 25,
-              }}
-            >
-              <Button
-                negative
-                onClick={handleFecharModal}
-                style={{
-                  width: 140,
-                  border: 0,
-                }}
-              >
-                Cancelar
-              </Button>
-              {loading ? (
-                <Button
-                  positive
-                  loading
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Loading
-                </Button>
-              ) : (
-                <Button
-                  positive
-                  type="submit"
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Salvar
-                </Button>
-              )}
-            </div>
-          </div>
-        </ModalArea>
-      </Form>
+        <Button
+          content="Salvar"
+          labelPosition="right"
+          icon="checkmark"
+          positive
+          onClick={handleSubmit}
+        />
+      </Modal.Actions>
     </Modal>
   );
 }
