@@ -6,7 +6,7 @@ import { ptBR as pt_BR } from 'date-fns/locale';
 import pt from './pt-BR';
 
 I18n.translations = {
-  pt_BR: pt,
+  pt_BR: 'pt-BR',
 };
 
 // your language
