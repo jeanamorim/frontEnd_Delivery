@@ -37,6 +37,8 @@ import Cancelado from '../../components/Pedidos/Cancelado';
 
 export default function Pedidos() {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [orders, setOrders] = useState([]);
   const [pendente, setPendente_] = useState([]);
   const [producao, setProducao_] = useState([]);
   const [enviado, setEnviado_] = useState([]);
@@ -144,7 +146,8 @@ export default function Pedidos() {
   }, [date]);
 
   function viewOrdens(order) {
-
+    setOrders(order);
+    setOpen(true);
   }
 
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
@@ -256,7 +259,10 @@ export default function Pedidos() {
                   />
                 </Grid.Row>
               </Grid>
-              {/* {openModal === true ? <OrderDetails /> : null} */}
+
+              {open === true ? (
+                <OrderDetails pedido={orders} open={open} setOpen={setOpen} />
+              ) : null}
             </div>
           </div>
         </div>

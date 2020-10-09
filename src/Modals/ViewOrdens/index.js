@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/button-has-type */
@@ -5,10 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { Input, Form, Select } from '@rocketseat/unform';
 import { MdClose } from 'react-icons/md';
 import { Modal, Button, Icon, Divider, Image } from 'semantic-ui-react';
-
-import { useSelector, useDispatch } from 'react-redux';
-
-import { CloseViewPedido } from '../../store/modules/pedidos/actions';
 
 import {
   StatusPedido,
@@ -47,10 +44,7 @@ import {
   TextObservacao,
 } from './styles';
 
-export default function Neew() {
-  const dispatch = useDispatch();
-  const openModal = useSelector(state => state.pedidos.viewModal);
-  const pedido = useSelector(state => state.pedidos.viewOrdens);
+export default function Neew({ open, setOpen, pedido }) {
   const [order, setOrder] = useState([]);
   const troco = pedido.troco - pedido.total;
 
@@ -59,14 +53,14 @@ export default function Neew() {
   }, [pedido]);
 
   function handleFecharModal() {
-    dispatch(CloseViewPedido());
+    setOpen(false);
   }
   const quantityItens = order.reduce((totalSum, product) => {
     return totalSum + product.quantity;
   }, 0);
 
   return (
-    <Modal open={openModal}>
+    <Modal open={open}>
       <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
         Pedido
         <MdClose style={{ float: 'right' }} onClick={handleFecharModal} />
