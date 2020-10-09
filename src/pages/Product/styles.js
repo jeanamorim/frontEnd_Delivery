@@ -32,12 +32,12 @@ export const PageActions = styled.div`
   display: flex;
   justify-content: space-between;
   @media only screen and (max-width: 620px) {
-    flex-direction: column;
+    flex-direction: center;
+    align-items: center;
+    align-self: center;
     display: block;
-
     div {
-      align-items: center;
-      justify-content: center;
+      margin-top: 15px;
     }
   }
   div {
