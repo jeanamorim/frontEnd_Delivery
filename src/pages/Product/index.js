@@ -190,7 +190,7 @@ export default function Products({ location }) {
                                         </main>
                                       </td>
                                       <td>{delivery.name}</td>
-                                      <td>{formatPrice(delivery.price)}</td>
+                                      <td> R$ {formatPrice(delivery.price)}</td>
                                       <td style={{ color: '#1C1CCE' }}>
                                         {delivery.variacao.length} (variações)
                                       </td>

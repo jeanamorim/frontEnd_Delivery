@@ -137,7 +137,7 @@ export default function Dashboard() {
                       <div className="panel-body bk-warning text-light">
                         <div className="stat-panel text-center">
                           <div className="stat-panel-number h2 ">
-                            {formatPrice(faturamento || loading)}
+                            R$ {formatPrice(faturamento || loading)}
                           </div>
                           <div className="stat-panel-title text-uppercase">
                             Faturamento

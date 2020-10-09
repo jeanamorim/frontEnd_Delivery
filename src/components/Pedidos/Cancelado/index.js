@@ -40,7 +40,7 @@ function Cancelado({ cancelado, loading, handleChange, viewOrdens }) {
                   <Card.Meta> #{order.id}</Card.Meta>
                   <Card.Description>
                     {order.payment_method}
-                    <strong> {formatPrice(order.total)}</strong>
+                    <strong> R$ {formatPrice(order.total)}</strong>
                   </Card.Description>
                   {order.order_details.map(image => (
                     <div

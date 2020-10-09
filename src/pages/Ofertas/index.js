@@ -154,11 +154,12 @@ export default function Offers() {
                                           <td>{delivery.product.name}</td>
 
                                           <td>
+                                            R$
                                             {formatPrice(
                                               delivery.product.price,
                                             )}
                                           </td>
-                                          <td>{formatPrice(delivery.to)}</td>
+                                          <td>R$ {formatPrice(delivery.to)}</td>
                                           <td
                                             className={
                                               isAfter(

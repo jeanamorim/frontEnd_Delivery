@@ -21,7 +21,7 @@ import {
   Segment,
   Card,
 } from 'semantic-ui-react';
-import { formatPrice } from '../../util/format';
+
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
 import api from '../../services/api';

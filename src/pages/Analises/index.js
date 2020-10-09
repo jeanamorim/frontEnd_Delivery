@@ -210,27 +210,27 @@ export default function Analises() {
                       <ul>
                         <Time>
                           <strong>
-                            {formatPrice(status.valorTotal) || loading}
+                            R$ {formatPrice(status.valorTotal) || loading}
                           </strong>
                           <span>VALOR TOTAL</span>
                         </Time>
 
                         <Time>
                           <strong>
-                            {formatPrice(status.totalDinheiro) || loading}
+                            R$ {formatPrice(status.totalDinheiro) || loading}
                           </strong>
                           <span>DINHEIRO</span>
                         </Time>
                         <Time>
                           <strong>
-                            {formatPrice(status.totalCartao) || loading}
+                            R$ {formatPrice(status.totalCartao) || loading}
                           </strong>
                           <span>CARTÃO</span>
                         </Time>
 
                         <Time>
                           <strong>
-                            {formatPrice(status.valorTotalFrete) || loading}
+                            R$ {formatPrice(status.valorTotalFrete) || loading}
                           </strong>
                           <span>VALOR DAS ENTREGAS</span>
                         </Time>
@@ -241,6 +241,7 @@ export default function Analises() {
                           <li>
                             <span>FATURAMENTO TOTAL ATE HOJE</span>
                             <strong>
+                              R$
                               {formatPrice(status.faturamentoTotal) || loading}
                             </strong>
                           </li>
@@ -248,7 +249,7 @@ export default function Analises() {
                           <li>
                             <span>VALOR A SER PAGO NO MÊS</span>
                             <strong>
-                              {formatPrice(porcentagemApp) || loading}
+                              R$ {formatPrice(porcentagemApp) || loading}
                             </strong>
                           </li>
                         </ul>

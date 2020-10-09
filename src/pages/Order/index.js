@@ -181,7 +181,7 @@ export default function Order({ location }) {
                           color: '#000',
                         }}
                       >
-                        {formatPrice(produto.price)}
+                        R$ {formatPrice(produto.price)}
                       </strong>
                     </td>
                   </tr>
