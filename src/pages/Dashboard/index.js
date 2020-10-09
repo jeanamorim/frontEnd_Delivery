@@ -12,39 +12,35 @@ import api from '../../services/api';
 export default function Dashboard() {
   const [status, setStatus] = useState();
   const [faturamento, setFaturamento] = useState([]);
-  const [relatorios, setRelatorio] = useState([]);
-  const [date] = useState(new Date());
-  /*
+
   useEffect(() => {
     async function loadStatus() {
       try {
         const response = await axios
-          .all([api.get('/products'), api.get('/orders'), api.get('/offers')])
+          .all([api.get('/productsList'), api.get('/offers')])
           .then(
-            axios.spread((products, orders, offers) => ({
-              products: products.data.length,
-              orders: orders.data.length,
+            axios.spread((productsList, offers) => ({
+              products: productsList.data.length,
+
               offers: offers.data.length,
             })),
           );
 
         setStatus(response);
       } catch (err) {
-        toast.error(translate('server_connection_error'));
+        toast.error(
+          translate('Falha ao buscar os dados, verifique sua internet!!!'),
+        );
       }
     }
     loadStatus();
   }, []);
-  */
 
   useEffect(() => {
     async function loadPedidos() {
       try {
         const response = await api.get('faturamentoTotal');
-        const relatorio = await api.get('relatoriopedidos', {
-          params: { date },
-        });
-        setRelatorio(relatorio.data.length);
+
         setFaturamento(response.data[0].subtotal);
       } catch (err) {
         toast.error('Falha ao conectar com o servidor');
@@ -71,9 +67,7 @@ export default function Dashboard() {
                         style={{ background: 'red' }}
                       >
                         <div className="stat-panel text-center">
-                          <div className="stat-panel-number h1 ">
-                            {relatorios || loading}
-                          </div>
+                          <div className="stat-panel-number h1 ">0</div>
                           <div className="stat-panel-title text-uppercase">
                             Pedidos
                           </div>
@@ -137,7 +131,7 @@ export default function Dashboard() {
                       <div className="panel-body bk-warning text-light">
                         <div className="stat-panel text-center">
                           <div className="stat-panel-number h2 ">
-                            R$ {formatPrice(faturamento || loading)}
+                            {loading ? formatPrice(faturamento) : '0'}
                           </div>
                           <div className="stat-panel-title text-uppercase">
                             Faturamento
