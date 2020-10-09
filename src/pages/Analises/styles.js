@@ -131,6 +131,14 @@ export const Content = styled.li`
       }
     }
   }
+  @media only screen and (max-width: 700px) {
+    ul {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      grid-gap: 15px;
+      margin-top: 30px;
+    }
+  }
 `;
 export const ProductTable = styled.table`
   margin: 10px auto;

@@ -104,13 +104,7 @@ export default function FormPagamento() {
                           <div> Valores das Entregas</div>
                         </Header>
                         <Divider />
-                        {/* <ContainerText>
-                          <Text>
-                            Ao editar uma zona de entrega em seguida clique em -
-                            SALVAR - se voçê for editar outra zona sem salvar a
-                            anterior, o valor da anterior será perdido.
-                          </Text>
-                        </ContainerText> */}
+
                         {loading ? (
                           <Container>
                             <div
