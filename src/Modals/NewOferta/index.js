@@ -4,123 +4,134 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/button-has-type */
 import React, { useEffect, useState } from 'react';
-import { Input, Form, Select } from '@rocketseat/unform';
-import { MdClose } from 'react-icons/md';
-import { Modal, Button, Icon } from 'semantic-ui-react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as Yup from 'yup';
+
+import { Button, Modal, Form, Message, Icon } from 'semantic-ui-react';
+
 import { toast } from 'react-toastify';
 import { formatPrice } from '../../util/format';
-import { ModalArea, TwoInput, AutocompleteStyle, ButtonSalve } from './style';
-import { postOfertaRequest } from '../../store/modules/ofertas/actions';
+
 import api from '../../services/api';
 
-const schema = Yup.object().shape({
-  product_id: Yup.number()
-    .typeError('Voce precisa selecionar um produto')
-    .required('O produto é obrigatório'),
-  unit: Yup.string().required('A unidade é obrigatória'),
-  from: Yup.string()
-    .matches(
-      /^[+]?([.]\d+|\d+[.]?\d*)$/,
-      'Insira um número válido. Ex: 3, 1.5, 0.46',
-    )
-    .required('O valor da oferta é obrigatório'),
-  to: Yup.string()
-    .matches(
-      /^[+]?([.]\d+|\d+[.]?\d*)$/,
-      'Insira um número válido. Ex: 3, 1.5, 0.46',
-    )
-    .required('O valor da oferta é obrigatório'),
-  quantity: Yup.number()
-    .typeError('O valor precisa ser um número')
-    .positive('O número precisa ser maior que zero')
-    .integer('O número precisa ser inteiro')
-    .required('A expiração da oferta é obrigatória'),
-  expires_in: Yup.number()
-    .typeError('O valor precisa ser um número')
-    .positive('O número precisa ser maior que zero')
-    .integer('O número precisa ser inteiro')
-    .required('A expiração da oferta é obrigatória'),
-});
-
 export default function Neew() {
-  const dispatch = useDispatch();
+  const [product_id, setProduct_id] = useState();
+  const [price_, setPrice] = useState();
+  const [unit_, setUnit] = useState();
+  const [quantity, setQuantity] = useState();
+  const [to, setTo] = useState();
+  const [expirin, setExpirin] = useState();
   const [products, setProducts] = useState([]);
+  const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
   const [nameProduct, setNameProduct] = useState('');
   const [ImageProduct, setImageProduct] = useState('');
-  const [openModal, setOpenModal] = useState(false);
-
-  const loading = useSelector(state => state.ofertas.loading);
-  const [productInfo, setProductInfo] = useState({
-    from: `${'R$'} 0`,
-    fromUnformatted: 0,
-    unit: 'KG',
-  });
 
   useEffect(() => {
     async function loadProducts() {
       try {
         const response = await api.get('/productsList');
-
         setProducts(response.data);
       } catch (err) {
         if (err.response) {
-          toast.error('Erro no servidor');
+          toast.error('Erro, verifique sua conexão com a internet');
         } else {
-          toast.error('Falha ao conectar com o servidor');
+          toast.error('Erro, verifique sua conexão com a internet');
         }
       }
     }
 
     loadProducts();
   }, []);
-
-  function handleChange(event) {
-    const { price, unit, name, image } = products.find(product => {
-      return product.id === Number(event.target.value);
+  const handleChange = (e, { value }) => {
+    const { price, unit, name, image, id } = products.find(product => {
+      return product.id === value;
     });
 
-    setProductInfo({ from: formatPrice(price), fromUnformatted: price, unit });
     setNameProduct(name);
     setImageProduct(image.url);
-  }
+    setProduct_id(id);
+    setPrice(formatPrice(price));
+    setUnit(unit);
+  };
 
-  async function handleSubmit(data) {
-    const { unit, price } = products.find(product => {
-      return product.id === data.product_id;
-    });
+  async function handleSubmit() {
+    if (to === '') {
+      setError(true);
+      return;
+    }
+    if (quantity === '') {
+      setError(true);
+      return;
+    }
+    if (expirin === '') {
+      setError(true);
+      return;
+    }
     const offerData = {
-      ...data,
-      unit,
-      from: price,
-      to: Number(data.to),
-      expires_in: Number(data.expires_in),
+      product_id,
+      quantity,
+      unit: unit_,
+      from: price_,
+      to,
+      expires_in: expirin,
     };
-    dispatch(postOfertaRequest(offerData));
-    CloseModalResetInput();
+    try {
+      await api.post('/offers', offerData);
+      setOpen(false);
+      toast.success('Oferta cadastrada com sucesso');
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro, verifique sua conexão com a internet');
+      } else {
+        toast.error('Erro, verifique sua conexão com a internet');
+      }
+    }
   }
-
-  const options = products.map(product => ({
-    id: product.id,
-    title: product.name,
+  // offers
+  const options = products.map(item => ({
+    key: item.id,
+    text: item.name,
+    value: item.id,
   }));
+  const unidade = [
+    { key: 'kg', text: 'kg', value: 'kg' },
+    { key: 'g', text: 'g', value: 'g' },
+    { key: 'dz', text: 'dz', value: 'dz' },
+    { key: 'un', text: 'un', value: 'un' },
+    { key: 'Nenhum', text: 'Nenhum', value: 'Nenhum' },
+  ];
 
-  function CloseModalResetInput() {
-    setOpenModal(false);
+  function handleAbrirModal() {
+    setOpen(true);
+    setProduct_id('');
+    setUnit('');
+    setPrice('');
+    setUnit('');
+    setImageProduct(null);
+    setExpirin('');
+    setTo('');
     setNameProduct('');
-    setProductInfo({
-      from: `${'R$'} 0`,
-      fromUnformatted: 0,
-      unit: 'kg',
-    });
+    setError(false);
+  }
+  function handleFecharModal() {
+    setOpen(false);
+    setProduct_id('');
+    setUnit('');
+    setPrice('');
+    setUnit('');
+    setImageProduct(null);
+    setExpirin('');
+    setTo('');
+    setNameProduct('');
+    setError(false);
   }
 
   return (
     <Modal
-      open={openModal}
+      onClose={() => handleFecharModal()}
+      onOpen={() => handleAbrirModal()}
+      open={open}
       trigger={
-        <Button positive onClick={() => setOpenModal(true)}>
+        <Button positive onClick={() => setOpen(true)}>
           <Icon name="plus" />
           Nova oferta
         </Button>
@@ -130,136 +141,105 @@ export default function Neew() {
         {nameProduct === ''
           ? 'Cadastrar oferta'
           : `Oferta para o produto ${nameProduct}`}
-
-        <MdClose style={{ float: 'right' }} onClick={CloseModalResetInput} />
       </Modal.Header>
-      <Form onSubmit={handleSubmit} id="vd-form" schema={schema}>
-        <ModalArea forR>
-          {nameProduct === '' ? null : (
-            <img
-              style={{
-                height: 150,
-                width: 150,
-                borderColor: 'red',
-                borderWidth: 2,
-              }}
-              src={ImageProduct}
-            />
-          )}
-          <div>
-            <AutocompleteStyle>
-              <div style={{ width: '50%' }}>
-                <label>
-                  Nome do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  onChange={handleChange}
-                  name="product_id"
-                  placeholder="SELECIONE O PRODUTO"
-                  options={options}
-                />
-              </div>
-
-              <div style={{ width: '50%', marginLeft: 5 }}>
-                <label>
-                  Unidade do produto <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Select
-                  disabled
-                  value={productInfo.unit}
-                  name="unit"
-                  options={[
-                    { id: 'kg', title: 'kg' },
-                    { id: 'g', title: 'g' },
-                    { id: 'dz', title: 'dz' },
-                    { id: 'un', title: 'un' },
-                    { id: '0', title: 'Nenhum' },
-                  ]}
-                />
-              </div>
-            </AutocompleteStyle>
-            <TwoInput>
-              <div style={{ width: '50%' }}>
-                <label>
-                  De <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input
-                  disabled
-                  value={productInfo.from}
-                  type="text"
-                  name="from-formatted"
-                />
-              </div>
-
-              <Input
-                type="hidden"
-                value={productInfo.fromUnformatted}
-                name="from"
+      <Modal.Content image>
+        {nameProduct === '' ? null : (
+          <img
+            style={{
+              height: 100,
+              width: 100,
+              borderColor: 'red',
+              borderWidth: 2,
+              borderRadius: 70,
+            }}
+            src={ImageProduct}
+          />
+        )}
+        <Modal.Description style={{ marginLeft: 30 }}>
+          <Form error={error}>
+            {error ? (
+              <Message
+                error
+                header="Verifique os dados"
+                content="Um ou mais campos ficaram sem preencher, os campos * são obrigatórios"
               />
-              <div style={{ width: '50%', marginLeft: 5 }}>
-                <label>
-                  Para <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input type="text" name="to" placeholder="PARA" />
-              </div>
-            </TwoInput>
-            <TwoInput>
-              <div style={{ width: '50%' }}>
-                <label>
-                  Quantidade <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input type="text" name="quantity" placeholder="QUANTIDADE" />
-              </div>
+            ) : null}
 
-              <div style={{ width: '50%', marginLeft: 5 }}>
-                <label>
-                  Expiração em dias <span style={{ color: 'red' }}>*</span>
-                </label>
-                <Input
-                  type="text"
-                  name="expires_in"
-                  placeholder="EXPIRAÇÃO (em dias)"
-                />
-              </div>
-            </TwoInput>
-            <ButtonSalve>
-              <Button
-                negative
-                onClick={() => setOpenModal(false)}
-                style={{
-                  width: 140,
-                  border: 0,
-                }}
-              >
-                Cancelar
-              </Button>
-              {loading ? (
-                <Button
-                  positive
-                  loading
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Loading
-                </Button>
-              ) : (
-                <Button
-                  positive
-                  type="submit"
-                  style={{
-                    width: 140,
-                    border: 0,
-                  }}
-                >
-                  Salvar
-                </Button>
-              )}
-            </ButtonSalve>
-          </div>
-        </ModalArea>
-      </Form>
+            <Form.Group widths="equal">
+              <Form.Select
+                fluid
+                name="product_id"
+                label="Selecione o produto"
+                options={options}
+                placeholder="Produto"
+                onChange={handleChange}
+              />
+
+              <Form.Select
+                fluid
+                required
+                label="Unidade"
+                name="unit"
+                options={unidade}
+                placeholder="Unidade"
+                value={unit_}
+              />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Input
+                fluid
+                required
+                label="De"
+                placeholder="De"
+                name="from"
+                value={price_}
+              />
+              <Form.Input
+                fluid
+                required
+                label="Para"
+                placeholder="Para"
+                name="to"
+                type="number"
+                onChange={e => setTo(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group widths="equal">
+              <Form.Input
+                fluid
+                required
+                label="Qtd. Produto"
+                placeholder="Quantidade"
+                name="quantity"
+                type="number"
+                onChange={e => setQuantity(e.target.value)}
+              />
+              <Form.Input
+                fluid
+                required
+                type="number"
+                label="Expiração(em dias)"
+                placeholder="Expiração em dias"
+                name="expirin_in"
+                onChange={e => setExpirin(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button color="black" onClick={() => handleFecharModal()}>
+          Cancelar
+        </Button>
+
+        <Button
+          content="Salvar"
+          labelPosition="right"
+          icon="checkmark"
+          positive
+          onClick={handleSubmit}
+        />
+      </Modal.Actions>
     </Modal>
   );
 }
