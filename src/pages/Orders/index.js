@@ -28,7 +28,7 @@ import api from '../../services/api';
 import { connect, disconnect, subscribeToNewDevs } from '../../services/socket';
 import OrderDetails from '../../Modals/ViewOrdens';
 import socketio from 'socket.io-client';
-import { openViewPedido } from '../../store/modules/pedidos/actions';
+
 import Pendente from '../../components/Pedidos/Pendente';
 import Producao from '../../components/Pedidos/Producao';
 import Enviado from '../../components/Pedidos/Enviado';
@@ -37,7 +37,6 @@ import Cancelado from '../../components/Pedidos/Cancelado';
 
 export default function Pedidos() {
   const dispatch = useDispatch();
-  const openModal = useSelector(state => state.pedidos.viewModal);
   const [pendente, setPendente_] = useState([]);
   const [producao, setProducao_] = useState([]);
   const [enviado, setEnviado_] = useState([]);
@@ -145,7 +144,7 @@ export default function Pedidos() {
   }, [date]);
 
   function viewOrdens(order) {
-    dispatch(openViewPedido(order));
+
   }
 
   // const loading = <Animation width={30} height={30} animation={loadingData} />;
@@ -257,7 +256,7 @@ export default function Pedidos() {
                   />
                 </Grid.Row>
               </Grid>
-              {openModal === true ? <OrderDetails /> : null}
+              {/* {openModal === true ? <OrderDetails /> : null} */}
             </div>
           </div>
         </div>

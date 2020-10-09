@@ -2,16 +2,10 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 /* eslint-disable no-alert */
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 
 import { format, parseISO, isAfter } from 'date-fns';
 import { Modal, Button, Icon, Header, Divider } from 'semantic-ui-react';
-import {
-  MdKeyboardArrowLeft,
-  MdKeyboardArrowRight,
-  MdSearch,
-} from 'react-icons/md';
+import { MdSearch } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Animation from '../../components/Animation';
 import * as loadingData from '../../assets/animations/loading.json';
@@ -19,25 +13,14 @@ import * as loadingData from '../../assets/animations/loading.json';
 import { formatPrice } from '../../util/format';
 import Oferta from '../../Modals/NewOferta';
 import { dateLanguage } from '../../locales';
-import {
-  GetOfertasRequest,
-  deletOfertasRequest,
-} from '../../store/modules/ofertas/actions';
-import {
-  Container,
-  PageContent,
-  Pagination,
-  PageActions,
-  Title,
-} from './styles';
+
+import { Container, PageContent, PageActions, Title } from './styles';
 import api from '../../services/api';
 
 export default function Offers() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [ofertas, setOfertas] = useState([]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     async function loadCategories() {
@@ -59,17 +42,28 @@ export default function Offers() {
     loadCategories();
   }, []);
 
+  async function handleDeleteOferta(id) {
+    try {
+      await api.delete(`offers/${id}`);
+
+      const response = await api.get('/offers');
+      setOfertas(response.data);
+
+      toast.success('Oferta finalizada com sucesso');
+      setOpenDeleteModal(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
 
-  useEffect(() => {
-    dispatch(GetOfertasRequest());
-  }, []);
-  function handleDeleteOferta(id) {
-    dispatch(deletOfertasRequest(id));
-    setOpenDeleteModal(false);
-  }
   function refreshPage() {
     window.location.reload();
   }
