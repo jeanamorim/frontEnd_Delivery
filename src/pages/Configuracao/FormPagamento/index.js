@@ -14,6 +14,8 @@ import {
   Pagination,
   ContainerTable,
   PageContent,
+  InfoHeader,
+  InfoText,
 } from './styles';
 import Animation from '../../../components/Animation';
 import * as loadingData from '../../../assets/animations/loading.json';
@@ -124,7 +126,7 @@ export default function FormPagamento() {
                   <div className="content-wrapper">
                     <div className="panel-body">
                       <Header>
-                        <div>Quais cartões você aceita para pagamento ?</div>
+                        <div>Forma de pagamento</div>
                       </Header>
                       <Divider />
                       {loading ? (
@@ -144,6 +146,9 @@ export default function FormPagamento() {
                       ) : (
                         <div>
                           <Container>
+                            <InfoHeader>
+                              <InfoText>Cartões não aceito</InfoText>
+                            </InfoHeader>
                             <ul>
                               {pagamentoFalse.map(item => (
                                 <Time>
@@ -152,7 +157,7 @@ export default function FormPagamento() {
                                   <img src={item.image.url} />
                                   <Button
                                     positive
-                                    style={{ borderRadius: 10, margin: 5 }}
+                                    style={{ margin: 5 }}
                                     onClick={() => updatePaymentTrue(item.id)}
                                   >
                                     Aceitar
@@ -163,6 +168,9 @@ export default function FormPagamento() {
                           </Container>
 
                           <ContainerAceito>
+                            <InfoHeader>
+                              <InfoText>Cartões aceitos</InfoText>
+                            </InfoHeader>
                             <ul>
                               {pagamentoTrue.map(item => (
                                 <Time>
@@ -171,7 +179,7 @@ export default function FormPagamento() {
                                   <img src={item.image.url} />
                                   <Button
                                     negative
-                                    style={{ borderRadius: 10, margin: 5 }}
+                                    style={{ margin: 5 }}
                                     onClick={() => updatePaymentFalse(item.id)}
                                   >
                                     Excluir

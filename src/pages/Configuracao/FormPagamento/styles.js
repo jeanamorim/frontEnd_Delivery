@@ -4,8 +4,7 @@ export const Header = styled.div`
   margin-top: 40px;
   display: flex;
   flex-direction: column;
-  align-self: center;
-  align-items: center;
+
 
   }
   div {
@@ -18,7 +17,7 @@ export const Header = styled.div`
 
 export const Container = styled.div`
   max-width: 50%;
-  display: flex;
+  display: block;
   float: left;
 
   header {
@@ -72,7 +71,7 @@ export const Container = styled.div`
 `;
 export const ContainerAceito = styled.div`
   max-width: 50%;
-  display: flex;
+  display: block;
   float: right;
 
   header {
@@ -292,4 +291,11 @@ export const PageContent = styled.table`
     border: 0;
     height: 45px;
   }
+`;
+export const InfoHeader = styled.div`
+  align-items: center;
+  align-self: center;
+`;
+export const InfoText = styled.div`
+  font-weight: bold;
 `;
