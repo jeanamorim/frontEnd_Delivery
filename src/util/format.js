@@ -1,11 +1,5 @@
-import currencyFormatter from 'currency-formatter';
-
-import { locale } from '../locales';
-
 const formatPrice = price => {
-  return currencyFormatter.format(price, {
-    locale,
-  });
+  return price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 
 const formatCPF = cpf => {
