@@ -1,50 +1,31 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Modal, Header, Icon } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
 
-export default function EditarOpcao({ open, setOpen, item }) {
+export default function EditarOpcao({ editar, setEditar, item }) {
   const [value, setValue] = useState([]);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [deletar, setDeletar] = useState(false);
+  const [status, setStatus] = useState();
 
-  useEffect(() => setValue(item), [item]);
+  useEffect(() => (setValue(item), setStatus(item.status)), [item]);
 
   function setVariacaoItemValue(field, valuee) {
     setValue({ ...value, [field]: valuee });
   }
-  async function deletarOpcao() {
-    setDeletar(true);
-    try {
-      await api.delete(`opcaovariacao/${item.id}`);
-
-      toast.success('Opção deletada com sucesso');
-      setOpenDelete(false);
-      setOpen(false);
-      setDeletar(false);
-    } catch (err) {
-      if (err.response) {
-        toast.error('Erro no servidor');
-      } else {
-        toast.error('Erro ao conectar com o servidor');
-      }
-    }
-  }
+  const handleChange = (e, { value }) => setStatus(value);
 
   async function editarOpção() {
-    setLoading(true);
     try {
       await api.put(`opcaovariacao/${item.id}`, {
         name: value.name,
         price: value.price,
-        status: value.status,
+        status,
       });
 
-      toast.success('Variacao editada com sucesso');
-      setOpen(false);
-      setLoading(false);
+      toast.success('Opção editada com sucesso');
+      setEditar(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -61,9 +42,9 @@ export default function EditarOpcao({ open, setOpen, item }) {
   return (
     <>
       <Modal
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        open={open}
+        onClose={() => setEditar(false)}
+        onOpen={() => setEditar(true)}
+        open={editar}
       >
         <Modal.Header>Editar opção</Modal.Header>
         <Modal.Content>
@@ -88,69 +69,28 @@ export default function EditarOpcao({ open, setOpen, item }) {
                 />
                 <Form.Select
                   fluid
-                  value={value.status}
+                  value={status}
                   label="Status"
                   options={options}
-                  placeholder="Gender"
-                  onChange={e => setVariacaoItemValue('status', e.target.value)}
+                  placeholder="Status"
+                  onChange={handleChange}
                 />
-                {deletar ? (
-                  <Button
-                    negative
-                    loading
-                    style={{ height: 40, marginTop: 20 }}
-                  >
-                    loading
-                  </Button>
-                ) : (
-                  <Button
-                    negative
-                    style={{ height: 40, marginTop: 20 }}
-                    onClick={() => setOpenDelete(true)}
-                  >
-                    Deletar
-                  </Button>
-                )}
               </Form.Group>
             </Form>
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="black" onClick={() => setOpen(false)}>
+          <Button color="black" onClick={() => setEditar(false)}>
             Cancelar
           </Button>
-          {loading ? (
-            <Button loading labelPosition="right" icon="checkmark" positive>
-              loading
-            </Button>
-          ) : (
-            <Button
-              content="Salvar"
-              labelPosition="right"
-              icon="checkmark"
-              onClick={() => editarOpção()}
-              positive
-            />
-          )}
-        </Modal.Actions>
-      </Modal>
-      <Modal
-        closeIcon
-        open={openDelete}
-        onClose={() => setOpenDelete(false)}
-        onOpen={() => setOpenDelete(true)}
-      >
-        <Header icon="archive" content="Deletar opção" />
-        <Modal.Content>
-          <p>Tem certeza que desejar deletar essa opção?</p>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button color="red" onClick={() => setOpenDelete(false)}>
-            <Icon name="remove" /> Não
-          </Button>
-          <Button color="green" onClick={() => deletarOpcao()}>
-            <Icon name="checkmark" /> Sim
-          </Button>
+
+          <Button
+            content="Editar"
+            labelPosition="right"
+            icon="checkmark"
+            onClick={() => editarOpção()}
+            positive
+          />
         </Modal.Actions>
       </Modal>
     </>

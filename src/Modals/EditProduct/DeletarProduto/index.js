@@ -2,21 +2,21 @@
 import React from 'react';
 import { Modal, Button, Icon, Header } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+
 import api from '../../../services/api';
-import { closeEditProduct } from '../../../store/modules/product/actions';
 
 export default function DeletarProduto({
   setOpenDeleteModal,
   openDeleteModal,
   product,
+  setOpen,
 }) {
-  const dispatch = useDispatch();
   async function handleDeleteProduct(id) {
     try {
       await api.delete(`products/${id}`);
-      dispatch(closeEditProduct());
+
       setOpenDeleteModal(false);
+      setOpen(false);
       toast.success('Produto deletado com sucesso');
     } catch (err) {
       if (err.response) {

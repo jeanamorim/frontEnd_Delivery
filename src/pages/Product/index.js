@@ -19,7 +19,7 @@ import { history } from '../../services/history';
 import { formatPrice } from '../../util/format';
 import Product from '../../Modals/NewProduct';
 import Category from '../../Modals/NewCategoria';
-import ProductEdit from '../../Modals/EditProduct/ModalTeste';
+import ProductEdit from '../../Modals/EditProduct/Produto';
 
 import { Container, Title, PageActions, PageContent } from './styles';
 import { getCategoriasRequest } from '../../store/modules/categorias/actions';

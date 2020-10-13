@@ -5,18 +5,18 @@ import { toast } from 'react-toastify';
 import api from '../../../services/api';
 
 export default function EditarOpcao({
-  novaOpcao,
-  setNovaOpcao,
-  itemIdVar,
+  newOpcao,
+  setNewOpcao,
+  idVariacao,
   variacao,
 }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
-
+  console.log(variacao);
   async function cadastrarOpcao() {
-    const newArray = variacao.filter(item => item.id === itemIdVar);
+    const newArray = variacao.filter(item => item.id === idVariacao);
     const newArray1 = newArray[0].opcao;
     const idOp = newArray1.map(function(item) {
       return item.id;
@@ -32,7 +32,7 @@ export default function EditarOpcao({
       const response = await api.post('opcaovariacao', data);
       const ids = response.data.id;
 
-      await api.put(`variacao/${itemIdVar}`, {
+      await api.put(`variacao/${idVariacao}`, {
         opcao: [...idOp, ids],
       });
 
@@ -42,7 +42,7 @@ export default function EditarOpcao({
 
       toast.success('Opção cadastrada com sucesso');
       setLoading(false);
-      setNovaOpcao(false);
+      setNewOpcao(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -61,9 +61,9 @@ export default function EditarOpcao({
   return (
     <>
       <Modal
-        onClose={() => setNovaOpcao(false)}
-        onOpen={() => setNovaOpcao(true)}
-        open={novaOpcao}
+        onClose={() => setNewOpcao(false)}
+        onOpen={() => setNewOpcao(true)}
+        open={newOpcao}
       >
         <Modal.Header>Nova opção</Modal.Header>
         <Modal.Content>
@@ -99,7 +99,7 @@ export default function EditarOpcao({
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="black" onClick={() => setNovaOpcao(false)}>
+          <Button color="black" onClick={() => setNewOpcao(false)}>
             Cancelar
           </Button>
           {loading ? (

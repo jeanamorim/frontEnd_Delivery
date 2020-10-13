@@ -5,8 +5,8 @@ import { toast } from 'react-toastify';
 import api from '../../../services/api';
 
 export default function EditarOpcao({
-  setNovaVariacao,
-  novaVariacao,
+  newVariacao,
+  setNewVariacao,
   product,
   variacao,
 }) {
@@ -31,13 +31,13 @@ export default function EditarOpcao({
       });
       const ids = response.data.id;
 
-      await api.put(`products/${product.id}`, {
+      await api.put(`products/${product}`, {
         variacao: [...idvar, ids],
       });
 
       toast.success('Variacao cadastrada com sucesso');
       setLoading(false);
-      setNovaVariacao(false);
+      setNewVariacao(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -56,11 +56,13 @@ export default function EditarOpcao({
   return (
     <>
       <Modal
-        onClose={() => setNovaVariacao(false)}
-        onOpen={() => setNovaVariacao(true)}
-        open={novaVariacao}
+        onClose={() => setNewVariacao(false)}
+        onOpen={() => setNewVariacao(true)}
+        open={newVariacao}
       >
-        <Modal.Header>Nova variação</Modal.Header>
+        <Modal.Header style={{ background: '#F4A460', color: '#fff' }}>
+          Nova variação
+        </Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <Form>
@@ -77,7 +79,7 @@ export default function EditarOpcao({
                   fluid
                   value={minimo}
                   label="Qtd. Minimo"
-                  placeholder="Preço"
+                  placeholder="minimo"
                   name="price"
                   onChange={e => setMinimo(e.target.value)}
                 />
@@ -85,7 +87,7 @@ export default function EditarOpcao({
                   fluid
                   value={maximo}
                   label="Qtd. Maximo"
-                  placeholder="Preço"
+                  placeholder="maximo"
                   name="price"
                   onChange={e => setMaximo(e.target.value)}
                 />
@@ -102,7 +104,7 @@ export default function EditarOpcao({
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="black" onClick={() => setNovaVariacao(false)}>
+          <Button color="black" onClick={() => setNewVariacao(false)}>
             Cancelar
           </Button>
           {loading ? (
