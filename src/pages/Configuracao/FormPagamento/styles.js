@@ -128,18 +128,18 @@ export const ContainerAceito = styled.div`
 `;
 
 export const Time = styled.li`
-  padding: 20px;
+  padding: 8px;
   border-radius: 2px;
   background: #dcdcdc;
   display: flex;
   flex-direction: column;
   align-self: center;
   align-items: center;
+  height: 130px;
 
   img {
-    width: 50px;
+    width: 90px;
     height: 50px;
-    border-radius: 50px;
   }
 
   strong {

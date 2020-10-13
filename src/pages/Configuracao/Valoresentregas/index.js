@@ -6,7 +6,9 @@ import {
   Divider,
   Icon,
   Dropdown,
-  Menu,
+  Checkbox,
+  Select,
+  Form,
 } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
@@ -16,6 +18,8 @@ import { Container, Time, Header, ContainerText, Text } from './styles';
 
 export default function FormPagamento() {
   const [valores, selValores] = useState([]);
+  const [loadingstatus, setLoadingStatus] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const [novoValor, setNovoValor] = useState([]);
@@ -83,6 +87,38 @@ export default function FormPagamento() {
   const loadingAnimation = (
     <Animation width={50} height={50} animation={loadingData} />
   );
+  async function onChangeActive(item) {
+    try {
+      setLoadingStatus(true);
+      await api.put(`frete/${item.id}`, {
+        status: 'INATIVA',
+      });
+      const response = await api.get('/frete');
+      selValores(response.data);
+      setLoadingStatus(false);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
+  async function onChangeInactive(item) {
+    try {
+      await api.put(`frete/${item.id}`, {
+        status: 'ATIVA',
+      });
+      const response = await api.get('/frete');
+      selValores(response.data);
+    } catch (err) {
+      if (err.response) {
+        toast.error('Erro no servidor');
+      } else {
+        toast.error('Erro ao conectar com o servidor');
+      }
+    }
+  }
 
   return (
     <div className="content-wrapper" style={{ marginTop: 40 }}>
@@ -174,13 +210,39 @@ export default function FormPagamento() {
                                     </Button>
                                   )}
                                 </div>
+
                                 <div
                                   style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
+                                    marginTop: 10,
                                   }}
                                 >
-                                  <span>Entrega {item.status}</span>
+                                  <div>
+                                    {item.status === 'ATIVA' ? (
+                                      <Button
+                                        onClick={() => onChangeActive(item)}
+                                        style={{
+                                          backgroundColor: '#509A45',
+                                          color: '#fff',
+                                          opacity: 1,
+                                          width: 100,
+                                        }}
+                                      >
+                                        {item.status}
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        onClick={() => onChangeInactive(item)}
+                                        style={{
+                                          backgroundColor: '#509A45',
+                                          color: '#fff',
+                                          opacity: 0.2,
+                                          width: 100,
+                                        }}
+                                      >
+                                        {item.status}
+                                      </Button>
+                                    )}
+                                  </div>
                                 </div>
                               </Time>
                             ))}
