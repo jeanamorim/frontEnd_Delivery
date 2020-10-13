@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/extensions */
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { Icon, Button, Divider } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
-import { updateProfileRequest } from '../../../store/modules/user/actions';
+
 import { Container, Header } from './styles';
 import api from '../../../services/api';
 import Animation from '../../../components/Animation';
@@ -41,15 +41,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function HorFuncionamento() {
-  const dispatch = useDispatch();
   const [scheduleItems, setScheduleItems] = useState([]);
+  const [status, setstatus] = useState([]);
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
-  const idLoja = useSelector(state => state.user.profile.id);
+  const id_loja = useSelector(state => state.user.profile.id);
   const profile = useSelector(state => state.user.profile);
   const [data] = useState(new Date());
-  const [hours, setHours] = useState();
 
   const classes = useStyles();
 
@@ -66,14 +65,27 @@ function HorFuncionamento() {
       setLoading(true);
       try {
         const response = await api.get('/schedule');
+        const statusLoja = await api.get(`estabelecimento/${id_loja}`);
         const newResult = response.data.some(
           item =>
             item.week_day === data.getDay() &&
             novaHora() <= item.to &&
             novaHora() >= item.from,
         );
-        setHours(newResult);
+        if (newResult) {
+          await api.put(`estabelecimento`, {
+            email: profile.email,
+            status: 'ABERTO',
+          });
+        } else {
+          await api.put(`estabelecimento`, {
+            email: profile.email,
+            status: 'FECHADO',
+          });
+        }
+
         setScheduleItems(response.data);
+        setstatus(statusLoja.data[0].status);
         setLoading(false);
       } catch (err) {
         if (err.response) {
@@ -86,24 +98,6 @@ function HorFuncionamento() {
     Schedule();
   }, [data]);
 
-  async function verificarHora() {
-    if (hours) {
-      await api.put(`estabelecimento/${idLoja}`, {
-        status: 'ABERTO',
-      });
-    } else {
-      await api.put(`estabelecimento/${idLoja}`, {
-        status: 'FECHADO',
-      });
-    }
-  }
-
-  verificarHora();
-
-  function jean(email, status) {
-    dispatch(updateProfileRequest(email, status));
-  }
-
   async function updateHours(id) {
     setLoadingButton(true);
     try {
@@ -112,14 +106,26 @@ function HorFuncionamento() {
         to: schedule.to,
       });
       const response = await api.get('/schedule');
-      setScheduleItems(response.data);
+      const statusLoja = await api.get(`estabelecimento/${id_loja}`);
       const newResult = response.data.some(
         item =>
           item.week_day === data.getDay() &&
           novaHora() <= item.to &&
           novaHora() >= item.from,
       );
-      setHours(newResult);
+      if (newResult) {
+        await api.put(`estabelecimento`, {
+          email: profile.email,
+          status: 'ABERTO',
+        });
+      } else {
+        await api.put(`estabelecimento`, {
+          email: profile.email,
+          status: 'FECHADO',
+        });
+      }
+      setScheduleItems(response.data);
+      setstatus(statusLoja.data[0].status);
       setSchedule('');
       setLoadingButton(false);
       toast.success('Horarios atualizado com sucesso');
@@ -132,7 +138,7 @@ function HorFuncionamento() {
     }
   }
 
-  function setFreteItemValue(position, field, value) {
+  function setHoursItemValue(position, field, value) {
     const updateScheduleItems = scheduleItems.map((scheduleItem, index) => {
       if (index === position) {
         setSchedule({ ...scheduleItem, [field]: value });
@@ -168,14 +174,14 @@ function HorFuncionamento() {
                   </div>
                   <div className="panel-body">
                     <div>
-                      {profile.status === 'ABERTO' ? (
+                      {status === 'ABERTO' ? (
                         <Button
                           type="button"
                           positive
                           variant="contained"
                           style={{ borderRadius: 5, width: 140, height: 40 }}
                         >
-                          {profile.status}
+                          {status}
                         </Button>
                       ) : (
                         <Button
@@ -184,7 +190,7 @@ function HorFuncionamento() {
                           variant="contained"
                           style={{ borderRadius: 5, width: 140, height: 40 }}
                         >
-                          {profile.status}
+                          {status}
                         </Button>
                       )}
                     </div>
@@ -245,7 +251,7 @@ function HorFuncionamento() {
                                   shrink: true,
                                 }}
                                 onChange={e =>
-                                  setFreteItemValue(
+                                  setHoursItemValue(
                                     index,
                                     'from',
                                     e.target.value,
@@ -263,7 +269,7 @@ function HorFuncionamento() {
                                   shrink: true,
                                 }}
                                 onChange={e =>
-                                  setFreteItemValue(index, 'to', e.target.value)
+                                  setHoursItemValue(index, 'to', e.target.value)
                                 }
                               />
                               {schedule.week_day === item.week_day ? (
