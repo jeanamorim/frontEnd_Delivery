@@ -5,7 +5,14 @@ import { Button, Form, Modal, Header, Icon } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
 
-export default function EditarOpcao({ editar, setEditar, item }) {
+export default function EditarOpcao({
+  editar,
+  setEditar,
+  item,
+  setRender,
+  render,
+  setVisualizar,
+}) {
   const [value, setValue] = useState([]);
   const [status, setStatus] = useState();
 
@@ -25,7 +32,9 @@ export default function EditarOpcao({ editar, setEditar, item }) {
       });
 
       toast.success('Opção editada com sucesso');
+      setRender(!render);
       setEditar(false);
+      setVisualizar(false);
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');

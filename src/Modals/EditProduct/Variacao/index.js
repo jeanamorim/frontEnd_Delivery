@@ -19,6 +19,7 @@ function ModalExampleModal({ openVariacao, setOpenVariacao, product }) {
   const [item, setItem] = useState();
   const [itemVar, setItemVar] = useState();
   const [itemVisua, setItemVisual] = useState();
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
     async function loadOrder() {
@@ -34,7 +35,7 @@ function ModalExampleModal({ openVariacao, setOpenVariacao, product }) {
       }
     }
     loadOrder();
-  }, []);
+  }, [render]);
 
   function deletarVariacao(itemV) {
     setItem(itemV);
@@ -130,9 +131,21 @@ function ModalExampleModal({ openVariacao, setOpenVariacao, product }) {
           </Button>
         </Modal.Actions>
       </Modal>
-      <DeletarVariacao deletar={deletar} setDeletar={setDeletar} item={item} />
+      <DeletarVariacao
+        deletar={deletar}
+        setDeletar={setDeletar}
+        item={item}
+        setRender={setRender}
+        render={render}
+      />
       {editar ? (
-        <Editar editar={editar} setEditar={setEditar} item={itemVar} />
+        <Editar
+          editar={editar}
+          setEditar={setEditar}
+          item={itemVar}
+          setRender={setRender}
+          render={render}
+        />
       ) : null}
       {visualizar ? (
         <Visualizar
@@ -140,6 +153,8 @@ function ModalExampleModal({ openVariacao, setOpenVariacao, product }) {
           setVisualizar={setVisualizar}
           item={itemVisua}
           variacao={variacao}
+          setRender={setRender}
+          render={render}
         />
       ) : null}
       <NewVariacao
@@ -147,6 +162,8 @@ function ModalExampleModal({ openVariacao, setOpenVariacao, product }) {
         product={product}
         newVariacao={newVariacao}
         setNewVariacao={setNewVariacao}
+        setRender={setRender}
+        render={render}
       />
     </>
   );

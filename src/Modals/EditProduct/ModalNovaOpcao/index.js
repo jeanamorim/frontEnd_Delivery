@@ -9,12 +9,15 @@ export default function EditarOpcao({
   setNewOpcao,
   idVariacao,
   variacao,
+  setRender,
+  render,
+  setVisualizar,
 }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
-  console.log(variacao);
+
   async function cadastrarOpcao() {
     const newArray = variacao.filter(item => item.id === idVariacao);
     const newArray1 = newArray[0].opcao;
@@ -40,9 +43,11 @@ export default function EditarOpcao({
       setPrice('');
       setStatus('');
 
-      toast.success('Opção cadastrada com sucesso');
+      setRender(!render);
+      setVisualizar(false);
       setLoading(false);
       setNewOpcao(false);
+      toast.success('Opção cadastrada com sucesso');
     } catch (err) {
       if (err.response) {
         toast.error('Erro no servidor');
@@ -91,7 +96,7 @@ export default function EditarOpcao({
                   value={status}
                   label="Status"
                   options={options}
-                  placeholder="Gender"
+                  placeholder="Status"
                   onChange={handleChange}
                 />
               </Form.Group>

@@ -9,6 +9,8 @@ export default function EditarOpcao({
   setNewVariacao,
   product,
   variacao,
+  setRender,
+  render,
 }) {
   const [name, setName] = useState('');
   const [minimo, setMinimo] = useState('');
@@ -37,6 +39,7 @@ export default function EditarOpcao({
 
       toast.success('Variacao cadastrada com sucesso');
       setLoading(false);
+      setRender(!render);
       setNewVariacao(false);
     } catch (err) {
       if (err.response) {

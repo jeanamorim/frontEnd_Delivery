@@ -4,7 +4,13 @@ import { Button, Form, Modal } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
 
-export default function EditarOpcao({ editar, setEditar, item }) {
+export default function EditarOpcao({
+  editar,
+  setEditar,
+  item,
+  setRender,
+  render,
+}) {
   const [name, setName] = useState(item.name);
   const [minimo, setMinimo] = useState(item.minimo);
   const [maximo, setMaximo] = useState(item.maximo);
@@ -22,6 +28,7 @@ export default function EditarOpcao({ editar, setEditar, item }) {
         maximo,
       });
       setEditar(false);
+      setRender(!render);
       toast.success('Variacao editada com sucesso');
     } catch (err) {
       if (err.response) {

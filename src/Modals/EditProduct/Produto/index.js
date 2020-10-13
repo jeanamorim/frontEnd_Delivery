@@ -13,6 +13,7 @@ function ModalExampleModal({ open, setOpen }) {
   const product = useSelector(state => state.product.ProductToEdit);
   const categories = useSelector(state => state.categorias.Categorias);
   const avatar = useSelector(state => state.uploads.avatar);
+
   const [categoria, setCategoria] = useState();
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(false);

@@ -7,7 +7,14 @@ import DeletarOpcao from '../DeletarOpcao';
 import NewOpcao from '../ModalNovaOpcao';
 import Editar from '../ModalEditarOpcao';
 
-function ModalExampleModal({ visualizar, setVisualizar, item, variacao }) {
+function ModalExampleModal({
+  visualizar,
+  setVisualizar,
+  item,
+  variacao,
+  setRender,
+  render,
+}) {
   const [deletar, setDeletar] = useState(false);
   const [newOpcao, setNewOpcao] = useState(false);
   const [editar, setEditar] = useState(false);
@@ -92,10 +99,24 @@ function ModalExampleModal({ visualizar, setVisualizar, item, variacao }) {
         </Modal.Actions>
       </Modal>
       {deletar ? (
-        <DeletarOpcao deletar={deletar} setDeletar={setDeletar} item={itemOp} />
+        <DeletarOpcao
+          deletar={deletar}
+          setDeletar={setDeletar}
+          item={itemOp}
+          setRender={setRender}
+          render={render}
+          setVisualizar={setVisualizar}
+        />
       ) : null}
       {editar ? (
-        <Editar editar={editar} setEditar={setEditar} item={itemEdit} />
+        <Editar
+          editar={editar}
+          setEditar={setEditar}
+          item={itemEdit}
+          setRender={setRender}
+          render={render}
+          setVisualizar={setVisualizar}
+        />
       ) : null}
       {newOpcao ? (
         <NewOpcao
@@ -103,6 +124,9 @@ function ModalExampleModal({ visualizar, setVisualizar, item, variacao }) {
           variacao={variacao}
           newOpcao={newOpcao}
           setNewOpcao={setNewOpcao}
+          setRender={setRender}
+          render={render}
+          setVisualizar={setVisualizar}
         />
       ) : null}
     </>

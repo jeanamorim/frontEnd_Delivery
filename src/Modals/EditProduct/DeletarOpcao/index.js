@@ -5,10 +5,20 @@ import { toast } from 'react-toastify';
 
 import api from '../../../services/api';
 
-export default function DeletarProduto({ deletar, setDeletar, item }) {
+export default function DeletarProduto({
+  deletar,
+  setDeletar,
+  item,
+  setRender,
+  render,
+  setVisualizar,
+}) {
   async function deletarOpcao() {
     try {
       await api.delete(`opcaovariacao/${item.id}`);
+
+      setRender(!render);
+      setVisualizar(false);
       setDeletar(false);
       toast.success('Opção deletada com sucesso');
     } catch (err) {
