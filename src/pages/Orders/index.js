@@ -37,6 +37,7 @@ import Cancelado from '../../components/Pedidos/Cancelado';
 
 export default function Pedidos() {
   const dispatch = useDispatch();
+  const [status, setstatus] = useState('');
   const [open, setOpen] = useState(false);
   const [orders, setOrders] = useState([]);
   const [pendente, setPendente_] = useState([]);
@@ -90,7 +91,8 @@ export default function Pedidos() {
       const response = await api.get('orders', {
         params: { date },
       });
-
+      const statusLoja = await api.get(`estabelecimento/${profile_id}`);
+      setstatus(statusLoja.data[0].status);
       const data = response.data.map(item => ({
         ...item,
         timeDistance: formatDistanceStrict(parseISO(item.date), new Date(), {
@@ -191,7 +193,7 @@ export default function Pedidos() {
                   >
                     Entrega 20-30 min
                   </Button>
-                  {profile.status === 'ABERTO' ? (
+                  {status === 'ABERTO' ? (
                     <Button
                       type="button"
                       positive
@@ -204,7 +206,7 @@ export default function Pedidos() {
                         marginTop: -35,
                       }}
                     >
-                      {profile.status}
+                      {status}
                     </Button>
                   ) : (
                     <Button
@@ -219,7 +221,7 @@ export default function Pedidos() {
                         marginTop: -35,
                       }}
                     >
-                      {profile.status}
+                      {status}
                     </Button>
                   )}
                 </div>

@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 
 function HorFuncionamento() {
   const [scheduleItems, setScheduleItems] = useState([]);
-  const [status, setstatus] = useState([]);
+  const [status, setstatus] = useState('');
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
@@ -106,7 +106,6 @@ function HorFuncionamento() {
         to: schedule.to,
       });
       const response = await api.get('/schedule');
-      const statusLoja = await api.get(`estabelecimento/${id_loja}`);
       const newResult = response.data.some(
         item =>
           item.week_day === data.getDay() &&
@@ -124,8 +123,10 @@ function HorFuncionamento() {
           status: 'FECHADO',
         });
       }
-      setScheduleItems(response.data);
+      const statusLoja = await api.get(`estabelecimento/${id_loja}`);
       setstatus(statusLoja.data[0].status);
+      setScheduleItems(response.data);
+
       setSchedule('');
       setLoadingButton(false);
       toast.success('Horarios atualizado com sucesso');
